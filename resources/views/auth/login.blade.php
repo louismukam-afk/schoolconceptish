@@ -176,7 +176,7 @@
 			<div class="form-group">
 				<label class="control-label">{{trans('admin.username')}}</label>
 				<div >
-					<input type="text" class="form-control" name="name" value="{{ old('name') }}">
+					<input type="text" class="form-control" name="name" value="{{ old('name') }}" autofocus>
 				</div>
 			</div>
 

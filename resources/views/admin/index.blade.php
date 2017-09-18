@@ -112,16 +112,26 @@
 
         </div>
 
-        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+
+
+
+
+
+    </div>
+
+    <div class="row text-center pad-top">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6"  style="display: none;">
             <div class="div-square">
-                <a href="{{URL::to('admin/retrait/')}}" >
-                    <i class="fa fa-money fa-5x"></i>
-                    <h4>{{trans('admin.effectuer_retrait')}} </h4>
+                <a href="{{URL::to('/admin/taux/')}}" >
+                    <i class="fa fa-5x fa-euro"></i>
+                    <h4>{{trans('admin.taux_enseignant')}}</h4>
                 </a>
             </div>
 
+
         </div>
     </div>
+
     <div class="page-header">
         <h3>{{trans('admin.autre')}} </h3>
     </div>

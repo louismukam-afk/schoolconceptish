@@ -107,6 +107,11 @@
                     <li>
                         <a href="{{URL::to('/personnel/')}}"><i class="fa fa-steam   "></i>{{  trans('menu.gestion_personnel')  }}</a>
                     </li>
+
+                    <li>
+                        <a href="{{URL::to('/comptabilite/')}}"><i class="fa fa-money"></i>{{  trans('admin.comptabilite')  }}</a>
+                    </li>
+
                     <li>
                         <a href="#"><i class="fa fa-bar-chart-o"></i>{{  trans('menu.bilan')  }}</a>
                     </li>

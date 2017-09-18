@@ -18,7 +18,7 @@ class searchController extends Controller {
 	 */
     public function __construct()
     {
-        session(['big_title'=>trans('admin.menu_recherche')]);
+        //session(['big_title'=>trans('admin.menu_recherche')]);
         $year=session('year');
         if($year==null){
             $p=parametres::whereNom('annee_scolaire')->get()->first();

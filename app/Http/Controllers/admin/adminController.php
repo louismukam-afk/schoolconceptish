@@ -2,7 +2,7 @@
 
 use gesecole\Http\Requests;
 use gesecole\Http\Controllers\Controller;
-
+use gesecole\parametres;
 use Illuminate\Http\Request;
 
 class adminController extends Controller {

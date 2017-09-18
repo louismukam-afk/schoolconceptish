@@ -15,7 +15,7 @@
                     <div class="row" col-md-10>
 
                         <div class="form-group col-md-6">
-                            <input type="checkbox" name="eleve[]" value="{{$e->id}}" onchange="onCheckedChange(this,'note{{$i}}')" checked>
+                            <input type="checkbox" name="eleve[]" value="{{$e->id}}" onchange="onCheckedChange(this,'note{{$i}}')" checked tabindex="-1">
                             <label >{{ $e->nom.' '.$e->prenom  }} : </label>
                         </div>
                         <div class="form-group col-md-2 row">

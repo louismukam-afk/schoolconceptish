@@ -1,0 +1,146 @@
+
+/*=============================================================
+    Authour URI: www.binarycart.com
+    License: Commons Attribution 3.0
+
+    http://creativecommons.org/licenses/by/3.0/
+
+    100% To use For Personal And Commercial Use.
+    IN EXCHANGE JUST GIVE US CREDITS AND TELL YOUR FRIENDS ABOUT US
+   
+    ========================================================  */
+
+/* cyrillic-ext */
+@font-face { font-family: open-sans;
+    font-weight: 400;
+    font-style: normal;
+    src: url('../fonts/open-sans.regular.ttf'); }
+/*==============================================
+    GENERAL  STYLES    
+    =============================================*/
+
+
+
+.custom-header
+{
+    min-height: 22mm;
+    position: relative;
+}
+.custom-header .school-nav,.custom-header .other-nav
+{
+    padding: 1mm;
+    position: absolute;
+    width: 80mm;
+    height: inherit;
+    text-align: center;
+}
+.custom-header .logo-nav
+{
+    -webkit-print-color-adjust:exact;
+    left: 46%;
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    background: url('../img/logo.png') !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+}
+
+
+
+.custom-header .other-nav
+{
+    right: 0;
+}
+.custom-header >p
+{
+    margin: 0;
+}
+.traduction
+{
+    font-size: 10px !important;
+    color: grey !important;
+}
+.div-bar{
+    margin-top: 65px;
+    height: 2mm;
+    border-top: solid 1px;
+    border-bottom: solid 3px;
+
+}
+
+@media print {
+    @page  {
+        margin-top: 2%;
+        margin-bottom: 2%;
+        margin-left: 2%;
+        margin-right: 2%;
+    }
+
+    .wrapper,.navbar-default,.alert,.btn,.big-title,hr,.action
+    {
+        display: none;
+    }
+
+    .copy
+    {
+        font-size: 10px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+
+
+
+
+    .custom-header
+    {
+        min-height: 22mm;
+        position: relative;
+    }
+    .custom-header .school-nav,.custom-header .other-nav
+    {
+        padding: 1mm;
+        position: absolute;
+        width: 80mm;
+        height: inherit;
+        text-align: center;
+    }
+    .custom-header .logo-nav
+    {
+        -webkit-print-color-adjust:exact;
+        left: 46%;
+        width: 80px;
+        height: 80px;
+        position: absolute;
+        background: url('../img/logo.png') !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+    }
+
+
+
+    .custom-header .other-nav
+    {
+        right: 0;
+    }
+    p
+    {
+        margin: 0;
+    }
+    .traduction
+    {
+        -webkit-print-color-adjust:exact;
+        font-size: 10px !important;
+        color: grey !important;
+    }
+    .div-bar{
+        margin-top: 0;
+        height: 2mm;
+        border-top: solid 1px;
+        border-bottom: solid 3px;
+    }
+}
+

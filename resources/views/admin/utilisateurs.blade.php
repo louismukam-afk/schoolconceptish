@@ -28,7 +28,7 @@
                     @if($u->active==1)
                     <td>{{trans('inscription.oui')}}</td>
                     <td>
-                        <a  class="btn btn-danger btn-xs"   href="{{url('utilisateurs/desactiver/'.$u->id)}}"  class="glyphicon glyphicon-remove-sign"  ></span> {{  trans('admin.desactiver')  }}</a>
+                        <a  class="btn btn-danger btn-xs"   href="{{url('utilisateurs/desactiver/'.$u->id)}}"> <span class="glyphicon glyphicon-ban-circle"></span> {{  trans('admin.desactiver')  }}</a>
                         @else
                         <td>{{trans('inscription.non')}}</td>
                         <td>

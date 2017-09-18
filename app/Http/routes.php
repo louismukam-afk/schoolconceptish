@@ -23,9 +23,7 @@ Route::group(['middleware'=>'auth'],function (){
 
     Route::group(['middleware'=>'lvl1'],function (){
 
-///routes pour les décaissements
-        Route::get('/admin/retrait/','admin\decaissementController@index');
-        Route::post('/admin/retrait/store','admin\decaissementController@store');
+
 
 
         //pour les recherches
@@ -87,6 +85,12 @@ Route::group(['middleware'=>'auth'],function (){
         Route::post('/admin/salaire/store', 'admin\salaireController@store');
         Route::post('/admin/salaire/update', 'admin\salaireController@update');
         Route::get('/admin/salaire/destroy/{id}', 'admin\salaireController@destroy');
+
+        //pour les taux
+        Route::get('/admin/taux/', 'admin\tauxController@index');
+        Route::get('/admin/taux/create/{id}', 'admin\tauxController@create');
+        Route::post('/admin/taux/store/', 'admin\tauxController@store');
+
 
     });
 
@@ -174,9 +178,27 @@ Route::group(['middleware'=>'auth'],function (){
         Route::post('/personnel/titulaire/store', 'personnel\titulaireController@store');
         Route::post('/personnel/titulaire/update', 'personnel\titulaireController@update');
 
+//pour les présences , abscences et retards
+        Route::get('/personnel/discipline/', 'personnel\disciplineController@index');
+        Route::get('/personnel/discipline/destroy/{id_p}/{id}', 'personnel\disciplineController@destroy');
+        Route::get('/personnel/discipline/{id}', 'personnel\disciplineController@show');
+
+        Route::post('/personnel/discipline/store', 'personnel\disciplineController@store');
 
 
     });
+
+    //pour la comptabilite
+    Route::get('/comptabilite/', 'comptabilite\comptabiliteController@index');
+            // les décaissements
+    Route::get('/admin/retrait/','admin\decaissementController@index');
+    Route::post('/admin/retrait/store','admin\decaissementController@store');
+         // le payement des salaires
+    Route::get('/comptabilite/payement-salaire/','comptabilite\payementController@index');
+    Route::get('/comptabilite/payement-salaire/create/{id}','comptabilite\payementController@create');
+    Route::post('/comptabilite/payement-salaire/store/','comptabilite\payementController@store');
+
+
 
 
 

@@ -1,0 +1,140 @@
+
+/*=============================================================
+    Authour URI: www.binarycart.com
+    License: Commons Attribution 3.0
+
+    http://creativecommons.org/licenses/by/3.0/
+
+    100% To use For Personal And Commercial Use.
+    IN EXCHANGE JUST GIVE US CREDITS AND TELL YOUR FRIENDS ABOUT US
+   
+    ========================================================  */
+
+/* cyrillic-ext */
+@font-face { font-family: open-sans;
+    font-weight: 400;
+    font-style: normal;
+    src: url('../fonts/open-sans.regular.ttf'); }
+/*==============================================
+    GENERAL  STYLES    
+    =============================================*/
+
+@page  {
+    margin-top: 2%;
+    margin-bottom: 2%;
+    margin-left: 2%;
+    margin-right: 2%;
+}
+p
+{
+    margin: 0;
+}
+
+
+.titre-salaire{
+    margin-top: 50px;
+    text-align: center;
+    font-size: 25px;
+
+}
+.traduction
+{
+    -webkit-print-color-adjust:exact;
+    font-size: 10px !important;
+    color: grey !important;
+}
+
+.titre-salaire .traduction{
+
+    font-size: 15px !important;
+
+}
+
+
+.body-salaire{
+    margin: 10%;
+}
+.fait-le{
+    background-color: grey;
+}
+.signature{
+    float: right;
+}
+.numero-container{
+    position: relative;
+
+}
+.numero{
+    position: absolute;
+    margin-right: 10%;
+    right: 0;
+    font-size: 18px;
+    color: indianred;
+}
+
+
+
+
+@media print {
+    @page  {
+        margin-top: 2%;
+        margin-bottom: 2%;
+        margin-left: 2%;
+        margin-right: 2%;
+    }
+
+    .wrapper,.navbar-default,.alert,.btn,.big-title,hr,.action
+    {
+        display: none;
+    }
+
+    .titre-salaire{
+        text-align: center;
+        margin-top: 50px;
+        font-size: 25px;
+
+    }
+    .body-salaire{
+        margin: 10%;
+    }
+    .traduction
+    {
+        -webkit-print-color-adjust:exact;
+        font-size: 10px !important;
+        color: grey !important;
+    }
+    .titre-salaire .traduction{
+
+        font-size: 15px !important;
+
+    }
+    .fait-le{
+        -webkit-print-color-adjust:exact;
+
+        background-color: grey !important;
+    }
+    .signature{
+        float: right;
+    }
+
+    .numero-container{
+        position: relative;
+
+    }
+    .numero{
+        -webkit-print-color-adjust:exact;
+        position: absolute;
+        margin-right: 10%;
+        right: 0;
+        font-size: 18px;
+        color: indianred !important;
+    }
+
+    p
+    {
+        margin: 0;
+    }
+
+
+}
+

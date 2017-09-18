@@ -28,7 +28,7 @@
                         @if($p->id == $c->id_personnel)
                           <td>  {{  $p->nom  }}</td>
                             <td>  @if($c->type==0){{trans('admin.salaire0') }}@else {{trans('admin.salaire1')}} @endif</td>
-                            <td>  {{  $c->montant  }}</td>
+                            <td>  {{  $c->montant.' '.trans('inscription.devise')  }}</td>
 
                         <?php break; ?>
                         @endif
@@ -73,7 +73,10 @@
 
                                 <div class="form-group">
                                     <label for="montant">{{  trans('inscription.montant')  }} :  </label>
-                                    <input class="form-control" id="nom" name="montant" type="text"  value="{{ old('montant') }}">
+                                    <div class="input-group">
+                                        <input class="form-control" id="nom" name="montant" type="text"  value="{{ old('montant') }}">
+                                        <span class="input-group-addon"> {{trans('inscription.devise')}}</span>
+                                    </div>
 
                                 </div>
                                 <input class="btn  btn-success " type="submit" value="{{  trans('admin.confirmer')  }}">
