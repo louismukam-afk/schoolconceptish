@@ -47,7 +47,9 @@ class personnel extends Model {
 
 	protected $table='personnel';
 
-    public $fillable=['matricule','nom','date_naiss','lieu_naiss','nationalite','diplome','sexe','date_entree','tel1','tel2','adresse','email','type','matieres','autre_information'];
+    public $fillable=['matricule','nom','date_naiss','lieu_naiss','nationalite','diplome','sexe','date_entree','tel1','tel2','adresse','email','type','type_personnel','mode_horaire','categorie_horaire','horaire_travail','actif','matieres','autre_information','id_campus'];
+
+    public $timestamps=false;
 
 
     public function dispenses(){
@@ -68,5 +70,8 @@ class personnel extends Model {
 
     }
 
+    public function campus(){
+        return $this->belongsTo(Campus::class,'id_campus');
+    }
 
 }

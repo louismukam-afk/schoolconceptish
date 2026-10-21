@@ -17,7 +17,7 @@ class verrouNote extends Model {
 
     protected  $table='verrou_note';
 
-    public $fillable=['sequence','annee_scolaire'];
+    public $fillable=['sequence','annee_scolaire','id_campus','target','is_active','starts_at','ends_at','objectif','message','id_creator','id_last_editor'];
 
 
 }

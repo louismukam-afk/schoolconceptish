@@ -279,19 +279,19 @@ class releve_ccController extends Controller {
 
 
                 if ((!$cpst) && (!$cps)) {
-                    $matieres[$l] = new pv1_matiere($matiere->id, $note, $credit, $nom, $matiere->type, $matiere->semestre, $matiere->id_code);
+                    $matieres[$l] = new ReleveCcMatiere($matiere->id, $note, $credit, $nom, $matiere->type, $matiere->semestre, $matiere->id_code);
 
                 }
 
                 if ($cpst) {
-                    $composantes[$cst] = new composante($matiere->id, $note, $matiere->id_classe_matiere, $nom, $credit, $matiere->type, $matiere->semestre, $matiere->id_code);
+                    $composantes[$cst] = new ReleveCcComposante($matiere->id, $note, $matiere->id_classe_matiere, $nom, $credit, $matiere->type, $matiere->semestre, $matiere->id_code);
                     $cst++;
 
                 }
 
 
                 if ($cps) {
-                    $composes[$c] = new compose($matiere->id, $note, $credit, $cpstList, $nom, $credit, $matiere->type, $matiere->semestre, $matiere->id_code);
+                    $composes[$c] = new ReleveCcCompose($matiere->id, $note, $credit, $cpstList, $nom, $credit, $matiere->type, $matiere->semestre, $matiere->id_code);
                     $c++;
 
                 }
@@ -342,7 +342,7 @@ class releve_ccController extends Controller {
             $sNote += ($co_note * $compt->credit);
             // $sNote+=$co_note;
 
-            $matieres[$l] = new pv1_matiere($compt->id_matiere, $co_note, $s_co_coef, $compt->nom, $compt->type, $compt->semestre, $compt->id_code);
+            $matieres[$l] = new ReleveCcMatiere($compt->id_matiere, $co_note, $s_co_coef, $compt->nom, $compt->type, $compt->semestre, $compt->id_code);
             $l++;
 
         }
@@ -350,7 +350,7 @@ class releve_ccController extends Controller {
 ///fini ici pour la fermeture des groupes matières
 
             if($sCoef==0) $sCoef=1;
-            $proces_v[$k]=new PV1($eleve->id,$matieres,$sNote/$sCoef);
+            $proces_v[$k]=new ReleveCcPV($eleve->id,$matieres,$sNote/$sCoef);
         /*   dump($proces_v);
           die();*/
 
@@ -503,7 +503,7 @@ class releve_ccController extends Controller {
 
     }
 }
-class PV1{
+class ReleveCcPV{
     public $eleve;
     public $matieres;
     public $mgp;
@@ -515,7 +515,7 @@ class PV1{
 
     }
 }
-class pv1_matiere{
+class ReleveCcMatiere{
     public $id_matiere;
     public $note;
     public $credit;
@@ -540,7 +540,7 @@ class pv1_matiere{
 
 }
 
-class composante{
+class ReleveCcComposante{
     public $id_matiere;
     public $note;
     public $id_classe_matiere;
@@ -561,7 +561,7 @@ class composante{
         $this->id_code=$co;
     }
 }
-class compose{
+class ReleveCcCompose{
     public $id_matiere;
     public $note;
     public $coef;

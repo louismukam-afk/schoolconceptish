@@ -23,12 +23,13 @@ class note extends Model {
 
 	protected  $table='note';
 
-    public $fillable=['id_matiere','id_eleve','note','sequence','annee_scolaire','id_classe',
+    public $fillable=['id_matiere','id_eleve','note','sequence','annee_scolaire','id_campus','id_classe',
         'id_classe_matiere',
         'id_session',
         'id_creator',
         'id_last_editor',
-        'edition_detail'
+        'edition_detail',
+        'edition_details'
 
         ];
 

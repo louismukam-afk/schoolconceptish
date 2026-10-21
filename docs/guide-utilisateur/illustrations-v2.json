@@ -1,0 +1,102 @@
+[
+  {
+    "name": "attestation-ebolowa",
+    "file": "captures/v2-attestation-ebolowa.png",
+    "origin": "Modèle rendu localement en lecture seule"
+  },
+  {
+    "name": "attestation-ndere",
+    "file": "captures/v2-attestation-ndere.png",
+    "origin": "Modèle rendu localement en lecture seule"
+  },
+  {
+    "name": "attestation-soa",
+    "file": "captures/v2-attestation-soa.png",
+    "origin": "Modèle rendu localement en lecture seule"
+  },
+  {
+    "name": "emploi-creer",
+    "file": "captures/v2-emploi-creer.png",
+    "origin": "Formulaire rendu localement sans initialisation ni validation"
+  },
+  {
+    "name": "emploi-enseignants",
+    "file": "captures/v2-emploi-enseignants.png",
+    "origin": "Formulaire rendu localement sans initialisation ni validation"
+  },
+  {
+    "name": "emploi-plages",
+    "file": "captures/v2-emploi-plages.png",
+    "origin": "Formulaire rendu localement sans initialisation ni validation"
+  },
+  {
+    "name": "emploi-specialites",
+    "file": "captures/v2-emploi-specialites.png",
+    "origin": "Formulaire rendu localement sans initialisation ni validation"
+  },
+  {
+    "name": "note-afficher",
+    "file": "captures/v2-note-afficher.png",
+    "origin": "Formulaire rendu localement sans initialisation ni validation"
+  },
+  {
+    "name": "note-grille",
+    "file": "captures/v2-note-grille.png",
+    "origin": "Formulaire rendu localement sans initialisation ni validation"
+  },
+  {
+    "name": "note-matieres",
+    "file": "captures/v2-note-matieres.png",
+    "origin": "Formulaire rendu localement sans initialisation ni validation"
+  },
+  {
+    "name": "pv-bts",
+    "file": "captures/v2-pv-bts.png",
+    "origin": "Modèle rendu localement en lecture seule"
+  },
+  {
+    "name": "pv-hnd",
+    "file": "captures/v2-pv-hnd.png",
+    "origin": "Modèle rendu localement en lecture seule"
+  },
+  {
+    "name": "pv-licence_bamenda",
+    "file": "captures/v2-pv-licence_bamenda.png",
+    "origin": "Modèle rendu localement en lecture seule"
+  },
+  {
+    "name": "pv-licence_ebolowa",
+    "file": "captures/v2-pv-licence_ebolowa.png",
+    "origin": "Modèle rendu localement en lecture seule"
+  },
+  {
+    "name": "pv-licence_ngaoundere",
+    "file": "captures/v2-pv-licence_ngaoundere.png",
+    "origin": "Modèle rendu localement en lecture seule"
+  },
+  {
+    "name": "pv-licence_soa",
+    "file": "captures/v2-pv-licence_soa.png",
+    "origin": "Modèle rendu localement en lecture seule"
+  },
+  {
+    "name": "releve-bamenda",
+    "file": "captures/v2-releve-bamenda.png",
+    "origin": "Modèle rendu localement en lecture seule"
+  },
+  {
+    "name": "releve-bts",
+    "file": "captures/v2-releve-bts.png",
+    "origin": "Modèle rendu localement en lecture seule"
+  },
+  {
+    "name": "releve-ebolowa",
+    "file": "captures/v2-releve-ebolowa.png",
+    "origin": "Modèle rendu localement en lecture seule"
+  },
+  {
+    "name": "releve-soa",
+    "file": "captures/v2-releve-soa.png",
+    "origin": "Modèle rendu localement en lecture seule"
+  }
+]

@@ -70,6 +70,14 @@ class classe extends Model {
         return $this->hasMany(inscription::class,'id_classe');
     }
 
+    public function campus(){
+        return $this->belongsToMany(Campus::class, 'campus_specialite', 'id_classe', 'id_campus')->withTimestamps();
+    }
+
+    public function tutelles(){
+        return $this->belongsToMany(TutelleAcademique::class, 'specialite_tutelle', 'id_classe', 'id_tutelle')->withTimestamps();
+    }
+
 
 
 

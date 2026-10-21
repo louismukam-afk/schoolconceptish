@@ -67,16 +67,13 @@
                                 <td>{{$p->net_a_payer}}</td>
                             </tr>
                         @endforeach
-                        <tr class="hidden-row">
-                            <td>@lang('admin.total')</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>{{$sumSalaire}}</td>
-                        </tr>
+
                         </tbody>
                         <tfoot>
-                            <th colspan="4">@lang('admin.total')</th>
+                            <th >@lang('admin.total')</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
                             <th>{{$sumSalaire}}</th>
                         </tfoot>
                     </table>
@@ -136,6 +133,8 @@
                         <th>{{trans('inscription.motif')}}</th>
                         <th>Date</th>
                         <th>@lang('inscription.montant')</th>
+                        <th>@lang('admin.ligne_budget')</th>
+                        <th>@lang('admin.categorie')</th>
                         </thead>
                         <tbody>
                         <?php $i=1; ?>
@@ -155,18 +154,19 @@
                                 <td><strong >{{$p->motif}}</strong></td>
                                 <td>{{(new DateTime($p->date))->format('d-m-Y')}}</td>
                                 <td>{{$p->montant}}</td>
+                                <td>{{$p->ligne_budgetaire ? $p->ligne_budgetaire->libelle_ligne : '' }}</td>
+                                <td>{{$p->categorie_budgetaire ? $p->categorie_budgetaire->libelle : '' }}</td>
                             </tr>
                         @endforeach
-                        <tr class="hidden-row">
-                            <td>@lang('admin.total')</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>{{$sumDepenses}}</td>
-                        </tr>
+
                         </tbody>
                         <tfoot>
-                        <th colspan="4">@lang('admin.total')</th>
+                        <th >@lang('admin.total')</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th>{{$sumDepenses}}</th>
                         </tfoot>
                     </table>
@@ -209,15 +209,16 @@
                     text: '<i class="fa fa-file-pdf-o"></i> PDF',
                     titleAttr: 'PDF',
                     title: '{!! trans('admin.bilan_sorties') !!} - {!! sanitize($table_titre) !!}',
-
+                    footer: true,
                 }
                 ,
                 {
                     extend: 'print',
                     text: '<i class="fa fa-print"></i> @lang("inscription.imprimer")',
-                    titleAttr: 'Imprimer',
+                    titleAttr: '@lang("inscription.imprimer")',
                     title: '{!! trans('admin.bilan_sorties') !!} - {!! sanitize($table_titre) !!}',
-
+                    customize: (window, buttonO, dtAPI) => {dataTableButtonFunction(window, buttonO, dtAPI)},
+                    footer: true,
                 }
             ]
         } );
@@ -240,18 +241,24 @@
                     text: '<i class="fa fa-file-pdf-o"></i> PDF',
                     titleAttr: 'PDF',
                     title: '{!! trans('admin.bilan_sorties') !!} - {!! sanitize($table_titre) !!}',
-
+                    footer: true,
                 }
                 ,
                 {
                     extend: 'print',
                     text: '<i class="fa fa-print"></i> @lang("inscription.imprimer")',
-                    titleAttr: 'Imprimer',
+                    titleAttr: '@lang("inscription.imprimer")',
                     title: '{!! trans('admin.bilan_sorties') !!} - {!! sanitize($table_titre) !!}',
-
+                    customize: (window, buttonO, dtAPI) => {dataTableButtonFunction(window, buttonO, dtAPI)},
+                    footer: true,
                 }
             ]
         } );
+
+        var dataTableButtonFunction = function (window, buttonO, dtAPI) {
+            window.document.body.innerHTML = '<style> @media print { @page  { size: A4 portrait } } </style>' + '@include('perso.header-trim')' + window.document.body.innerHTML
+
+        }
 
     </script>
     @endsection

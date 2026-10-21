@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property int $id
  * @property int $id_personnel
+ * @property string|null $nom_beneficiaire
+ * @property int|null $id_caisse
  * @property float $variation
  * @property string $motif
  * @property float $montant
@@ -25,10 +27,34 @@ class decaissement extends Model {
 
 	protected  $table='decaissement';
 
-    public $fillable=['id_personnel','motif','montant','date','annee_scoaire'];
+    public $fillable=['id_personnel','nom_beneficiaire','motif','montant','date','annee_scoaire','id_caisse','id_campus','id_creator','id_last_editor'];
 
     public function personnel() {
         return $this->belongsTo(personnel::class, 'id_personnel');
+    }
+
+    public function ligne_budgetaire() {
+        return $this->belongsTo(LigneBudgetaire::class, 'id_ligne_budgetaire');
+    }
+
+    public function categorie_budgetaire() {
+        return $this->belongsTo(CategorieBudgetaire::class, 'id_categorie_budgetaire');
+    }
+
+    public function creator() {
+        return $this->belongsTo(User::class, 'id_creator');
+    }
+
+    public function lastEditor() {
+        return $this->belongsTo(User::class, 'id_last_editor');
+    }
+
+    public function campus() {
+        return $this->belongsTo(Campus::class, 'id_campus');
+    }
+
+    public function caisse() {
+        return $this->belongsTo(Caisse::class, 'id_caisse');
     }
 
 

@@ -45,6 +45,25 @@
             </div>
 
         </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+            <div class="div-square">
+                <a href="{{url('/comptabilite/categorie/')}}" >
+                    <i class="fa fa-bank fa-5x"></i>
+                    <h4>{{trans('admin.categorie_budget')}} </h4>
+                </a>
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+            <div class="div-square">
+                <a href="{{url('/comptabilite/ligne/')}}" >
+                    <i class="fa fa-life-bouy fa-5x"></i>
+                    <h4>{{trans('admin.ligne_budget')}} </h4>
+                </a>
+            </div>
+
+        </div>
 
     </div>
     @endsection

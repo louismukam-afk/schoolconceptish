@@ -94,12 +94,142 @@
             </div>
         </div>
     </div>
+
     <script>
-        function choix_seq(id)
+
+    function chargerPvSoa(
+        idClasse,
+        sequence,
+        cycle,
+        nniveau
+    ) {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Interface
+        |--------------------------------------------------------------------------
+        */
+
+        $('#pv-erreur')
+            .hide()
+            .html('');
+
+        $('#pv-resultat')
+            .html('');
+
+        $('#pv-loading')
+            .show();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | AJAX
+        |--------------------------------------------------------------------------
+        */
+
+        $.ajax({
+
+            url:
+                "{{ url('/eleves/notes/print_note_soa') }}"
+                + '/'
+                + idClasse,
+
+            type: 'GET',
+
+            dataType: 'json',
+
+            data: {
+
+                sequence: sequence,
+
+                cycle: cycle,
+
+                nniveau: nniveau,
+
+                ajax: 1
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SUCCES
+            |--------------------------------------------------------------------------
+            */
+
+            success: function(response) {
+
+                $('#pv-loading').hide();
+
+
+                if (response.success) {
+
+                    $('#pv-resultat')
+                        .html(
+                            response.html
+                        );
+
+                } else {
+
+                    $('#pv-erreur')
+                        .html(
+                            response.message
+                            ||
+                            'Impossible de charger le PV.'
+                        )
+                        .show();
+                }
+            },
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | ERREUR
+            |--------------------------------------------------------------------------
+            */
+
+            error: function(xhr) {
+
+                $('#pv-loading').hide();
+
+
+                var message =
+                    'Une erreur est survenue lors du chargement du PV.';
+
+
+                /*
+                 * Si Laravel retourne du JSON
+                 */
+
+                if (
+                    xhr.responseJSON
+                    &&
+                    xhr.responseJSON.message
+                ) {
+
+                    message =
+                        xhr.responseJSON.message;
+                }
+
+
+                $('#pv-erreur')
+                    .html(message)
+                    .show();
+
+
+                console.log(
+                    xhr.responseText
+                );
+            }
+
+        });
+    }
+      function choix_seq(id)
         {
             document.getElementById("id").value = id;
         }
-    </script>
+
+</script>
+  
 
 @endsection
 

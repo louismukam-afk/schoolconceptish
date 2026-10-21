@@ -1,0 +1,983 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+      <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apercu attestation ndere</title>
+    <link rel="shortcut icon" href="http://127.0.0.1:8080/ISH/app/public/img/log.png" type="image/x-icon">
+	<!-- BOOTSTRAP STYLES-->
+    <link href="http://127.0.0.1:8080/ISH/app/public/dist/css/bootstrap.min.css" rel="stylesheet" />
+     <!-- FONTAWESOME STYLES-->
+    <link href="http://127.0.0.1:8080/ISH/app/public/css/font-awesome.css" rel="stylesheet" />
+        <!-- CUSTOM STYLES-->
+    <link href="http://127.0.0.1:8080/ISH/app/public/css/custom.css?202212051300" rel="stylesheet" media="screen"/>
+    <link href="http://127.0.0.1:8080/ISH/app/public/js/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet" media="screen"/>
+    <link href="http://127.0.0.1:8080/ISH/app/public/js/datatables/datatables.min.css" rel="stylesheet"/>
+    <link href="http://127.0.0.1:8080/ISH/app/public/js/chosen_v1.8.7/chosen.min.css" rel="stylesheet"/>
+
+
+    <!-- GOOGLE FONTS-->
+
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/jquery.min.js"></script>
+
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/jquery-ui-1.12.1/jquery-ui.js"></script>
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/chosen_v1.8.7/chosen.jquery.min.js"></script>
+    <!-- BOOTSTRAP SCRIPTS -->
+    <script src="http://127.0.0.1:8080/ISH/app/public/dist/js/bootstrap.min.js"></script>
+    <!-- CUSTOM SCRIPTS -->
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/custom.js"></script>
+
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/datatables/datatables.min.js"></script>
+
+
+<script>
+    function startLoading() {
+       // $('.loading-back').css('display','inline');
+        $('.loading_icon').css('display','inline');
+    }
+    function stopLoading() {
+        //$('.loading-back').css('display','none');
+        $('.loading_icon').css('display','none');
+    }
+
+    function showLoader() {
+        $('.loader').removeClass('hidden');
+    }
+    function hideLoader() {
+        $('.loader').addClass('hidden');
+
+    }
+</script>
+
+    <style>
+        #loader {
+            display: none;
+        }
+
+        .loader{
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 100000;
+            background-color: rgba(0, 0, 0, 0.6);
+            top: 0;
+            left: 0;
+        }
+        .loader img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150px;
+            transform: translate(-50%, -50%);
+        }
+        #qrcode-input {
+            height: 0;
+        }
+    </style>
+</head>
+
+
+
+<body>
+<div  class="loader hidden">
+    <img src="http://127.0.0.1:8080/ISH/app/public/img/loading3.gif" alt="">
+</div>
+<div class="loading-back">  </div>
+<div class="col-md-12" >
+    <a href="#"><img class="back-button" src="http://127.0.0.1:8080/ISH/app/public/img/back_button.png" onclick="history.back()" width="50px" height="50px"></a>
+
+</div>
+
+    <div class="loading_icon" style="
+    position: fixed;
+    Left: calc(50% - 75px);
+    top: calc(50% - 37.5px);
+    z-index: 10000;
+     width: 150px;
+     height: 75px;
+         box-shadow: 0 10px 20px rgba(0, 0, 0, .5);
+     display: none;
+">
+        <img src="http://127.0.0.1:8080/ISH/app/public/img/loading.gif" alt="" style="width: inherit;height: inherit">
+    </div>
+
+    <div id="wrapper">
+         <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="adjust-nav">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand logo" href="#">
+                        <img src="http://127.0.0.1:8080/ISH/app/public/img/school-concept.png" />
+
+                    </a>
+                </div>
+                <div class="nom-etab"><strong>INSTITUT SUPERIEUR HINTEL - IS-HINTEL</strong></div>
+
+
+                <span class="logout-spn" >
+
+                    <a href="http://127.0.0.1:8080/ISH/app/public/auth/logout">Se d&eacute;connecter</a>
+                </span>
+                <div ><span class="annee">Ann&eacute;e acad&eacute;mique <span>2025-2026</span> <a data-toggle="modal"  href="#change-year" class="btn btn-success btn-xs">Modifier</a></span></div>
+                <div class="langage ">
+                    <div class="lang dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle"><strong style="color: white">Langue :</strong> Francais  <span class="caret"></span></a>
+                    <ul class="dropdown-menu navbar-inverse">
+                        <li><a href="http://127.0.0.1:8080/ISH/app/public/language/french"><strong>Français</strong></a></li>
+                        <li><a href="http://127.0.0.1:8080/ISH/app/public/language/english"><strong>English</strong></a></li>
+                    </ul>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="modal fade" id="change-year">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">x</button>
+                            <h4 class="modal-title">Remplir les champs</h4>
+                        </div>
+                        <div
+                                class="modal-body">
+
+
+
+                            <form accept-charset="UTF-8" role="form" method="POST" id="edit_classe_form" action="http://127.0.0.1:8080/ISH/app/public/update-school-year">
+                                <input type="hidden" name="_token" value="ZiNl2T4MLvFI9NYFEN9bHQfaUj27YhLDEymiVtI1"/>
+
+                                <div class="form-group">
+                                    <div class="row" style="text-align: center">
+                                        <div class="col-md-2"><input type="text" name="first_year" placeholder="2017" class="form-control"></div> <span class="col-md-1 " style="font-size: 20px;font-weight: 600;"> - </span><div class="col-md-2"><input class="form-control" type="text" name="second_year" placeholder="2018" ></div>
+                                    </div>
+
+                                </div>
+                                <input class="btn  btn-success " type="submit" value="Confirmer">
+
+
+                            </form>
+
+
+                        </div>
+
+
+
+
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <!-- /. NAV TOP  -->
+        <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+                 
+
+
+                    <li class="active-link">
+                        <a href="#" ><i class="fa fa-desktop "></i>Tableau de bord</a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public"><i class="fa fa-home "></i>Accueil</a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/inscriptions"><i class="fa fa-table "></i>Gestion des inscriptions</a>
+                    </li>
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/eleves"><i class="fa fa-edit "></i>Gestion des &eacute;tudiants et des notes</a>
+                    </li>
+
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/personnel"><i class="fa fa-steam   "></i>Gestion du personnel</a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/comptabilite"><i class="fa fa-money"></i>Comptabilit&eacute;</a>
+                    </li>
+
+                    <li style="display: none;">
+                        <a href="#"><i class="fa fa-bar-chart-o"></i>Bilan</a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/admin"><span class="glyphicon glyphicon-lock"></span> Administration</a>
+                    </li>
+                                        <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/admin/blk"><span class="fa fa-ban"></span>BLK</a>
+                    </li>
+
+                        <li>
+                            <a href="http://127.0.0.1:8080/ISH/app/public/admin/unblk"><span class="fa fa-ban"></span>UBLK</a>
+                        </li>
+                    
+                    
+                </ul>
+                            </div>
+
+        </nav>
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper" >
+            <div id="page-inner">
+                <div class="row hidden">
+                    <div class="col-md-12">
+
+                     <h2 class="big-title">Gestion des &eacute;tudiants et des notes</h2>
+                    </div>
+                </div>
+                 <!-- /. ROW  -->
+                  <hr style="margin-top: 0;margin-bottom: 0" />
+                <div class="row-fluid">
+                    <ul class="breadcrumb" style="margin-bottom: 0;padding: 2px 15px;font-size: 16px">
+
+                                            </ul>
+                <div style="height: 10px; background: #214761" class="action"></div>
+                    <div class="col-lg-12 ">
+                                            
+                    </div>
+
+                    </div>
+
+
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="alert alert-danger print-error-msg" style="display: none">
+                            <ul> </ul>
+                        </div>
+                        <div class="alert alert-success print-success-msg" style="display: none">
+                            <ul> </ul>
+                        </div>
+                                                                    </div>
+
+                </div>
+                  <!-- /. ROW  -->
+
+                    
+    <h3 class="big-title">Apercu attestation ndere</h3>
+    <style>
+    @page  {
+        size: A4 landscape;
+        margin: 9mm 10mm 9mm 10mm;
+    }
+    @media  print {
+        .no-print,
+        .attestation-toolbar,
+        .main-menu,
+        .navbar,
+        .navbar-side,
+        .sidebar-collapse,
+        .breadcrumb,
+        .action,
+        .back-button,
+        .big-title,
+        .footer,
+        footer {
+            display:none !important;
+            height:0 !important;
+            overflow:hidden !important;
+            margin:0 !important;
+            padding:0 !important;
+        }
+        body { background:#fff !important; }
+        #wrapper, #page-wrapper, #page-inner, .row, .row-fluid, .col-md-12, .col-lg-12 {
+            margin:0 !important;
+            padding:0 !important;
+            width:100% !important;
+            min-height:0 !important;
+        }
+        .attestation-page { page-break-after: always; margin: 0 !important; box-shadow:none !important; }
+        .attestation-soa-page {
+            width: 279mm !important;
+            height: 192mm !important;
+            min-height: 192mm !important;
+            max-height: 192mm !important;
+            padding: 4mm 6mm 12mm !important;
+            overflow: hidden !important;
+        }
+        .attestation-page:not(.attestation-soa-page) { border: 3px double #000 !important; }
+        .attestation-page:last-child { page-break-after: auto; }
+    }
+    .attestation-toolbar {
+        margin: 0 0 10px 0;
+        padding: 6px;
+        background: #fff;
+        border: 1px solid #ddd;
+        text-align: right;
+    }
+    h3.big-title {
+        display: none;
+    }
+    .attestation-page {
+        width: 100%;
+        min-height: 186mm;
+        margin: 0 auto 20px;
+        padding: 7mm 9mm 13mm;
+        background: #fff;
+        color: #000;
+        font-family: "Times New Roman", Times, serif;
+        border: 3px double #000;
+        box-sizing: border-box;
+        position: relative;
+        overflow: hidden;
+    }
+    .attestation-page-a3 { min-height: 277mm; padding-bottom: 14mm; font-size: 1.22em; }
+    .attestation-head { display: table; width: 100%; table-layout: fixed; line-height: 1.12; font-size: 10px; font-weight: bold; text-align: center; }
+    .attestation-head-col { display: table-cell; width: 32%; vertical-align: top; }
+    .attestation-head-center { width: 36%; vertical-align: middle; }
+    .attestation-school-name { font-size: 11px; text-transform: uppercase; }
+    .attestation-logo-row { display: table; width: 100%; table-layout: fixed; margin-bottom: 2px; }
+    .attestation-logo-cell { display: table-cell; text-align: center; vertical-align: middle; }
+    .attestation-logo { max-width: 62px; max-height: 58px; object-fit: contain; }
+    .attestation-title { text-align: center; margin: 6px 0 6px; line-height: 1.12; }
+    .attestation-title-main { display: block; font-size: 22px; font-weight: bold; text-decoration: underline; text-transform: uppercase; }
+    .attestation-title-sub { display: block; font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .attestation-body { font-size: 14px; line-height: 1.32; text-align: justify; margin-top: 4px; }
+    .attestation-body p { margin: 4px 0; }
+    .attestation-strong { font-weight: bold; text-transform: uppercase; }
+    .attestation-identity { width: 100%; border-collapse: collapse; margin: 4px 0 6px; font-size: 14px; line-height: 1.18; }
+    .attestation-identity td { border: 0; padding: 2px 4px; vertical-align: bottom; }
+    .attestation-label-en { display: block; font-size: 11px; font-style: italic; font-weight: normal; }
+    .attestation-legal { font-size: 12px; line-height: 1.25; }
+    .attestation-result { display: table; width: 100%; margin: 7px 0 5px; font-size: 14px; font-weight: bold; }
+    .attestation-result-left, .attestation-result-right { display: table-cell; width: 50%; vertical-align: top; }
+    .attestation-result-right { text-align: right; }
+    .attestation-signatures { display: table; width: 100%; margin-top: 6px; font-size: 13px; font-weight: bold; text-align: center; }
+    .attestation-signature { display: table-cell; width: 33.33%; vertical-align: top; }
+    .attestation-footer-note { position: absolute; left: 9mm; right: 9mm; bottom: 2.5mm; text-align: center; font-size: 8.6px; line-height: 1.08; }
+    .attestation-soa-page {
+        border: 0;
+        width: 279mm;
+        height: 192mm;
+        min-height: 192mm;
+        max-height: 192mm;
+        padding: 4mm 6mm 12mm;
+        overflow: hidden;
+    }
+    .attestation-soa-header { display: table; width: 100%; table-layout: fixed; font-family: Arial, Helvetica, sans-serif; font-size: 8.2px; line-height: 1.08; text-align: center; }
+    .attestation-soa-header-col { display: table-cell; width: 40%; vertical-align: top; font-weight: bold; }
+    .attestation-soa-header-center { display: table-cell; width: 20%; vertical-align: top; font-weight: bold; padding: 1mm 2mm 0; }
+    .attestation-soa-logo-wrap { height: 15mm; margin-top: 1mm; text-align: center; }
+    .attestation-soa-logo { max-width: 13mm; max-height: 15mm; width: auto; height: auto; object-fit: contain; }
+    .attestation-soa-site { font-weight: normal; font-size: 8px; }
+    .attestation-soa-body { margin-top: 10mm; font-size: 13.2px; line-height: 1.28; text-align: left; }
+    .attestation-soa-title { text-align: center; font-size: 19.8px; line-height: 1.06; font-weight: bold; text-transform: uppercase; }
+    .attestation-soa-title span { display: block; }
+    .attestation-soa-line { width: 140px; border-top: 1px solid #000; margin: 6px auto 10px; }
+    .attestation-soa-intro { text-align: justify; margin: 0 0 8px; }
+    .attestation-soa-body p { margin: 6px 0; }
+    .attestation-soa-field { display: table; width: 100%; table-layout: fixed; margin: 3.5px 0; }
+    .attestation-soa-label { display: table-cell; width: 29%; vertical-align: bottom; font-weight: bold; }
+    .attestation-soa-value { display: table-cell; width: 71%; vertical-align: bottom; border-bottom: 1px dotted #777; font-weight: bold; text-transform: uppercase; padding-left: 6px; }
+    .attestation-soa-label-en { display: block; font-size: 10.2px; font-style: italic; font-weight: normal; }
+    .attestation-soa-two { display: table; width: 100%; table-layout: fixed; }
+    .attestation-soa-two .attestation-soa-field { display: table-cell; width: 50%; padding-right: 10px; }
+    .attestation-soa-two .attestation-soa-label { width: 38%; }
+    .attestation-soa-two .attestation-soa-value { width: 62%; }
+    .attestation-soa-results { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13.2px; }
+    .attestation-soa-results td { padding: 2.5px 5px; vertical-align: middle; }
+    .attestation-soa-results-label { font-weight: bold; width: 38%; }
+    .attestation-soa-results-value { font-weight: bold; text-align: center; border-bottom: 1px dotted #777; }
+    .attestation-soa-place { margin-top: 13px; text-align: right; font-size: 13.2px; }
+    .attestation-soa-signature { margin-top: 22px; text-align: right; padding-right: 34px; font-weight: bold; font-size: 13.4px; }
+    .attestation-soa-footer { position: absolute; left: 8mm; right: 8mm; bottom: 4mm; text-align: center; font-size: 8.1px; line-height: 1.08; }
+    .attestation-page-a3.attestation-soa-page .attestation-soa-header { font-size: 11px; }
+    .attestation-page-a3.attestation-soa-page .attestation-soa-logo-wrap { height: 24mm; }
+    .attestation-page-a3.attestation-soa-page .attestation-soa-logo { max-width: 21mm; max-height: 24mm; }
+    .attestation-page-a3.attestation-soa-page .attestation-soa-site { font-size: 10px; }
+    .attestation-page-a3.attestation-soa-page .attestation-soa-body { font-size: 17px; line-height: 1.42; margin-top: 19mm; }
+    .attestation-page-a3.attestation-soa-page .attestation-soa-title { font-size: 26px; }
+    .attestation-page-a3.attestation-soa-page .attestation-soa-label-en { font-size: 13px; }
+    .attestation-page-a3.attestation-soa-page .attestation-soa-results { font-size: 17px; margin-top: 18px; }
+    .attestation-page-a3.attestation-soa-page .attestation-soa-place { font-size: 17px; margin-top: 28px; }
+    .attestation-page-a3.attestation-soa-page .attestation-soa-signature { font-size: 17px; margin-top: 42px; }
+    .attestation-page-a3.attestation-soa-page .attestation-soa-footer { font-size: 11px; }
+    .attestation-ebolowa-page .attestation-soa-header { font-size: 8.8px; }
+    .attestation-ebolowa-page .attestation-soa-logo-wrap { height: 14mm; }
+    .attestation-ebolowa-page .attestation-soa-logo { max-width: 16mm; max-height: 14mm; }
+    .attestation-ebolowa-page .attestation-soa-body { margin-top: 7mm; font-size: 13.8px; line-height: 1.24; }
+    .attestation-ebolowa-page .attestation-soa-title { font-size: 21px; }
+    .attestation-ebolowa-page .attestation-soa-line { margin-bottom: 8px; }
+    .attestation-ebolowa-page .attestation-soa-field { margin: 2.5px 0; }
+    .attestation-ebolowa-page .attestation-soa-results { font-size: 13.6px; margin-top: 7px; }
+    .attestation-ebolowa-page .attestation-soa-place { margin-top: 10px; font-size: 13.6px; }
+    .attestation-ebolowa-page .attestation-soa-signature { margin-top: 17px; font-size: 13.8px; }
+</style>
+
+<div class="btn-toolbar no-print attestation-toolbar">
+    <a href="http://127.0.0.1:8080/ISH/app/public/eleves" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-home"></span> Accueil</a>
+    <a href="http://127.0.0.1:8080/ISH/app/public/eleves/attestations_reussite_ndere" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-certificate"></span> Attestations</a>
+    <a href="http://127.0.0.1:8080/ISH/app/public/eleves/attestations_reussite_ndere/historique" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-folder-open"></span> Historique</a>
+    <a href="http://127.0.0.1:8080/ISH/app/public?page_size=a4" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-resize-full"></span> A4 paysage</a>
+    <a href="http://127.0.0.1:8080/ISH/app/public?page_size=a3" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-resize-full"></span> A3 paysage</a>
+    <button onclick="window.print();" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-print"></span> Imprimer</button>
+    <a href="javascript:history.back();" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-arrow-left"></span> Retour</a>
+</div>
+
+
+        <div class="attestation-page attestation-page-a4  ">
+                <div class="attestation-head">
+            <div class="attestation-head-col">
+                <div>REPUBLIQUE DU CAMEROUN</div>
+                <div>Paix-Travail-Patrie</div>
+                <div>MINISTERE DE L&#039;ENSEIGNEMENT SUPERIEUR</div>
+                <div>UNIVERSITE DE NGAOUNDERE</div>
+                <div>BP : 454 Ngaoundere-Cameroun, Tel: 222 25 40 39</div>
+                <div>INSTITUT UNIVERSITAIRE DE TECHNOLOGIE (IUT)</div>
+            </div>
+            <div class="attestation-head-col attestation-head-center">
+                <div class="attestation-logo-row">
+                    <div class="attestation-logo-cell"><img src="http://127.0.0.1:8080/ISH/app/public/img/school-concept.png" class="attestation-logo" alt="Hintel"></div>
+                    <div class="attestation-logo-cell"></div>
+                    <div class="attestation-logo-cell"></div>
+                </div>
+                <div class="attestation-school-name">INSTITUT SUPERIEUR HINTEL</div>
+                <div>(IS-HINTEL)</div>
+                <div>BP 4441 Yaounde, Tel 683252783 /695320131</div>
+                <div>WWW.IS-hintel.cm</div>
+            </div>
+            <div class="attestation-head-col">
+                <div>REPUBLIC OF CAMEROON</div>
+                <div>Peace-Work-Fatherland</div>
+                <div>MINISTRY OF HIGHER EDUCATION</div>
+                <div>THE UNIVERSITY OF NGAOUNDERE</div>
+                <div>BP : 454 Ngaoundere-Cameroun, Tel: 222 25 40 39</div>
+                <div>HIGHER INSTITUTE OF TECHNOLOGY</div>
+            </div>
+        </div>
+
+        <div class="attestation-title">
+            <span class="attestation-title-main">ATTESTATION DE REUSSITE DE LICENCE</span>
+            <span class="attestation-title-sub">BACHELOR'S DEGREE SUCCESS TESTIMONIAL</span>
+        </div>
+
+        <div class="attestation-body">
+            <p>
+                Le Directeur de l'<span class="attestation-strong">INSTITUT UNIVERSITAIRE DE TECHNOLOGIE (IUT)</span> de l'<span class="attestation-strong">UNIVERSITE DE NGAOUNDERE</span>
+                et le Directeur de l'<span class="attestation-strong">INSTITUT SUPERIEUR HINTEL</span> certifient que: /
+                <em>The Director of <span class="attestation-strong">HIGHER INSTITUTE OF TECHNOLOGY</span> of the <span class="attestation-strong">THE UNIVERSITY OF NGAOUNDERE</span>
+                and the Director of the <span class="attestation-strong">INSTITUT SUPERIEUR HINTEL</span> hereby certify that:</em>
+            </p>
+
+            <table class="attestation-identity">
+                <tr>
+                    <td style="width:12%;"><strong>M. / Mlle:</strong><span class="attestation-label-en">Mr/Mss</span></td>
+                    <td style="width:43%;" class="attestation-strong">ETUDIANT EXEMPLE PEDAGOGIQUE</td>
+                    <td style="width:15%;"><strong>Matricule N&deg;:</strong><span class="attestation-label-en">Registration</span></td>
+                    <td style="width:30%;" class="attestation-strong">DEMONSTRATION</td>
+                </tr>
+                <tr>
+                    <td><strong>Ne(e) le:</strong><span class="attestation-label-en">Born on</span></td>
+                    <td>01/01/2003 &agrave; VILLE EXEMPLE</td>
+                    <td><strong>Sexe:</strong><span class="attestation-label-en">Sex</span></td>
+                    <td>M</td>
+                </tr>
+            </table>
+
+            <div class="attestation-legal">
+                <p>Vu la r&egrave;glementation en vigueur, / <em>Mindful of the regulations in force,</em></p>
+                <p>Vu l'Accord-Cadre du <strong>24 Fevrier 2025</strong> entre l'<span class="attestation-strong">UNIVERSITE DE NGAOUNDERE</span> et <span class="attestation-strong">IS-HINTEL</span> / <em>Mindful of the Cooperation Agreement of 24 February 2025 between the <span class="attestation-strong">THE UNIVERSITY OF NGAOUNDERE</span> and <span class="attestation-strong">IS-HINTEL</span>,</em></p>
+                <p>Vu la Convention Sp&eacute;cifique entre l'<span class="attestation-strong">UNIVERSITE DE NGAOUNDERE</span> &agrave; travers l'<span class="attestation-strong">INSTITUT UNIVERSITAIRE DE TECHNOLOGIE (IUT)</span> et l'<span class="attestation-strong">INSTITUT SUPERIEUR HINTEL</span>, relative aux formations pr&eacute;parant aux dipl&ocirc;mes de Licence dans les Fili&egrave;res Informatiques en date du <strong>24 Fevrier 2025</strong>, / <em>Mindful of the Specific Agreement between the <span class="attestation-strong">THE UNIVERSITY OF NGAOUNDERE</span> through its <span class="attestation-strong">HIGHER INSTITUTE OF TECHNOLOGY</span> and <span class="attestation-strong">INSTITUT SUPERIEUR HINTEL</span> on courses in preparation for the award of a Bachelor's Degree in COMPUTER SCIENCES of 24th February 2025.</em></p>
+                <p>Vu le proc&egrave;s-verbal du jury en date du <strong>21 October 2026</strong> / <em>Mindful of the official report of the jury of <strong>21 October 2026</strong>,</em></p>
+            </div>
+
+            <p>
+                A suivi avec succ&egrave;s la formation pour l'obtention du dipl&ocirc;me de
+                <span class="attestation-strong">LICENCE EN TECHNOLOGIE ET SCIENCES INDUSTRIELLES</span>, fili&egrave;re:
+                <span class="attestation-strong">ELECTROTECHNIQUE</span>, sp&eacute;cialit&eacute;:
+                <span class="attestation-strong">ELECTROTECHNIQUE</span>, /
+                <em>Has successfully completed the course work for award of a Bachelor's degree in
+                <span class="attestation-strong">TECHNOLOGY AND INDUSTRIAL SCIENCES</span>, field of study:
+                <span class="attestation-strong">ELECTROTECHNIQUE</span>, Speciality:
+                <span class="attestation-strong">ELECTROTECHNIQUE</span>.</em>
+            </p>
+
+            <div class="attestation-result">
+                <div class="attestation-result-left">
+                    Annee academique : 2025-2026<br>
+                    <em>Academic Year</em>
+                </div>
+                <div class="attestation-result-right">
+                    Mention Globale : Assez bien / Pretty good<br>
+                    Moyenne : 13.00/20 - 65.00/100
+                </div>
+            </div>
+
+            <p>
+                En foi de quoi, la pr&eacute;sente attestation lui est d&eacute;livr&eacute;e pour servir et valoir ce que de droit. /
+                <em>This certificate is, therefore, issued to the above named to serve the purposes for which it is intended.</em>
+            </p>
+        </div>
+
+        <div class="attestation-signatures">
+            <div class="attestation-signature">Le Directeur de l&#039;IUT<br><em>The Director</em></div>
+            <div class="attestation-signature">Le Directeur de IS-HINTEL<br><em>The Director</em></div>
+            <div class="attestation-signature">Ngaoundere, le ........................<br><em>on</em></div>
+        </div>
+
+        <div class="attestation-footer-note">
+            Il n'est delivre qu'un seul exemplaire de cette attestation de reussite. Le titulaire peut etablir et faire certifier des copies conformes /
+            <em>Only one success certificate is issued. The owner can establish and certify sample copies.</em>
+        </div>
+            </div>
+                 <!-- /. ROW  -->
+
+                  <!-- /. ROW  --> 
+    </div>
+             <!-- /. PAGE INNER  -->
+        </div>
+         <!-- /. PAGE WRAPPER  -->
+        </div>
+
+
+<div class="modal fade" id="edit_pass">
+    <div class="modal-dialog">
+        <div class="modal-content col-md-6">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <h4 class="modal-title">Remplir les champs</h4>
+            </div>
+            <div
+                    class="modal-body">
+
+
+
+                <form accept-charset="UTF-8" role="form" method="POST" action="#">
+                    <input type="hidden" name="_token" value="ZiNl2T4MLvFI9NYFEN9bHQfaUj27YhLDEymiVtI1">
+                    <fieldset>
+
+                        <div class="form-group">
+                            <label for="ancien_mot_de_passe">Ancien mot de passe : <span class="required">*</span></label>
+                            <input class="form-control" id="ancien_mot_de_passe" name="ancien_mot_de_passe" type="password"  value="" required autofocus>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="nouveau_mot_de_passe">Nouveau mot de passe : <span class="required">*</span></label>
+                            <input class="form-control" id="nouveau_mot_de_passe" name="nouveau_mot_de_passe" type="password"  value="" required >
+
+                        </div>
+                        <div class="form-group">
+                            <label for="password_again">Confirmer le mot de passe : <span class="required">*</span></label>
+                            <input class="form-control" id="password_again" name="password_again" type="password"  value="" required >
+
+                        </div>
+                        <a id="submit_new_pass" class="btn  btn-success" data-dismiss="modal">Confirmer</a>
+
+
+                    </fieldset>
+                </form>
+
+
+            </div>
+
+
+
+
+
+        </div>
+
+
+    </div>
+</div>
+    <div class="footer">
+      
+    
+            <div class="row">
+                <div class="col-md-12 copy" >
+                    &copy;  2017 SchoolConcept | by: <a href="http://youth-concept.com" style="color:#fff;" target="_blank">youth-concept</a>
+                </div>
+            </div>
+        </div>
+          
+
+     <!-- /. WRAPPER  -->
+    <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
+    <!-- JQUERY SCRIPTS -->
+
+
+<div class="modal fade" id="choose_level">
+    <div class="modal-dialog" style="width: 20%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <h4 class="modal-title">Remplir les champs</h4>
+            </div>
+            <div class="modal-body">
+
+
+
+                <form accept-charset="UTF-8" role="form" method="GET" id="choix_level_form" action="">
+                    <input type="hidden" name="id" id="id_select_classe" value=""/>
+                    <input type="hidden" name="option" id="option_select_classe" value=""/>
+
+                    <fieldset>
+                        <div class="form-group">
+                            <label for="cycle">Cycle : </label>
+                            <select  name="cycle" id="cycle_select_classe" form="choix_level_form" class="form-control" required>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="nniveau">Niveau : </label>
+                            <select  name="nniveau" id="nniveau_select_classe" form="choix_level_form" class="form-control" required>
+                                <option value="" disabled>Sélectionner un élément</option>
+                            </select>
+                        </div>
+
+                        <input type="hidden" name="_token" value="ZiNl2T4MLvFI9NYFEN9bHQfaUj27YhLDEymiVtI1"/>
+                        <input class="btn  btn-success " type="submit" value="Confirmer" autofocus>
+
+
+                    </fieldset>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="confirm_delete_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #d9534f">
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <h4 class="modal-title" style="color: white">Remplir les champs</h4>
+            </div>
+            <div class="modal-body">
+
+                <form accept-charset="UTF-8" role="form" method="GET" id="confirm_delete_form" action="">
+                    <input type="hidden" name="id" id="confirm_delete_item_id" value=""/>
+
+                    <fieldset>
+                        <h4 id="confirm_delete_text">Êtes vous sure de vouloir supprimer cet élément?</h4>
+                        <div class="btn  btn-primary pull-right" style="margin-left: 10px"  class="close" data-dismiss="modal">Non</div>
+                        <input class="btn  btn-danger pull-right" type="submit" value="Oui">
+
+
+                    </fieldset>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="change-status-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" onclick="toggleScanStatus()">x</button>
+                <h4 class="modal-title">Remplir les champs</h4>
+            </div>
+            <div class="modal-body">
+
+                <form id="change-status-form" accept-charset="UTF-8" role="form" method="POST" action="http://127.0.0.1:8080/ISH/app/public/inscriptions/eleve/set-status?status=1&amp;id=">
+                    <input type="hidden" name="_token" value="ZiNl2T4MLvFI9NYFEN9bHQfaUj27YhLDEymiVtI1">
+
+
+
+                    <div class="form-group">
+                        <label for="date_debut">Date de d&eacute;but : <span class="required">*</span></label>
+                        <input class="form-control" id="change_status-date_debut" name="date_debut" type="date"  value="" required autofocus />
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date_fin">Date de fin : <span class="required">*</span></label>
+                        <input class="form-control" id="change_status-date_fin" name="date_fin" type="date"   value="" required />
+
+                    </div>
+                    <div class="form-group">
+                        <label for="montant">Montant : </label>
+                        <input class="form-control" id="change_status-montant" name="montant" type="number"  value="" disable>
+
+                    </div>
+
+                    <input class="btn  btn-success " type="submit" value="Confirmer">
+
+                </form>
+
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+</body>
+<script>
+    var scanActivated = false;
+    function enableScan() {
+        scanActivated = true;
+
+        console.log('Scan active')
+
+        if ($('#qrcode-input')[0]) {
+            $('#qrcode-input')[0].addEventListener('focusout', giveFocus)
+        }
+    }
+
+    function disableScan() {
+        scanActivated = false;
+        console.log('Scan desactive')
+        if ($('#qrcode-input')[0]) {
+            $('#qrcode-input')[0].removeEventListener('focusout', giveFocus)
+        }
+    }
+
+    function giveFocus(e) {
+        e.target.focus();
+    }
+
+    $(function () {
+        $('#submit_new_pass').click(function () {
+            //$('#edit_pass').modal('hide');
+            $.post('http://127.0.0.1:8080/ISH/app/public/user-profile/edit-password',{ _token:'ZiNl2T4MLvFI9NYFEN9bHQfaUj27YhLDEymiVtI1',ancien_mot_de_passe:$("#ancien_mot_de_passe").val(),nouveau_mot_de_passe:$("#nouveau_mot_de_passe").val(),password_again:$("#password_again").val() },function (data) {
+                $(".print-success-msg").find("ul").html('');
+                $(".print-error-msg").find("ul").html('');
+                $(".print-success-msg").css('display', 'none');
+                $(".print-error-msg").css('display', 'none');
+                if(data.success)
+                    printSuccessMsg(data);
+                else
+                {
+                	console.log(data);
+                    printErrorMsg(data);
+                }
+                	
+
+            });
+        });
+        function printErrorMsg (msg) {
+
+            
+            if(msg)
+            $(".print-error-msg").css('display', 'block');
+
+            $.each(msg, function (key, value) {
+                $(".print-error-msg").find("ul").append('<li>' + value + '</li>');
+            });
+
+        }
+        function printSuccessMsg (msg) {
+
+            if(msg)
+                $(".print-success-msg").css('display', 'block');
+
+            $.each(msg, function (key, value) {
+                $(".print-success-msg").find("ul").append('<li>' + value + '</li>');
+            });
+
+        }
+
+            jQuery.noConflict();
+            $( "#date_naiss, #date, #date_rec, .datepicker" ).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'yy/mm/dd',
+                yearRange: '1900:c+10'
+            });
+
+            $('#cycle_select_classe').on('change', function (e) {
+                if(e.target.value) {
+                    getNniveau(e.target.value);
+                }
+            })
+    });
+
+
+    function export_to_excel(idTable)
+    {
+
+        var tab_text="<table ><tr >";
+        var textRange; var j=0;
+        tab = document.getElementById(idTable); // id of table
+
+        for(j = 0 ; j < (tab.rows.length) ; j++)
+        {
+            tab_text=tab_text+tab.rows[j].innerHTML+"</tr>";
+            //tab_text=tab_text+"</tr>";
+        }
+
+        tab_text=tab_text+"</table>";
+        tab_text= tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+        tab_text= tab_text.replace(/<img[^>]*>/gi,""); // remove if u want images in your table
+        tab_text= tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input paras
+        tab_text= tab_text.replace(/<a[^>]*>|<\/a>/gi, "");
+        tab_text= tab_text.replace(/<div[^>]*>|<\/div>/gi, "");
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf("MSIE ");
+
+        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+        {
+            txtArea1.document.open("txt/html","replace");
+            txtArea1.document.write(tab_text);
+            txtArea1.document.close();
+            txtArea1.focus();
+            sa=txtArea1.document.execCommand("SaveAs",true,"dataExport.xls");
+        }
+        else                 //other browser not tested on IE 11
+            sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+
+
+        return (sa);
+    }
+
+    function getAllCycles() {
+        var jElement = $('#cycle_select_classe');
+        jElement.empty();
+        $('.loading_icon').css('display','inline');
+        $.ajax({
+            type: 'GET',
+            url: 'http://127.0.0.1:8080/ISH/app/public/admin/cycles/get-all',
+            timeout: 20000,
+            success: function (data) {
+                jElement.append('<option value="" disabled>'+ 'Sélectionner un élément' +'</option>');
+                var i = 0;
+                var selectedValue = -1;
+                $.each(data,function (key,val) {
+                    jElement.append('<option value="'+val.id+'">'+val.nom+'</option>');
+                    i++;
+                    if(i == 1) {
+                        selectedValue = val.id;
+                    }
+                })
+
+                //$('.loading_icon').css('display','none');
+                if(selectedValue != -1) {
+                    getNniveau(selectedValue);
+                }
+            },
+            error: function (data) {
+                $('.loading_icon').css('display','none');
+            }
+
+
+        });
+    }
+
+      function getNniveau(cycle) {
+            var jElement = $('#nniveau_select_classe');
+            jElement.empty();
+            $('.loading_icon').css('display','inline');
+            $.ajax({
+                type: 'GET',
+                url: 'http://127.0.0.1:8080/ISH/app/public/admin/nniveaux/get/'+cycle,
+                timeout: 20000,
+                success: function (data) {
+                    jElement.append('<option value="" disabled>'+ 'Sélectionner un élément' +'</option>');
+                    $.each(data,function (key,val) {
+                        jElement.append('<option value="'+val.id+'">'+val.nom+'</option>');
+                    })
+                    $('.loading_icon').css('display','none');
+                },
+                error: function (data) {
+                    $('.loading_icon').css('display','none');
+                }
+
+
+            });
+        }
+
+    function choose_level(id, actionUrl, option)
+    {
+        document.getElementById("id_select_classe").value = id;
+        document.getElementById("option_select_classe").value = option;
+        $('#choix_level_form').attr('action', actionUrl);
+        getAllCycles();
+    }
+
+    function fill_delete_modal(id, actionUrl, method, text)
+    {
+        var jForm = $('#confirm_delete_form');
+        if(id) {
+            document.getElementById("confirm_delete_item_id").value = id;
+        }
+        jForm.attr('action', actionUrl);
+        if(method) {
+            jForm.attr('method', method);
+        } else {
+            jForm.attr('method', 'GET');
+        }
+        if(text) {
+            $('#confirm_delete_text').html(text);
+        } else {
+            $('#confirm_delete_text').html('Êtes vous sure de vouloir supprimer cet élément?');
+
+        }
+
+        $('#confirm_delete_modal').modal('show');
+    }
+
+    $(function (){
+        $('#qrcode-input').on('change', function (e){
+            console.log('scanned', e.target.value);
+            var scanned = e.target.value;
+            e.target.value = "";
+            $('#scan-error-message').addClass('hidden');
+
+            $.ajax({
+                url : 'http://127.0.0.1:8080/ISH/app/public/inscriptions/eleve/process-scan',
+                type:'GET',
+                dataType:'html',
+                data:'scanned='+scanned,
+                beforeSend: function () {
+                    showLoader();
+                },
+                success: function (res) {
+
+                    console.log(res);
+
+
+                    if(res == 0) {
+                        hideLoader();
+                        $('#scan-error-message').removeClass('hidden');
+                        $('#status-container').addClass('hidden');
+
+
+                    } else {
+
+                        location.href = 'http://127.0.0.1:8080/ISH/app/public/inscriptions/eleve/status' + '?id=' + res + "&show_access=1"
+                    }
+                },
+
+                error: function (xhr) {
+                    console.error(xhr);
+                    hideLoader();
+                }
+
+            })
+        })
+
+
+        enableScan();
+        $('.autocomplete').chosen({width : '100%'});
+    })
+
+    function openChangeStatusModal(action) {
+        $('#change-status-form')[0].action = action
+        $('#change-status-modal').modal('show');
+    }
+
+    function allowStudentAccess(id) {
+        const action =  `http://127.0.0.1:8080/ISH/app/public/inscriptions/eleve/set-status?status=1&id=${id}`
+        openChangeStatusModal(action)
+    }
+
+</script>
+</html>

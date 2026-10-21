@@ -52,8 +52,19 @@ class payement_salaire extends Model {
 
     protected $table='payement_salaire';
 
-    public $fillable=['id_personnel','annee_scolaire','date_p','montant','id_user','numero','mois','heure_realise','primes','acomptes','cnss','cas_sociales','assurances','autre_retenues','taux','total','total_retenu','net_a_payer'];
+    public $fillable=['id_personnel','annee_scolaire','date_p','montant','id_user','numero','mois','heure_realise','primes','acomptes','cnss','cas_sociales','assurances','autre_retenues','taux','total','total_retenu','net_a_payer','id_campus','id_creator','id_last_editor'];
 
+    public function agent() {
+        return $this->belongsTo(User::class, 'id_user');
+    }
+
+    public function creator() {
+        return $this->belongsTo(User::class, 'id_creator');
+    }
+
+    public function campus() {
+        return $this->belongsTo(Campus::class, 'id_campus');
+    }
 
 
 }

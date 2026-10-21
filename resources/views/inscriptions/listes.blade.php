@@ -1,5 +1,6 @@
 @extends('skeleton')
 @section('sub-content')
+<div class="ajax-list-fragment">
     @include('perso.functions')
     <div class="row">
         <div class="col-md-12">
@@ -41,7 +42,7 @@
         @if(isset($show_classe))<th>@lang('admin.nniveau')</th>@endif
         @if(isset($show_montant))<th>@lang('admin.montant')</th> <?php $sumAmount = 0 ?>@endif
         @if(isset($type) && $type != 1)<th>{{trans('inscription.reste')}}</th>@endif
-        <th class="action"></th>
+        @if(!isset($hide_actions) || isset($show_reinscrire))<th class="action"></th>@endif
         </thead>
         <tbody>
         <?php $i=1; $elevesStringArray = ""; $sumReste = 0?>
@@ -79,7 +80,12 @@
                     <?php $sumReste += $e->reste - (isset($e->montant_bourse) && isset($last_installment) ? $e->montant_bourse : 0)?>
                 </td>
                 @endif
-                <td class="action">
+                @if(!isset($hide_actions) || isset($show_reinscrire))<td class="action">
+                    @if(isset($show_reinscrire))
+                        <a href="{{ URL::to('/inscriptions/restore/').'/'.$e->id }}" class="btn btn-success btn-sm">
+                            <span class="glyphicon glyphicon-plus"></span> Inscrire
+                        </a>
+                    @else
                     <div class="btn-group">
                         <a href="#" class=" btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <b class="caret"></b></a>
                         <ul class="dropdown-menu">
@@ -89,8 +95,9 @@
                             <li><a style="color: white" href="{{url('/inscriptions/eleve/set-status?status=0&id='. $e->id)}}"   class="btn-danger"><span class="fa fa-ban"></span> {{  trans('admin.deny_student_access')  }}</a></li>
                         </ul>
                     </div>
+                    @endif
 
-                </td>
+                </td>@endif
             </tr>
         @endforeach
         </tbody>
@@ -199,6 +206,7 @@
             modal: true
         });
     </script>
+</div>
 @endsection
 @section('breadcrumb')
     <li><strong><a href="{{url('inscriptions')}}">@lang('menu.gestion_inscriptions')</a></strong></li>

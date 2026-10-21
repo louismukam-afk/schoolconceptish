@@ -44,19 +44,19 @@ class bilanComptaController extends Controller {
 
         if($date_range && ($date_debut != null || $date_fin != null)) {
             if($date_debut!=null && $date_fin!=null){
-                $p=payement::with('eleve')->whereAnneeScolaire(\session('year'))
+                $p=payement::with('eleve')->whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date_payement','>=',(new \DateTime($date_debut))->format('Y-m-d'))
                     ->where('date_payement','<=',(new \DateTime($date_fin))->format('Y-m-d'))
                     ->orderBy('date_payement','desc')
                     ->get();
 
             } elseif ($date_debut != null && $date_fin == null) {
-                $p=payement::with('eleve')->whereAnneeScolaire(\session('year'))
+                $p=payement::with('eleve')->whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date_payement','>=',(new \DateTime($date_debut))->format('Y-m-d'))
                     ->orderBy('date_payement','desc')
                     ->get();
             } else {
-                $p=payement::with('eleve')->whereAnneeScolaire(\session('year'))
+                $p=payement::with('eleve')->whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date_payement','<=',(new \DateTime($date_fin))->format('Y-m-d'))
                     ->orderBy('date_payement','desc')
                     ->get();
@@ -70,7 +70,7 @@ class bilanComptaController extends Controller {
                 $dd=date('Y-m-01');
                 $df=date('Y-m-t');
 
-                $p=payement::with('eleve')->whereAnneeScolaire(\session('year'))
+                $p=payement::with('eleve')->whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date_payement','>=',(new \DateTime($dd))->format('Y-m-d'))
                     ->where('date_payement','<=',(new \DateTime($df))->format('Y-m-d'))
                     ->orderBy('date_payement','desc')
@@ -83,7 +83,7 @@ class bilanComptaController extends Controller {
 
                 $monday = Carbon::now()->startOfWeek()->toDateString();
                 $sunday = Carbon::now()->endOfWeek()->toDateString();
-                $p=payement::with('eleve')->whereAnneeScolaire(\session('year'))
+                $p=payement::with('eleve')->whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date_payement','>=',(new \DateTime($monday))->format('Y-m-d'))
                     ->where('date_payement','<=',(new \DateTime($sunday))->format('Y-m-d'))
                     ->orderBy('date_payement','desc')
@@ -94,7 +94,7 @@ class bilanComptaController extends Controller {
                 $tt=trans('admin.today');
 
                 $d = date('Y-m-d');
-                $p=payement::with('eleve')->whereAnneeScolaire(\session('year'))
+                $p=payement::with('eleve')->whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date_payement','=', $d)
                     ->orderBy('date_payement','created_at')
                     ->get();
@@ -102,7 +102,7 @@ class bilanComptaController extends Controller {
             else{
                 $tt=trans('admin.toute_lannee');
                 $p=payement::with('eleve.inscriptions.classe', 'eleve.inscriptions.nniveau')
-                ->whereAnneeScolaire(\session('year'))->orderBy('date_payement','desc')->get();
+                ->whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))->orderBy('date_payement','desc')->get();
 
             }
 
@@ -120,6 +120,7 @@ class bilanComptaController extends Controller {
             $values['date_debut']=$date_debut;
             $values['date_fin']=$date_fin;
             $values['table_titre'] = $date_debut . ' - ' . $date_fin;
+
         }
         if(session('success')){
             $values['success']=true;
@@ -129,7 +130,7 @@ class bilanComptaController extends Controller {
 
 
 
-        return view('comptabilite/bilanEntrees',$values);
+        return view('comptabilite.bilanEntrees',$values);
 	}
 
     public function indexSorties(Request $request)
@@ -149,35 +150,35 @@ class bilanComptaController extends Controller {
 
         if($date_range && ($date_debut != null || $date_fin != null)) {
             if ($date_debut != null && $date_fin != null) {
-                $p = payement_salaire::whereAnneeScolaire(\session('year'))
+                $p = payement_salaire::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date_p', '>=', (new \DateTime($date_debut))->format('Y-m-d'))
                     ->where('date_p', '<=', (new \DateTime($date_fin))->format('Y-m-d'))
                     ->orderBy('date_p', 'desc')
                     ->get();
 
-                $d = decaissement::whereAnneeScolaire(\session('year'))
+                $d = decaissement::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date', '>=', (new \DateTime($date_debut))->format('Y-m-d'))
                     ->where('date', '<=', (new \DateTime($date_fin))->format('Y-m-d'))
                     ->orderBy('date', 'desc')
                     ->get();
 
             } elseif ($date_debut != null && $date_fin == null) {
-                $p = payement_salaire::whereAnneeScolaire(\session('year'))
+                $p = payement_salaire::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date_p', '>=', (new \DateTime($date_debut))->format('Y-m-d'))
                     ->orderBy('date_p', 'desc')
                     ->get();
 
-                $d = decaissement::whereAnneeScolaire(\session('year'))
+                $d = decaissement::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date', '>=', (new \DateTime($date_debut))->format('Y-m-d'))
                     ->orderBy('date', 'desc')
                     ->get();
             } else {
-                $p = payement_salaire::whereAnneeScolaire(\session('year'))
+                $p = payement_salaire::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date_p', '<=', (new \DateTime($date_fin))->format('Y-m-d'))
                     ->orderBy('date_p', 'desc')
                     ->get();
 
-                $d = decaissement::whereAnneeScolaire(\session('year'))
+                $d = decaissement::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date', '<=', (new \DateTime($date_fin))->format('Y-m-d'))
                     ->orderBy('date', 'desc')
                     ->get();
@@ -190,12 +191,12 @@ class bilanComptaController extends Controller {
                 $dd = date('Y-m-01');
                 $df = date('Y-m-t');
 
-                $p = payement_salaire::whereAnneeScolaire(\session('year'))
+                $p = payement_salaire::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date_p', '>=', (new \DateTime($dd))->format('Y-m-d'))
                     ->where('date_p', '<=', (new \DateTime($df))->format('Y-m-d'))
                     ->orderBy('date_p', 'desc')
                     ->get();
-                $d = decaissement::whereAnneeScolaire(\session('year'))
+                $d = decaissement::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date', '>=', (new \DateTime($dd))->format('Y-m-d'))
                     ->where('date', '<=', (new \DateTime($df))->format('Y-m-d'))
                     ->orderBy('date', 'desc')
@@ -207,13 +208,13 @@ class bilanComptaController extends Controller {
 
                 $monday = Carbon::now()->startOfWeek()->toDateString();
                 $sunday = Carbon::now()->endOfWeek()->toDateString();
-                $p = payement_salaire::whereAnneeScolaire(\session('year'))
+                $p = payement_salaire::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date_p', '>=', (new \DateTime($monday))->format('Y-m-d'))
                     ->where('date_p', '<=', (new \DateTime($sunday))->format('Y-m-d'))
                     ->orderBy('date_p', 'desc')
                     ->get();
 
-                $d = decaissement::whereAnneeScolaire(\session('year'))
+                $d = decaissement::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date', '>=', (new \DateTime($monday))->format('Y-m-d'))
                     ->where('date', '<=', (new \DateTime($sunday))->format('Y-m-d'))
                     ->orderBy('date', 'desc')
@@ -223,21 +224,21 @@ class bilanComptaController extends Controller {
                 $tt = trans('admin.today');
 
                 $d = date('Y-m-d');
-                $p = payement_salaire::whereAnneeScolaire(\session('year'))
+                $p = payement_salaire::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date_p', '=', $d)
                     ->orderBy('date_p', 'desc')
                     ->get();
 
-                $d = decaissement::whereAnneeScolaire(\session('year'))
+                $d = decaissement::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
                     ->where('date', '=', $d)
                     ->orderBy('date', 'desc')
                     ->get();
 
             } else {
                 $tt = trans('admin.toute_lannee');
-                $p = payement_salaire::whereAnneeScolaire(\session('year'))->orderBy('date_p', 'desc')->get();
+                $p = payement_salaire::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))->orderBy('date_p', 'desc')->get();
 
-                $d = decaissement::whereAnneeScolaire(\session('year'))->orderBy('date', 'desc')->get();
+                $d = decaissement::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))->orderBy('date', 'desc')->get();
 
 
             }
@@ -265,7 +266,7 @@ class bilanComptaController extends Controller {
             }
 
 
-            return view('comptabilite/bilanSorties', $values);
+            return view('comptabilite.bilanSorties', $values);
         }
 
 

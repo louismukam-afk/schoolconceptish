@@ -2,6 +2,7 @@
 
 use gesecole\acces_eleve;
 use gesecole\Vars;
+use Illuminate\Support\Facades\Schema;
 
 class EnregistrementService {
   /**
@@ -9,11 +10,16 @@ class EnregistrementService {
    * @param \gesecole\bourse $bourse
    * @return \gesecole\bourse
    */
-  public static function getStudentAccessStatus($id) {
+  public static function getStudentAccessStatus($id, $idCampus = null) {
     $status = Vars::DECISION_UNSET;
     $acces = acces_eleve::where('id_eleve', '=', $id)
-      ->where('annee_scolaire', '=', session('year'))
-      ->first();
+      ->where('annee_scolaire', '=', session('year'));
+
+    if ($idCampus && Schema::hasColumn('acces_eleves', 'id_campus')) {
+      $acces->where('id_campus', '=', $idCampus);
+    }
+
+    $acces = $acces->first();
 
     if (!$acces) {
       return Vars::DECISION_UNSET;

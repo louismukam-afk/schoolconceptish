@@ -204,6 +204,17 @@ class nderenoteController extends Controller {
         $nniveau=$request->input('nniveau');
         $id_cycle=$request->input('cycle');
 
+        if (in_array((int) $sequence, array(7, 9)) && $request->input('ajax') != 1) {
+            $params = $request->all();
+            $params['ajax'] = 1;
+
+            return view('eleves/pv_ajax_loader', array(
+                'titre' => 'Chargement du PV',
+                'pv_url' => url('/eleves/notes/print_note_ndere/'.$id).'?'.http_build_query($params),
+                'back_url' => url('/eleves/notes/matieres/show_ndere').'?id='.$id.'&cycle='.$id_cycle.'&nniveau='.$nniveau
+            ));
+        }
+
         if($sequence==1 || $sequence==2) {
             $mat = matiere::find($id_m);
             $cm = classeMatiere::whereIdClasse($id)->where('id_matiere', '=', $id_m)->where('id_cycle', '=', $id_cycle)->where('id_nniveau','=',$nniveau)->first();
@@ -551,8 +562,6 @@ class nderenoteController extends Controller {
                     if( !$cps){
 //if((!$cpst) && (!$cps)){
                         $matieres[$l]=new pv_matiere($matiere->id,$note,$credit,$controle,$normal,$matiere->nom);
-                        dump($matieres);
-                        die();
                         if(!$minus_credit_cpst) {
                             $liste_mat[$l]=new matiere_groupe($matiere->id,$nom);
                         }

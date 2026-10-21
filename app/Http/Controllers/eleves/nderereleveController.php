@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 use gesecole\note;
 use gesecole\classeMatiere;
 use gesecole\matiere;
+use gesecole\TutelleAcademique;
+use gesecole\ReleveNoteGeneration;
 use Illuminate\Http\Request;
 use PhpParser\Node\Expr\Array_;
 
@@ -77,6 +79,14 @@ class nderereleveController extends Controller {
         $proces_v=[];
         $id_cycle=$request->input('cycle');
         $nniveau=$request->input('nniveau');
+        $nniveauModel = NNiveau::find($nniveau);
+        $niveauUniversitaire = $this->universityLevel($nniveauModel);
+        $semesterPairs = array(1 => array(1, 2), 2 => array(3, 4), 3 => array(5, 6), 4 => array(7, 8), 5 => array(8, 9));
+        $trimestre = (int) $request->input('trimestre', $semesterPairs[$niveauUniversitaire][0]);
+        if (!in_array($trimestre, $semesterPairs[$niveauUniversitaire])) {
+            $trimestre = $semesterPairs[$niveauUniversitaire][0];
+        }
+        $baseSemestre = $trimestre % 2 ? 1 : 2;
         $values= array('titre'=>trans('admin.releve_notes'));
         $id_eleves=array();
         $semestre=array(1,2);
@@ -85,10 +95,10 @@ class nderereleveController extends Controller {
         $rattrap=array(5,6);
      //
         $sequences_pv=array(1,2,3);
-        $semestre_matiere = array(1,3,5);
+        $semestre_matiere = array($trimestre);
 
 
-        $e = DB::select('SELECT e.* FROM eleve e,inscription i WHERE i.annee_scolaire=? AND i.id_classe=? AND i.id_eleve=e.id AND i.id_cycle=? AND i.id_nniveau=? ORDER BY e.nom,e.prenom', [session('year'), $id, $id_cycle,$nniveau]);
+        $e = DB::select('SELECT e.* FROM eleve e,inscription i WHERE i.annee_scolaire=? AND i.id_classe=? AND i.id_eleve=e.id AND i.id_cycle=? AND i.id_nniveau=? AND (i.id_campus = ? OR i.id_campus IS NULL) ORDER BY e.nom,e.prenom', [session('year'), $id, $id_cycle,$nniveau, $this->currentCampusId()]);
         $j=0;
         $matieres=array();
         foreach ($e as $el){
@@ -123,6 +133,7 @@ class nderereleveController extends Controller {
 
         $matiere_list=$cm->fetch('id_matiere')->toArray();
         $m=matiere::Join('classe_matiere','matiere.id','=','classe_matiere.id_matiere')
+            ->leftJoin('codages', DB::raw('codages.id::text'), '=', 'classe_matiere.id_code')
             //->Join('groupe_matieres','classe_matiere.id','=','groupe_matieres.id_classe_matiere')
             ->where('classe_matiere.id_classe','=',$id)
             // ->where('groupe_matieres.id_classe','=',$id)
@@ -130,9 +141,13 @@ class nderereleveController extends Controller {
             ->where('id_cycle','=',$id_cycle)
             ->where('classe_matiere.id_nniveau','=',$nniveau)
             ->whereIn('classe_matiere.semestre',$semestre_matiere)
-            ->select(['matiere.*','classe_matiere.semestre','coef','type','classe_matiere.id AS id_classe_matiere'])
+            ->select(['matiere.*','classe_matiere.semestre','coef','type','classe_matiere.id AS id_classe_matiere','classe_matiere.id_code AS classe_matiere_id_code','codages.nom AS codage_nom'])
             //->orderBy('groupe_matieres.id')
             ->get();
+        $sCoef = 0;
+        foreach ($m as $selectedMatiere) {
+            $sCoef += $selectedMatiere->coef;
+        }
 
         //$m=matiere::whereIn('id',$matiere_list)->whereIn('id',$matieres_pv)->get();
       /*  $m=matiere::whereIn('matiere.id',$matiere_list)
@@ -162,6 +177,9 @@ class nderereleveController extends Controller {
             $l = 0;
             $c = 0;
             $cst = 0;
+            $matieres = array();
+            $composes = array();
+            $composantes = array();
             $sNote = 0;
             foreach ($m as $matiere) {
                 $cps = false;
@@ -254,7 +272,11 @@ class nderereleveController extends Controller {
 
                 }
                 $note = 0;
-                if (is_numeric($noteS1) && is_numeric($noteS2)) {
+                if ($baseSemestre == 1 && is_numeric($noteS1)) {
+                    $note = $noteS1;
+                } elseif ($baseSemestre == 2 && is_numeric($noteS2)) {
+                    $note = $noteS2;
+                } elseif (is_numeric($noteS1) && is_numeric($noteS2)) {
                     $note = ($noteS1 + $noteS2) / 2;
 
                 } elseif (!is_numeric($noteS2)) {
@@ -271,19 +293,19 @@ class nderereleveController extends Controller {
 
 
                 if ((!$cpst) && (!$cps)) {
-                    $matieres[$l] = new pv1_matiere($matiere->id, $note, $credit, $nom, $matiere->type, $matiere->semestre, $matiere->id_code);
+                    $matieres[$l] = new NdereSoaMatiere($matiere->id, $note, $credit, $nom, $matiere->type, $matiere->semestre, $this->resolveMatiereCode($matiere));
 
                 }
 
                 if ($cpst) {
-                    $composantes[$cst] = new composante($matiere->id, $note, $matiere->id_classe_matiere, $nom, $credit, $matiere->type, $matiere->semestre, $matiere->id_code);
+                    $composantes[$cst] = new NdereSoaComposante($matiere->id, $note, $matiere->id_classe_matiere, $nom, $credit, $matiere->type, $matiere->semestre, $this->resolveMatiereCode($matiere));
                     $cst++;
 
                 }
 
 
                 if ($cps) {
-                    $composes[$c] = new compose($matiere->id, $note, $credit, $cpstList, $nom, $credit, $matiere->type, $matiere->semestre, $matiere->id_code);
+                    $composes[$c] = new NdereSoaCompose($matiere->id, $note, $credit, $cpstList, $nom, $credit, $matiere->type, $matiere->semestre, $this->resolveMatiereCode($matiere));
                     $c++;
 
                 }
@@ -331,14 +353,14 @@ class nderereleveController extends Controller {
             $sNote += ($co_note * $compt->credit);
             // $sNote+=$co_note;
 
-            $matieres[$l] = new pv1_matiere($compt->id_matiere, $co_note, $s_co_coef, $compt->nom, $compt->type, $compt->semestre, $compt->id_code);
+            $matieres[$l] = new NdereSoaMatiere($compt->id_matiere, $co_note, $s_co_coef, $compt->nom, $compt->type, $compt->semestre, $compt->id_code);
             $l++;
         }
 
 ///fini ici pour la fermeture des groupes matières
 
             if($sCoef==0) $sCoef=1;
-            $proces_v[$k]=new PV1($eleve->id,$matieres,$sNote/$sCoef);
+            $proces_v[$k]=new NdereSoaPV($eleve->id,$matieres,$sNote/$sCoef);
 //           dump($proces_v);
 //          die();
 
@@ -348,16 +370,338 @@ class nderereleveController extends Controller {
         $values['eleves'] = $e;
         $values['PV'] = $proces_v;
         $values['matieres'] = $m;
+        $values['module_groups'] = $this->buildModuleGroups($m, $gm);
+        $values['semester_summaries'] = $this->buildSemesterSummaries($e, $id, $id_cycle, $nniveau, $trimestre, $m, $gm, $n_cc, $n_sn, $n_rattrap);
+        if ((int) $trimestre === 6) {
+            $previousGeneration = ReleveNoteGeneration::where('type', 'licence_ngaoundere')
+                ->where('annee_academique', session('year'))
+                ->where('id_classe', $id)
+                ->where('id_cycle', $id_cycle)
+                ->where('id_nniveau', $nniveau)
+                ->where('semestre', 5)
+                ->orderBy('id', 'desc')
+                ->first();
+            if ($previousGeneration) {
+                $previousPayload = json_decode($previousGeneration->contenu);
+                if (isset($previousPayload->PV)) {
+                    $previousSummaries = $this->buildSavedSemesterSummaries($previousPayload->PV, 5);
+                    foreach ($previousSummaries as $studentId => $studentSummary) {
+                        if (isset($values['semester_summaries'][$studentId])) {
+                            $values['semester_summaries'][$studentId]['semester_5'] = $studentSummary['semester_5'];
+                        }
+                    }
+                }
+            }
+        }
         $values['nb_matieres'] = $m->count();
         $values['classe'] = $classe;
         $values['cycle']= cycle::find($id_cycle);
         $values['nniveau']=NNiveau::find($nniveau);
         $values['niveau']= niveau::find($classe->id_niveau);
-        $values['semestre'] = $semestre;
+        $values['semestre'] = $semesterPairs[$niveauUniversitaire];
+        $values['pv_type'] = 'licence_ngaoundere';
+        $values['trimestre'] = $trimestre;
+        $values['sequence'] = $baseSemestre == 1 ? 5 : 6;
+        $values['campus'] = $this->currentCampus();
+        $values['tutelle'] = $this->resolveNdereTutelle($id);
+        $pageSize = strtolower((string) $request->input('page_size', 'a4'));
+        $values['page_size'] = in_array($pageSize, array('a3', 'a4')) ? strtoupper($pageSize) : 'A4';
 
+        if ($request->input('save') == 1) {
+            $generation = new ReleveNoteGeneration();
+            $generation->type = 'licence_ngaoundere';
+            $generation->annee_academique = session('year');
+            $generation->id_niveau = $classe ? $classe->id_niveau : null;
+            $generation->id_classe = (int) $id;
+            $generation->id_cycle = (int) $id_cycle;
+            $generation->id_nniveau = (int) $nniveau;
+            $generation->periode_debut = $request->input('periode_debut') ?: null;
+            $generation->periode_fin = $request->input('periode_fin') ?: null;
+            $generation->semestre = $trimestre;
+            $generation->nb_releves = count($proces_v);
+            $payload = array('PV'=>$proces_v, 'eleves'=>$e, 'matieres'=>$m, 'classe'=>$classe,
+                'module_groups'=>$values['module_groups'],
+                'semester_summaries'=>$values['semester_summaries'],
+                'cycle'=>$values['cycle'], 'nniveau'=>$values['nniveau'], 'niveau'=>$values['niveau'],
+                'campus'=>$values['campus'], 'tutelle'=>$values['tutelle'], 'trimestre'=>$trimestre,
+                'sequence'=>$values['sequence'], 'semestre'=>$trimestre,
+                'page_size'=>$values['page_size'],
+                'periode_debut'=>$generation->periode_debut, 'periode_fin'=>$generation->periode_fin);
+            $generation->contenu = json_encode($payload);
+            $generation->hash_generation = hash('sha256', $generation->contenu);
+            $generation->id_creator = \Auth::check() ? \Auth::user()->id : null;
+            $generation->save();
+            if ($request->ajax() || $request->input('ajax') == 1) {
+                return \Response::json(array('success'=>true, 'id'=>$generation->id,
+                    'nb_releves'=>$generation->nb_releves,
+                    'url'=>\URL::to('/eleves/releves_ndere/generation/'.$generation->id.'/print')));
+            }
+
+            $values['generation'] = $generation;
+        }
         return view('eleves/print_releves_ndere', $values);
 
 
+    }
+
+    private function buildModuleGroups($matieres, $groups)
+    {
+        $byClasseMatiere = array();
+        foreach ($matieres as $matiereItem) {
+            $matiereItem->id_code = $this->resolveMatiereCode($matiereItem);
+            $byClasseMatiere[$matiereItem->id_classe_matiere] = $matiereItem;
+        }
+        $result = array();
+        foreach ($groups as $group) {
+            $mother = null;
+            foreach ($matieres as $candidate) {
+                if ((int) $candidate->id === (int) $group->id_matiere_mere) {
+                    $mother = $candidate;
+                    break;
+                }
+            }
+            if (!$mother) continue;
+            $key = (int) $group->id_matiere_mere;
+            if (!isset($result[$key])) {
+                $result[$key] = array('module' => $mother, 'matieres' => array());
+            }
+            if (isset($byClasseMatiere[$group->id_classe_matiere])) {
+                $result[$key]['matieres'][] = $byClasseMatiere[$group->id_classe_matiere];
+            }
+        }
+        return array_values($result);
+    }
+
+    private function resolveMatiereCode($matiere)
+    {
+        if (isset($matiere->codage_nom) && trim((string) $matiere->codage_nom) !== '') {
+            return $matiere->codage_nom;
+        }
+        if (isset($matiere->classe_matiere_id_code) && trim((string) $matiere->classe_matiere_id_code) !== '') {
+            return $matiere->classe_matiere_id_code;
+        }
+        if (isset($matiere->id_code) && trim((string) $matiere->id_code) !== '') {
+            return $matiere->id_code;
+        }
+        if (isset($matiere->code_matiere) && trim((string) $matiere->code_matiere) !== '') {
+            return $matiere->code_matiere;
+        }
+        if (isset($matiere->code) && trim((string) $matiere->code) !== '') {
+            return $matiere->code;
+        }
+        return isset($matiere->id) ? $matiere->id : '';
+    }
+
+    private function buildSemesterSummaries($eleves, $idClasse, $idCycle, $idNniveau, $selectedSemester, $selectedMatieres, $groups, $nCc, $nSn, $nRattrap)
+    {
+        $sets = array($selectedSemester => $selectedMatieres);
+        if ((int) $selectedSemester === 6) {
+            $sets[5] = matiere::Join('classe_matiere','matiere.id','=','classe_matiere.id_matiere')
+                ->leftJoin('codages', DB::raw('codages.id::text'), '=', 'classe_matiere.id_code')
+                ->where('classe_matiere.id_classe','=',$idClasse)
+                ->where('id_cycle','=',$idCycle)
+                ->where('classe_matiere.id_nniveau','=',$idNniveau)
+                ->where('classe_matiere.semestre','=',5)
+                ->select(['matiere.*','classe_matiere.semestre','coef','type','classe_matiere.id AS id_classe_matiere','classe_matiere.id_code AS classe_matiere_id_code','codages.nom AS codage_nom'])
+                ->get();
+        }
+
+        $motherIds = $groups->fetch('id_matiere_mere')->toArray();
+        $summaries = array();
+        foreach ($eleves as $eleve) {
+            $summaries[$eleve->id] = array();
+            foreach ($sets as $semester => $matieres) {
+                $noteTotal = 0;
+                $creditTotal = 0;
+                $gpaTotal = 0;
+                foreach ($matieres as $matiere) {
+                    if ($this->isIn($matiere->id, $motherIds)) continue;
+                    $note = $this->semesterMatterNote($eleve->id, $matiere->id, $semester, $nCc, $nSn, $nRattrap);
+                    if (!is_numeric($note)) continue;
+                    $credit = (float) $matiere->coef;
+                    if ($credit <= 0) continue;
+                    $noteTotal += ((float) $note) * $credit;
+                    $creditTotal += $credit;
+                    $gpaTotal += $this->gradePoint($note) * $credit;
+                }
+                $summaries[$eleve->id]['semester_'.$semester] = array(
+                    'credits'=>$creditTotal,
+                    'note100'=>$creditTotal > 0 ? $noteTotal / $creditTotal : null,
+                    'gpa'=>$creditTotal > 0 ? $gpaTotal / $creditTotal : null
+                );
+            }
+        }
+        return $summaries;
+    }
+
+    private function buildSavedSemesterSummaries($procesV, $semester)
+    {
+        $summaries = array();
+        foreach ($procesV as $pv) {
+            if (!isset($pv->eleve) || !isset($pv->eleve->id)) continue;
+
+            $creditTotal = 0;
+            $noteTotal = 0;
+            $gpaTotal = 0;
+            $hasNote = false;
+            if (isset($pv->matieres)) {
+                foreach ($pv->matieres as $matiereItem) {
+                    $credit = isset($matiereItem->credit) && is_numeric($matiereItem->credit)
+                        ? (float) $matiereItem->credit : 0;
+                    if ($credit <= 0) continue;
+                    $creditTotal += $credit;
+                    if (isset($matiereItem->note) && is_numeric($matiereItem->note)) {
+                        $note = (float) $matiereItem->note;
+                        $noteTotal += $note * $credit;
+                        $gpaTotal += $this->gradePoint($note) * $credit;
+                        $hasNote = true;
+                    }
+                }
+            }
+
+            $summaries[$pv->eleve->id] = array(
+                'semester_'.$semester => array(
+                    'credits' => $creditTotal,
+                    'note100' => $hasNote && $creditTotal > 0 ? $noteTotal / $creditTotal : null,
+                    'gpa' => $hasNote && $creditTotal > 0 ? $gpaTotal / $creditTotal : null
+                )
+            );
+        }
+        return $summaries;
+    }
+
+    private function semesterMatterNote($idEleve, $idMatiere, $semester, $nCc, $nSn, $nRattrap)
+    {
+        $ccSequence = ((int) $semester % 2) ? 1 : 2;
+        $snSequence = ((int) $semester % 2) ? 3 : 4;
+        $rattrapSequence = ((int) $semester % 2) ? 5 : 6;
+        $cc = $nCc->where('id_matiere', $idMatiere, false)->where('id_eleve', $idEleve, false)->where('sequence', $ccSequence, false)->first();
+        $sn = $nSn->where('id_matiere', $idMatiere, false)->where('id_eleve', $idEleve, false)->where('sequence', $snSequence, false)->first();
+        $rattrap = $nRattrap->where('id_matiere', $idMatiere, false)->where('id_eleve', $idEleve, false)->where('sequence', $rattrapSequence, false)->first();
+        if ($cc === null && $sn === null && $rattrap === null) return null;
+        $note = ($cc ? (float) $cc->note : 0) + ($sn ? (float) $sn->note : 0);
+        if ($rattrap && $note < 50) {
+            $note = ($cc ? (float) $cc->note : 0) + (float) $rattrap->note;
+        }
+        return $note;
+    }
+
+    private function gradePoint($note)
+    {
+        if ($note >= 80) return 4;
+        if ($note >= 75) return 3.7;
+        if ($note >= 70) return 3.3;
+        if ($note >= 65) return 3;
+        if ($note >= 60) return 2.7;
+        if ($note >= 55) return 2.3;
+        if ($note >= 50) return 2;
+        if ($note >= 45) return 1.7;
+        if ($note >= 40) return 1.3;
+        if ($note >= 35) return 1;
+        return 0;
+    }
+
+    private function universityLevel($nniveau)
+    {
+        if ($nniveau && preg_match('/([1-5])/', $nniveau->nom, $matches)) {
+            return (int) $matches[1];
+        }
+        return 1;
+    }
+
+    private function resolveNdereTutelle($idClasse)
+    {
+        $tutelles = TutelleAcademique::whereHas('specialites', function ($query) use ($idClasse) {
+            $query->where('classe.id', '=', $idClasse);
+        })->get();
+        foreach ($tutelles as $tutelle) {
+            $identity = strtoupper(
+                (isset($tutelle->nom) ? $tutelle->nom : '').' '.
+                (isset($tutelle->tutelle_anglophone) ? $tutelle->tutelle_anglophone : '').' '.
+                (isset($tutelle->ville) ? $tutelle->ville : '').' '.
+                (isset($tutelle->localisation) ? $tutelle->localisation : '')
+            );
+            if (strpos($identity, 'NGAOUND') !== false) {
+                return $tutelle;
+            }
+        }
+        if (count($tutelles) > 0) {
+            return $tutelles->first();
+        }
+        return TutelleAcademique::where(function ($query) {
+            $query->where('nom', 'LIKE', '%NGAOUND%')
+                ->orWhere('tutelle_anglophone', 'LIKE', '%NGAOUND%')
+                ->orWhere('ville', 'LIKE', '%NGAOUND%')
+                ->orWhere('localisation', 'LIKE', '%NGAOUND%');
+        })->first();
+    }
+
+    public function generate(Request $request)
+    {
+        $request->merge(array('save' => 1));
+        return $this->create($request);
+    }
+
+    public function printSaved($id)
+    {
+        $generation = ReleveNoteGeneration::findOrFail($id);
+        $payload = json_decode($generation->contenu);
+        $classe = isset($payload->classe) ? $payload->classe : classe::find($generation->id_classe);
+        $tutelle = $this->resolveNdereTutelle($classe->id);
+        $savedSemester = $generation->semestre
+            ? (int) $generation->semestre
+            : (isset($payload->trimestre) ? (int) $payload->trimestre : 1);
+        $savedSequence = $savedSemester % 2 ? 5 : 6;
+        $semesterSummaries = isset($payload->PV)
+            ? $this->buildSavedSemesterSummaries($payload->PV, $savedSemester)
+            : array();
+        if ($savedSemester === 6) {
+            $previousGeneration = ReleveNoteGeneration::where('type', 'licence_ngaoundere')
+                ->where('annee_academique', $generation->annee_academique)
+                ->where('id_classe', $generation->id_classe)
+                ->where('id_cycle', $generation->id_cycle)
+                ->where('id_nniveau', $generation->id_nniveau)
+                ->where('semestre', 5)
+                ->where('id', '<>', $generation->id)
+                ->orderBy('id', 'desc')
+                ->first();
+            if ($previousGeneration) {
+                $previousPayload = json_decode($previousGeneration->contenu);
+                if (isset($previousPayload->PV)) {
+                    $previousSummaries = $this->buildSavedSemesterSummaries($previousPayload->PV, 5);
+                    foreach ($previousSummaries as $studentId => $studentSummary) {
+                        if (isset($semesterSummaries[$studentId])) {
+                            $semesterSummaries[$studentId]['semester_5'] = $studentSummary['semester_5'];
+                        }
+                    }
+                }
+            }
+        }
+        return view('eleves/print_releves_ndere', array(
+            'titre'=>trans('admin.releve_notes'), 'PV'=>isset($payload->PV) ? $payload->PV : array(),
+            'eleves'=>isset($payload->eleves) ? $payload->eleves : array(),
+            'matieres'=>isset($payload->matieres) ? $payload->matieres : array(),
+            'module_groups'=>isset($payload->module_groups) ? $payload->module_groups : array(),
+            'semester_summaries'=>$semesterSummaries,
+            'classe'=>$classe, 'cycle'=>isset($payload->cycle) ? $payload->cycle : cycle::find($generation->id_cycle),
+            'nniveau'=>isset($payload->nniveau) ? $payload->nniveau : NNiveau::find($generation->id_nniveau),
+            'niveau'=>niveau::find($generation->id_niveau),
+            'semestre'=>array(1,2), 'trimestre'=>$savedSemester,
+            'sequence'=>$savedSequence,
+            'campus'=>isset($payload->campus) ? $payload->campus : $this->currentCampus(),
+            'tutelle'=>$tutelle, 'generation'=>$generation,
+            'page_size'=>in_array(strtolower(\Input::get('page_size', isset($payload->page_size) ? $payload->page_size : 'a4')), array('a3', 'a4')) ? strtoupper(\Input::get('page_size', isset($payload->page_size) ? $payload->page_size : 'a4')) : 'A4'
+        ));
+    }
+
+    public function history(Request $request)
+    {
+        $query = ReleveNoteGeneration::where('type', 'licence_ngaoundere');
+        if ($request->input('annee_academique')) $query->where('annee_academique', $request->input('annee_academique'));
+        return view('eleves/releves_ndere_historique', array(
+            'titre'=>'Historique des relevés Ngaoundéré',
+            'generations'=>$query->orderBy('created_at', 'desc')->get()
+        ));
     }
 
     /**
@@ -411,7 +755,11 @@ class nderereleveController extends Controller {
      */
     public function destroy($id)
     {
-        //
+        $generation = ReleveNoteGeneration::where('type', 'licence_ngaoundere')->where('id', $id)->firstOrFail();
+        $generation->delete();
+
+        return redirect()->to('/eleves/releves_ndere/historique')
+            ->with('success', 'Historique de releve supprime avec succes.');
     }
 
     function isIn($val,$array)
@@ -487,7 +835,7 @@ class nderereleveController extends Controller {
 
     }
 }
-class PV1{
+class NdereSoaPV{
     public $eleve;
     public $matieres;
     public $mgp;
@@ -499,7 +847,7 @@ class PV1{
 
     }
 }
-class pv1_matiere{
+class NdereSoaMatiere{
     public $id_matiere;
     public $note;
     public $credit;
@@ -524,7 +872,7 @@ class pv1_matiere{
 
 }
 
-class composante{
+class NdereSoaComposante{
     public $id_matiere;
     public $note;
     public $id_classe_matiere;
@@ -545,7 +893,7 @@ class composante{
         $this->id_code=$co;
     }
 }
-class compose{
+class NdereSoaCompose{
     public $id_matiere;
     public $note;
     public $coef;

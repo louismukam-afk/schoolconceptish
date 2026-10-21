@@ -83,6 +83,15 @@
 
         </div>
 
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+            <div class="div-square">
+                <a href="{{ route('fiches_progression') }}" >
+                    <i class="fa fa-5x fa-file-text-o"></i>
+                    <h4>Gestion des fiches de progression</h4>
+                </a>
+            </div>
+        </div>
+
 
 
 

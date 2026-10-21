@@ -1,6 +1,7 @@
 <?php namespace gesecole\Http\Controllers\Auth;
 
 use gesecole\Http\Controllers\Controller;
+use gesecole\Campus;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\Registrar;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
@@ -55,6 +56,17 @@ class AuthController extends Controller {
 
         if ($this->auth->attempt($credentials, $request->has('remember')))
         {
+            $user = $this->auth->user();
+            $campusCount = $user->isAdmin() ? Campus::count() : $user->campus()->count();
+            if ($campusCount > 1) {
+                return redirect()->to(url('/select-campus'));
+            }
+            if ($campusCount == 1) {
+                $campus = $user->isAdmin() ? Campus::first() : $user->campus()->first();
+                if ($campus) {
+                    session(array('campus_id' => $campus->id, 'campus_nom' => $campus->nom));
+                }
+            }
             return redirect()->intended($this->redirectPath());
         }
 

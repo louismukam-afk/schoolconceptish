@@ -230,16 +230,61 @@ Route::group(['middleware'=>'auth'],function (){
         //releve soa
 
         Route::get('/eleves/releves_soa/','eleves\soareleveController@index');
+        Route::get('/eleves/releves_soa/historique','eleves\soareleveController@history');
+        Route::get('/eleves/releves_soa/historique/{id}','eleves\soareleveController@history');
         Route::get('/eleves/releves_soa/print/','eleves\soareleveController@create');
+        Route::post('/eleves/releves_soa/generate/','eleves\soareleveController@generate');
+        Route::get('/eleves/releves_soa/generation/{id}/print','eleves\soareleveController@printSaved');
 
         //ndere releve
 
         Route::get('/eleves/releves_ndere/','eleves\nderereleveController@index');
         Route::get('/eleves/releves_ndere/print/','eleves\nderereleveController@create');
+        Route::post('/eleves/releves_ndere/generate/','eleves\nderereleveController@generate');
+        Route::get('/eleves/releves_ndere/generation/{id}/print','eleves\nderereleveController@printSaved');
+        Route::get('/eleves/releves_ndere/generation/{id}/destroy','eleves\nderereleveController@destroy');
+        Route::get('/eleves/releves_ndere/historique','eleves\nderereleveController@history');
+
+        // attestations de reussite soa
+        Route::get('/eleves/attestations_reussite_soa/','eleves\soaAttestationReussiteController@index');
+        Route::post('/eleves/attestations_reussite_soa/generate/','eleves\soaAttestationReussiteController@generate');
+        Route::get('/eleves/attestations_reussite_soa/generation/{id}/print','eleves\soaAttestationReussiteController@printSaved');
+        Route::get('/eleves/attestations_reussite_soa/generation/{id}/destroy','eleves\soaAttestationReussiteController@destroy');
+        Route::get('/eleves/attestations_reussite_soa/historique','eleves\soaAttestationReussiteController@history');
+
+        // attestations de reussite ebolowa
+        Route::get('/eleves/attestations_reussite_ebolowa/','eleves\ebolowaAttestationReussiteController@index');
+        Route::post('/eleves/attestations_reussite_ebolowa/generate/','eleves\ebolowaAttestationReussiteController@generate');
+        Route::get('/eleves/attestations_reussite_ebolowa/generation/{id}/print','eleves\ebolowaAttestationReussiteController@printSaved');
+        Route::get('/eleves/attestations_reussite_ebolowa/generation/{id}/destroy','eleves\ebolowaAttestationReussiteController@destroy');
+        Route::get('/eleves/attestations_reussite_ebolowa/historique','eleves\ebolowaAttestationReussiteController@history');
 
         //estic releve
         Route::get('/eleves/releve_estic/','eleves\esticreleveController@index');
+        Route::get('/eleves/releve_estic/historique','eleves\esticreleveController@history');
+        Route::get('/eleves/releve_estic/historique/{id}','eleves\esticreleveController@history');
         Route::get('/eleves/releve_estic/print/','eleves\esticreleveController@create');
+        Route::post('/eleves/releve_estic/generate/','eleves\esticreleveController@generate');
+        Route::get('/eleves/releve_estic/generation/{id}/print','eleves\esticreleveController@printSaved');
+        Route::get('/eleves/releve_estic/generation/{id}/destroy','eleves\esticreleveController@destroy');
+
+        //bamenda releve
+        Route::get('/eleves/releves_bamenda/','eleves\bamendareleveController@index');
+        Route::get('/eleves/releves_bamenda/historique','eleves\bamendareleveController@history');
+        Route::get('/eleves/releves_bamenda/historique/{id}','eleves\bamendareleveController@history');
+        Route::get('/eleves/releves_bamenda/print/','eleves\bamendareleveController@create');
+        Route::post('/eleves/releves_bamenda/generate/','eleves\bamendareleveController@generate');
+        Route::get('/eleves/releves_bamenda/generation/{id}/print','eleves\bamendareleveController@printSaved');
+        Route::get('/eleves/releves_bamenda/generation/{id}/destroy','eleves\bamendareleveController@destroy');
+
+        //bts releve
+        Route::get('/eleves/releves_bts/','eleves\bts_releveSessionController@index');
+        Route::get('/eleves/releves_bts/historique','eleves\bts_releveSessionController@history');
+        Route::get('/eleves/releves_bts/historique/{id}','eleves\bts_releveSessionController@history');
+        Route::get('/eleves/releves_bts/print/','eleves\bts_releveSessionController@create');
+        Route::post('/eleves/releves_bts/generate/','eleves\bts_releveSessionController@generate');
+        Route::get('/eleves/releves_bts/generation/{id}/print','eleves\bts_releveSessionController@printSaved');
+        Route::get('/eleves/releves_bts/generation/{id}/destroy','eleves\bts_releveSessionController@destroy');
 
 
 

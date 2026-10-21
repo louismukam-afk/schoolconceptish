@@ -206,7 +206,11 @@ if(session('nom_etab')==null){
                             <fieldset>
                                 <select id="annee" name="id_inscription" form="add_level_form" class="form-control">
                                     @foreach($inscriptions as $ins)
-                                        <option value="{{$ins->id}}" @if($ins->id == old('id_inscription')) selected @endif>{{$ins->annee_scolaire}} : {{$ins->classe->getNom() . ' - ' . $ins->nniveau->nom }}</option>
+                                        <option value="{{$ins->id}}" @if($ins->id == old('id_inscription')) selected @endif>
+                                            {{$ins->annee_scolaire}} : {{$ins->classe->getNom() . ' - ' . $ins->nniveau->nom }}
+                                            @if($ins->cycle) - {{$ins->cycle->nom}} @endif
+                                            @if($ins->campus) - Campus : {{$ins->campus->nom}} @endif
+                                        </option>
                                     @endforeach
 
                                 </select>

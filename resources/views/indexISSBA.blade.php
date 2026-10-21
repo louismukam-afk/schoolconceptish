@@ -512,13 +512,17 @@ if(session('nom_etab')==null){
 
         console.log('Scan active')
 
-        $('#qrcode-input')[0].addEventListener('focusout', giveFocus)
+        if ($('#qrcode-input')[0]) {
+            $('#qrcode-input')[0].addEventListener('focusout', giveFocus)
+        }
     }
 
     function disableScan() {
         scanActivated = false;
         console.log('Scan desactive')
-        $('#qrcode-input')[0].removeEventListener('focusout', giveFocus)
+        if ($('#qrcode-input')[0]) {
+            $('#qrcode-input')[0].removeEventListener('focusout', giveFocus)
+        }
     }
 
     function giveFocus(e) {

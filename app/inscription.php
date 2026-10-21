@@ -29,7 +29,7 @@ class inscription extends Model {
 
 	protected  $table='inscription';
 
-    public $fillable=['date_inscription','id_eleve','id_nniveau','id_classe','id_cycle','annee_scolaire','montant'];
+    public $fillable=['date_inscription','id_eleve','id_nniveau','id_classe','id_cycle','id_scolarite','annee_scolaire','type_scolarite','montant','lettre','mode_paye','ref_versement','desinscrire','id_campus','operation_source','id_caisse','id_banque','numero_versement','reference_operation','demande_operation','id_creator','id_last_editor','edition_details'];
 
 
     public function classe(){
@@ -50,6 +50,21 @@ class inscription extends Model {
     public function Etudiant_users()
     {
         return $this->belongsTo(Etudiant_user::class,'id_inscription');
+    }
+
+    public function campus()
+    {
+        return $this->belongsTo(Campus::class, 'id_campus');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'id_creator');
+    }
+
+    public function lastEditor()
+    {
+        return $this->belongsTo(User::class, 'id_last_editor');
     }
 
 }

@@ -1,0 +1,775 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+      <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Emploi du temps specialites</title>
+    <link rel="shortcut icon" href="http://127.0.0.1:8080/ISH/app/public/img/log.png" type="image/x-icon">
+	<!-- BOOTSTRAP STYLES-->
+    <link href="http://127.0.0.1:8080/ISH/app/public/dist/css/bootstrap.min.css" rel="stylesheet" />
+     <!-- FONTAWESOME STYLES-->
+    <link href="http://127.0.0.1:8080/ISH/app/public/css/font-awesome.css" rel="stylesheet" />
+        <!-- CUSTOM STYLES-->
+    <link href="http://127.0.0.1:8080/ISH/app/public/css/custom.css?202212051300" rel="stylesheet" media="screen"/>
+    <link href="http://127.0.0.1:8080/ISH/app/public/js/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet" media="screen"/>
+    <link href="http://127.0.0.1:8080/ISH/app/public/js/datatables/datatables.min.css" rel="stylesheet"/>
+    <link href="http://127.0.0.1:8080/ISH/app/public/js/chosen_v1.8.7/chosen.min.css" rel="stylesheet"/>
+
+
+    <!-- GOOGLE FONTS-->
+
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/jquery.min.js"></script>
+
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/jquery-ui-1.12.1/jquery-ui.js"></script>
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/chosen_v1.8.7/chosen.jquery.min.js"></script>
+    <!-- BOOTSTRAP SCRIPTS -->
+    <script src="http://127.0.0.1:8080/ISH/app/public/dist/js/bootstrap.min.js"></script>
+    <!-- CUSTOM SCRIPTS -->
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/custom.js"></script>
+
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/datatables/datatables.min.js"></script>
+
+
+<script>
+    function startLoading() {
+       // $('.loading-back').css('display','inline');
+        $('.loading_icon').css('display','inline');
+    }
+    function stopLoading() {
+        //$('.loading-back').css('display','none');
+        $('.loading_icon').css('display','none');
+    }
+
+    function showLoader() {
+        $('.loader').removeClass('hidden');
+    }
+    function hideLoader() {
+        $('.loader').addClass('hidden');
+
+    }
+</script>
+
+    <style>
+        #loader {
+            display: none;
+        }
+
+        .loader{
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 100000;
+            background-color: rgba(0, 0, 0, 0.6);
+            top: 0;
+            left: 0;
+        }
+        .loader img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150px;
+            transform: translate(-50%, -50%);
+        }
+        #qrcode-input {
+            height: 0;
+        }
+    </style>
+</head>
+
+
+
+<body>
+<div  class="loader hidden">
+    <img src="http://127.0.0.1:8080/ISH/app/public/img/loading3.gif" alt="">
+</div>
+<div class="loading-back">  </div>
+<div class="col-md-12" >
+    <a href="#"><img class="back-button" src="http://127.0.0.1:8080/ISH/app/public/img/back_button.png" onclick="history.back()" width="50px" height="50px"></a>
+
+</div>
+
+    <div class="loading_icon" style="
+    position: fixed;
+    Left: calc(50% - 75px);
+    top: calc(50% - 37.5px);
+    z-index: 10000;
+     width: 150px;
+     height: 75px;
+         box-shadow: 0 10px 20px rgba(0, 0, 0, .5);
+     display: none;
+">
+        <img src="http://127.0.0.1:8080/ISH/app/public/img/loading.gif" alt="" style="width: inherit;height: inherit">
+    </div>
+
+    <div id="wrapper">
+         <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="adjust-nav">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand logo" href="#">
+                        <img src="http://127.0.0.1:8080/ISH/app/public/img/school-concept.png" />
+
+                    </a>
+                </div>
+                <div class="nom-etab"><strong>INSTITUT SUPERIEUR HINTEL - IS-HINTEL</strong></div>
+
+
+                <span class="logout-spn" >
+
+                    <a href="http://127.0.0.1:8080/ISH/app/public/auth/logout">Se d&eacute;connecter</a>
+                </span>
+                <div ><span class="annee">Ann&eacute;e acad&eacute;mique <span>2025-2026</span> <a data-toggle="modal"  href="#change-year" class="btn btn-success btn-xs">Modifier</a></span></div>
+                <div class="langage ">
+                    <div class="lang dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle"><strong style="color: white">Langue :</strong> Francais  <span class="caret"></span></a>
+                    <ul class="dropdown-menu navbar-inverse">
+                        <li><a href="http://127.0.0.1:8080/ISH/app/public/language/french"><strong>Français</strong></a></li>
+                        <li><a href="http://127.0.0.1:8080/ISH/app/public/language/english"><strong>English</strong></a></li>
+                    </ul>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="modal fade" id="change-year">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">x</button>
+                            <h4 class="modal-title">Remplir les champs</h4>
+                        </div>
+                        <div
+                                class="modal-body">
+
+
+
+                            <form accept-charset="UTF-8" role="form" method="POST" id="edit_classe_form" action="http://127.0.0.1:8080/ISH/app/public/update-school-year">
+                                <input type="hidden" name="_token" value="NRHn26j1scny4hlNhlX5Yf06M86KV3mKVe6qnSyM"/>
+
+                                <div class="form-group">
+                                    <div class="row" style="text-align: center">
+                                        <div class="col-md-2"><input type="text" name="first_year" placeholder="2017" class="form-control"></div> <span class="col-md-1 " style="font-size: 20px;font-weight: 600;"> - </span><div class="col-md-2"><input class="form-control" type="text" name="second_year" placeholder="2018" ></div>
+                                    </div>
+
+                                </div>
+                                <input class="btn  btn-success " type="submit" value="Confirmer">
+
+
+                            </form>
+
+
+                        </div>
+
+
+
+
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <!-- /. NAV TOP  -->
+        <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+                 
+
+
+                    <li class="active-link">
+                        <a href="#" ><i class="fa fa-desktop "></i>Tableau de bord</a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public"><i class="fa fa-home "></i>Accueil</a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/inscriptions"><i class="fa fa-table "></i>Gestion des inscriptions</a>
+                    </li>
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/eleves"><i class="fa fa-edit "></i>Gestion des &eacute;tudiants et des notes</a>
+                    </li>
+
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/personnel"><i class="fa fa-steam   "></i>Gestion du personnel</a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/comptabilite"><i class="fa fa-money"></i>Comptabilit&eacute;</a>
+                    </li>
+
+                    <li style="display: none;">
+                        <a href="#"><i class="fa fa-bar-chart-o"></i>Bilan</a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/admin"><span class="glyphicon glyphicon-lock"></span> Administration</a>
+                    </li>
+                                        <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/admin/blk"><span class="fa fa-ban"></span>BLK</a>
+                    </li>
+
+                        <li>
+                            <a href="http://127.0.0.1:8080/ISH/app/public/admin/unblk"><span class="fa fa-ban"></span>UBLK</a>
+                        </li>
+                    
+                    
+                </ul>
+                            </div>
+
+        </nav>
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper" >
+            <div id="page-inner">
+                <div class="row hidden">
+                    <div class="col-md-12">
+
+                     <h2 class="big-title">Gestion des ressources humaines</h2>
+                    </div>
+                </div>
+                 <!-- /. ROW  -->
+                  <hr style="margin-top: 0;margin-bottom: 0" />
+                <div class="row-fluid">
+                    <ul class="breadcrumb" style="margin-bottom: 0;padding: 2px 15px;font-size: 16px">
+
+                        <li><a href="http://127.0.0.1:8080/ISH/app/public/emploi-du-temps"><strong>Gestion des ressources humaines</strong></a></li><li class="active"><strong>Emploi du temps specialites</strong></li>                    </ul>
+                <div style="height: 10px; background: #214761" class="action"></div>
+                    <div class="col-lg-12 ">
+                                            
+                    </div>
+
+                    </div>
+
+
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="alert alert-danger print-error-msg" style="display: none">
+                            <ul> </ul>
+                        </div>
+                        <div class="alert alert-success print-success-msg" style="display: none">
+                            <ul> </ul>
+                        </div>
+                                                                    </div>
+
+                </div>
+                  <!-- /. ROW  -->
+
+                    
+    <h3 class="big-title">Emploi du temps specialites</h3>
+    <form method="GET" class="well">
+    <div class="row">
+                    <div class="col-md-2"><label>Cycle</label><select name="id_cycle" id="id_cycle" class="form-control"><option value="">Tous</option><option value="1" >BTS</option><option value="20" >BTS1</option><option value="3" >CAPACITE</option><option value="19" >CYCLE L GES</option><option value="8" >FORMATION </option><option value="16" >INGENIEUR 1 et 2</option><option value="17" >INGENIEUR 3</option><option value="18" >INGENIEUR 4 et 5</option><option value="10" >LICENCE</option><option value="12" >LICENCE L</option><option value="14" >LICENCE L3 </option><option value="13" >LICENCE L3 A</option><option value="7" >LICENCE PRO</option><option value="6" >MASTER PRO 1</option><option value="15" >MASTER PRO 2</option></select></div>
+                <div class="col-md-2"><label>Niveau</label><select name="id_nniveau" id="id_nniveau" class="form-control"><option value="">Tous</option><option value="5" data-cycle="1" >bts1</option><option value="6" data-cycle="1" >bts2</option><option value="16" data-cycle="1" >HR2</option><option value="15" data-cycle="1" >HR3</option><option value="7" data-cycle="3" >CAPACITE1</option><option value="8" data-cycle="3" >CAPACITE2</option><option value="13" data-cycle="6" >MASTER 1</option><option value="12" data-cycle="7" >LICENCE3</option><option value="30" data-cycle="10" >LICENCE 1 A</option><option value="9" data-cycle="10" >LICENCE L1</option><option value="18" data-cycle="10" >LICENCE L2</option><option value="17" data-cycle="12" >LICENCE L1 A</option><option value="10" data-cycle="12" >LICENCE L2 A</option><option value="11" data-cycle="13" >LICENCE L3 A</option><option value="19" data-cycle="14" >LICENCE L3</option><option value="14" data-cycle="15" >MASTER 2</option><option value="25" data-cycle="16" >INGENIEUR N1</option><option value="26" data-cycle="16" >INGENIEUR N2</option><option value="27" data-cycle="17" >INGENIEUR N3</option><option value="28" data-cycle="18" >INGENIEUR N4</option><option value="29" data-cycle="18" >INGENIEUR N5</option><option value="24" data-cycle="19" >LICENCE GES L1</option></select></div>
+        <div class="col-md-2"><label>Filiere</label><select name="id_niveau" id="id_niveau" class="form-control"><option value="">Toutes</option><option value="4" data-cycle="" >AGRONOMIE</option><option value="20" data-cycle="" >AGRONOMIE L2</option><option value="21" data-cycle="" >AGRONOMIE L3</option><option value="40" data-cycle="" >AGRONOMIE NOUVEAU</option><option value="12" data-cycle="" >CAPACITE EN DROIT</option><option value="14" data-cycle="" >CARRIERES JURIDIQUES</option><option value="36" data-cycle="" >classe intermediaire N2</option><option value="37" data-cycle="" >classe intermediaire N3</option><option value="18" data-cycle="" >COMMERCE</option><option value="9" data-cycle="" >ECONOMIE SOCIALE ET FAMILIALE</option><option value="28" data-cycle="" >FORESTERIE</option><option value="8" data-cycle="" >GENIE CIVIL</option><option value="31" data-cycle="" >GENIE CIVIL BATIMENT</option><option value="26" data-cycle="" >GENIE CIVIL SOIR</option><option value="38" data-cycle="" >GENIE CIVIL SOIR BAT</option><option value="5" data-cycle="" >GENIE ELECTRIQUE</option><option value="30" data-cycle="" >GENIE ELECTRIQUE SOIR</option><option value="25" data-cycle="" >GENIE ELECTRIQUE SOIR</option><option value="15" data-cycle="" >GENIE INFORMATIQUE</option><option value="29" data-cycle="" >GENIE INFORMATIQUE N2</option><option value="24" data-cycle="" >GENIE INFORMATIQUE SOIR</option><option value="7" data-cycle="" >GENIE MECANIQUE ET PRODUCTIQUE</option><option value="6" data-cycle="" >GENIE THERMIQUE</option><option value="19" data-cycle="" >GESTION</option><option value="39" data-cycle="" >GESTION CYCLE LICENCE</option><option value="22" data-cycle="" >GESTION SOIR</option><option value="1" data-cycle="" >HOTELLERIE</option><option value="27" data-cycle="" >INDUSTRIE ET TECHNOLOGIE</option><option value="10" data-cycle="" >INFORMATION ET COMMUNICATION</option><option value="23" data-cycle="" >INFORMATION ET COMMUNICATION SOIR</option><option value="35" data-cycle="" >INGENIEUR  AGRONOME</option><option value="32" data-cycle="" >INGENIEUR CLASSIQUE</option><option value="33" data-cycle="" >INGENIEUR EN ART NUMERIQUE</option><option value="34" data-cycle="" >INGENIEUR EN HUMANITE NUMERIQUE</option><option value="13" data-cycle="" >RESTAURATION</option><option value="16" data-cycle="" >TELECOM, RESEAUX ET SECURITE</option><option value="17" data-cycle="" >TOPOGRAHIE</option></select></div>
+        <div class="col-md-2"><label>Specialite</label><select name="id_classe" id="id_classe" class="form-control"><option value="">Toutes</option><option value="52" data-niveau="5" data-cycle="" > ELECTROTECHNIQUE  ELECTRONIQUE ET  AUTOMATISME</option><option value="54" data-niveau="4" data-cycle="" >AGRONOMIE</option><option value="121" data-niveau="40" data-cycle="" >AGRONOMIE</option><option value="104" data-niveau="35" data-cycle="" >AQUACULTURE ET GESTION DES RESSOURCES HALIEUTIQUES</option><option value="92" data-niveau="34" data-cycle="" >ART NUMERIQUE ET HUMANITE NUMERIQUE</option><option value="90" data-niveau="33" data-cycle="" >ART NUMERIQUE ET HUMANITE NUMERIQUE</option><option value="91" data-niveau="33" data-cycle="" >ART NUMERIQUE OPTION INTELLIGENCE ARTIFICIELLE</option><option value="3" data-niveau="19" data-cycle="" >ASSISTANCE MANAGER</option><option value="9" data-niveau="19" data-cycle="" >ASSURANCE</option><option value="105" data-niveau="36" data-cycle="" >ATTENTE  NIVEAU 2</option><option value="106" data-niveau="37" data-cycle="" >ATTENTE NIVEAU 3</option><option value="11" data-niveau="19" data-cycle="" >BANQUE ET FINANCE</option><option value="25" data-niveau="19" data-cycle="" >BANQUE ET INSTITUTIONS FINANCIERES</option><option value="14" data-niveau="8" data-cycle="" >BATIMENT</option><option value="110" data-niveau="31" data-cycle="" >BATIMENT</option><option value="107" data-niveau="38" data-cycle="" >BATIMENT SOIR</option><option value="114" data-niveau="8" data-cycle="" >BATIMENT SOUS RESERVE</option><option value="120" data-niveau="31" data-cycle="" >BATIMENT SOUS RESERVE</option><option value="45" data-niveau="8" data-cycle="" >BTP ET CADASTRE</option><option value="59" data-niveau="18" data-cycle="" >COMMERCE INTERNATIONAL</option><option value="10" data-niveau="18" data-cycle="" >COMMERCE MARKETING VENTE</option><option value="53" data-niveau="1" data-cycle="" >COMMERCIALISATION DES SERVICES DE RESTAURATION </option><option value="70" data-niveau="23" data-cycle="" >COMMUNCATION ET ORGANISATION SOIR</option><option value="123" data-niveau="10" data-cycle="" >COMMUNICATION ET MARKETING DIGITALE</option><option value="12" data-niveau="10" data-cycle="" >COMMUNICATION ET ORGANISATION</option><option value="116" data-niveau="10" data-cycle="" >COMMUNICATION ET ORGANISATION SOUS RESERVE</option><option value="33" data-niveau="10" data-cycle="" >COMMUNICATION ET RELATIONS PUBLIQUES</option><option value="117" data-niveau="19" data-cycle="" >COMPTABILITE CONTROLE ET AUDIT SOUS RESERVE</option><option value="24" data-niveau="19" data-cycle="" >COMPTABILITE ET CONTROLE AUDIT</option><option value="2" data-niveau="19" data-cycle="" >COMPTABILITE ET GESTION DES ENTREPRISES</option><option value="69" data-niveau="22" data-cycle="" >COMPTABILITE ET GESTION DES ENTREPRISES SOIR</option><option value="23" data-niveau="4" data-cycle="" >CONSEILER AGROPASTORAL</option><option value="93" data-niveau="34" data-cycle="" >CYBERSECURITE ET INVESTIGATION NUMERIQUE</option><option value="96" data-niveau="34" data-cycle="" >DATA SCIENCE</option><option value="122" data-niveau="15" data-cycle="" >DATA SCIENCE ET INTELLIGENT ARTIFICIELLE  </option><option value="36" data-niveau="1" data-cycle="" >DEVELOPPEMENT ET AMENAGEMENT TOURISTIQUE</option><option value="51" data-niveau="14" data-cycle="" >DOUANE ET TRANSIT</option><option value="99" data-niveau="35" data-cycle="" >ECONOMIE ET SOCIOLOGIE RURAL</option><option value="40" data-niveau="4" data-cycle="" >ECONOMIE SOCIOLOGIES RURALES</option><option value="124" data-niveau="40" data-cycle="" >ECONOMIE SOCIOLOGIES RURALES</option><option value="20" data-niveau="5" data-cycle="" >ELECTROTECHNIQUE</option><option value="115" data-niveau="5" data-cycle="" >ELECTROTECHNIQUE ELECTRONIQUE ET AUTOMATISME SOUS REVERSE</option><option value="72" data-niveau="25" data-cycle="" >ELECTROTECHNIQUE SOIR</option><option value="80" data-niveau="30" data-cycle="" >ELECTROTECNIQUE SOIR</option><option value="76" data-niveau="27" data-cycle="" >ENERGIE RENOUVELABLE</option><option value="22" data-niveau="4" data-cycle="" >ENTREPRENEURIAT AGROPASTORAL</option><option value="127" data-niveau="40" data-cycle="" >ENTREPRENEURIAT AGROPASTORAL	</option><option value="17" data-niveau="7" data-cycle="" >FABRICATION MECANIQUE ET CONSTRUCTION</option><option value="101" data-niveau="35" data-cycle="" >FORESTERIE</option><option value="77" data-niveau="4" data-cycle="" >FORESTERIE</option><option value="18" data-niveau="6" data-cycle="" >FROID ET CLIMATISATION</option><option value="47" data-niveau="6" data-cycle="" >GENIE BOIS</option><option value="86" data-niveau="32" data-cycle="" >GENIE CIVIL </option><option value="7" data-niveau="1" data-cycle="" >GENIE CULINAIRE</option><option value="81" data-niveau="1" data-cycle="" >GENIE CULINAIRE PRO</option><option value="43" data-niveau="5" data-cycle="" >GENIE ELECTRIQUE</option><option value="88" data-niveau="32" data-cycle="" >GENIE ELECTRIQUE ET TELECOMMUNICATION</option><option value="89" data-niveau="32" data-cycle="" >GENIE INDUSTRIEL ET MECANIQUE</option><option value="87" data-niveau="32" data-cycle="" >GENIE INFORMATIQUE</option><option value="44" data-niveau="8" data-cycle="" >GENIE INFORMATIQUE ET RESEAUX</option><option value="42" data-niveau="7" data-cycle="" >GENIE MECANIQUE ET PRODUCTIQUE</option><option value="129" data-niveau="40" data-cycle="" >GENIE RURAL</option><option value="41" data-niveau="4" data-cycle="" >GENIE RURAL</option><option value="100" data-niveau="35" data-cycle="" >GENIE RURAL</option><option value="55" data-niveau="1" data-cycle="" >GESTION  DES ETABLISSEMENTS  HOTELLIER </option><option value="84" data-niveau="19" data-cycle="" >GESTION DE PROJET</option><option value="109" data-niveau="39" data-cycle="" >GESTION DES PROJETS</option><option value="30" data-niveau="19" data-cycle="" >GESTION DES RESOURCES HUMAINES</option><option value="118" data-niveau="15" data-cycle="" >GESTION DES SYSTEMES D&#039;INFORMATIONS  SOUS RESERVE</option><option value="8" data-niveau="15" data-cycle="" >GESTION DES SYSTEMES D INFORMATIONS</option><option value="71" data-niveau="24" data-cycle="" >GESTION DES SYSTEMES INFORMATIQUE SOIR</option><option value="1" data-niveau="1" data-cycle="" >GESTION ET MANAGEMENT HOTELIER </option><option value="48" data-niveau="1" data-cycle="" >GESTION ET MANAGEMENT HOTELIER   A</option><option value="82" data-niveau="1" data-cycle="" >GESTION ET MANAGEMENT HOTELIER  B</option><option value="62" data-niveau="19" data-cycle="" >GESTION LOGISTIQUE ET TRANSPORT</option><option value="35" data-niveau="1" data-cycle="" >GUIDE TOURISTIQUE NATIONAL</option><option value="83" data-niveau="1" data-cycle="" >HOTELLERIE ET RESTAURATION A</option><option value="75" data-niveau="1" data-cycle="" >HOTELLERIE ET RESTAURATION B</option><option value="102" data-niveau="35" data-cycle="" >INDUSTRIE AGROALIMENTAIRE</option><option value="66" data-niveau="4" data-cycle="" >INDUSTRIE AGROALIMENTAIRE </option><option value="128" data-niveau="40" data-cycle="" >INDUSTRIE AGROALIMENTAIRE	</option><option value="94" data-niveau="34" data-cycle="" >INFORMATION ET COMMUNICATION DIGITAL</option><option value="108" data-niveau="15" data-cycle="" >INFORMATIQUE</option><option value="58" data-niveau="19" data-cycle="" >Informatique de Gestion</option><option value="64" data-niveau="15" data-cycle="" >INFORMATIQUE ET GENIE LOGICIEL</option><option value="119" data-niveau="15" data-cycle="" >INFORMATIQUE ET GENIE LOGICIEL SOUS RESERVE</option><option value="50" data-niveau="15" data-cycle="" >INFORMATIQUE INDUSTRIELLE ET AUTOMATISME</option><option value="37" data-niveau="4" data-cycle="" >INGENIEURS DES TRAVAUX AGRICOLES</option><option value="6" data-niveau="10" data-cycle="" >journalisme</option><option value="63" data-niveau="15" data-cycle="" >MAINTENANCE DES  SYSTEMES INFORMATIQUES </option><option value="85" data-niveau="27" data-cycle="" >MAINTENANCE DES APPAREILS BIOMEDICAUX</option><option value="21" data-niveau="5" data-cycle="" >MAINTENANCE DES SYSTEMES ELECTRONIQUES</option><option value="79" data-niveau="29" data-cycle="" >MAINTENANCE DES SYSTEMES INFORMATIQUES</option><option value="16" data-niveau="7" data-cycle="" >MAINTENANCE ET APRES VENTE AUTOMOBILE</option><option value="31" data-niveau="1" data-cycle="" >MANAGEMENT DES ENTREPRISES HOTELERES</option><option value="34" data-niveau="1" data-cycle="" >MANAGEMENT DES ENTREPRISES TOURISTIQUES</option><option value="113" data-niveau="1" data-cycle="" >MANAGEMENT DES ENTREPRISES TOURISTIQUES SOUS RESERVE</option><option value="27" data-niveau="1" data-cycle="" >MANAGEMENT DES OPERATIONS DU COMMERCE INTERNATIONAL</option><option value="95" data-niveau="34" data-cycle="" >MANAGEMENT DES SYSTEMES D&#039;INFORMATION</option><option value="28" data-niveau="18" data-cycle="" >MANAGEMENT ET MARKETING DES RESEAUX DE DISTRIBUTION</option><option value="65" data-niveau="1" data-cycle="" >MANAGEMENT TOURISTIQ</option><option value="60" data-niveau="18" data-cycle="" >MARKETING COMMERCE VENTE </option><option value="68" data-niveau="18" data-cycle="" >MARKETING ET MANAGEMENT OPERATIONNELLE</option><option value="61" data-niveau="10" data-cycle="" >MARKETING ET PUBLICITE </option><option value="32" data-niveau="10" data-cycle="" >MARKETING PUBLICITE</option><option value="29" data-niveau="19" data-cycle="" >MATKETING MANAGER OPERATIONNEL</option><option value="74" data-niveau="7" data-cycle="" >MECATRONONIQUE</option><option value="97" data-niveau="35" data-cycle="" >PRODUCTION ANIMAL</option><option value="125" data-niveau="40" data-cycle="" >PRODUCTION ANIMALE </option><option value="126" data-niveau="40" data-cycle="" >PRODUCTION VEGETALE  </option><option value="98" data-niveau="35" data-cycle="" >PRODUCTION VEGETALES</option><option value="38" data-niveau="4" data-cycle="" >PRODUCTION VEGETALES</option><option value="39" data-niveau="4" data-cycle="" >PRODUCTIONS ANIMALES</option><option value="13" data-niveau="9" data-cycle="" >PUERICULTURE ET GERONTOLOGIE</option><option value="112" data-niveau="15" data-cycle="" >RESEAU SYSTEME ET CYBERSECURITE</option><option value="78" data-niveau="16" data-cycle="" >RESEAUX ET TELECOMMUNICATION</option><option value="111" data-niveau="15" data-cycle="" >SECURITE ET RESEAUX INFORMATIQUES</option><option value="103" data-niveau="35" data-cycle="" >TECHNOLOGIE DE SEMENCE</option><option value="56" data-niveau="16" data-cycle="" >TELECOM</option><option value="57" data-niveau="16" data-cycle="" >TELECOM, RESEAUX ET SECURITE </option><option value="46" data-niveau="8" data-cycle="" >TELECOMMUNICATION ET RESEAUX</option><option value="67" data-niveau="8" data-cycle="" >topographie</option><option value="15" data-niveau="8" data-cycle="" >TRAVAUX PUBLIC</option><option value="73" data-niveau="26" data-cycle="" >TRAVAUX PUBLIC SOIR</option></select></div>
+        <div class="col-md-2"><label>Semestre</label><select name="semestre" class="form-control"><option value="">Tous</option><option value="1" >Semestre 1</option><option value="2" >Semestre 2</option></select></div>
+        <div class="col-md-2"><label>Date debut</label><input type="date" name="date_debut" value="" class="form-control"></div>
+        <div class="col-md-2"><label>Date fin</label><input type="date" name="date_fin" value="" class="form-control"></div>
+        <div class="col-md-2"><label>&nbsp;</label><button class="btn btn-primary form-control">Filtrer</button></div>
+    </div>
+</form>
+<button onclick="window.print()" class="btn btn-warning"><span class="glyphicon glyphicon-print"></span> Imprimer</button>
+<a href="http://127.0.0.1:8080/ISH/app/public/emploi-du-temps/cours-enseignants/create" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span> Programmer un cours</a>
+<table class="table table-bordered table-striped table-condensed" style="margin-top:20px;background:#fff">
+    <thead><tr><th>Jour</th></tr></thead>
+    <tbody>
+            <tr><th>Lundi</th>
+                </tr>
+            <tr><th>Mardi</th>
+                </tr>
+            <tr><th>Mercredi</th>
+                </tr>
+            <tr><th>Jeudi</th>
+                </tr>
+            <tr><th>Vendredi</th>
+                </tr>
+            <tr><th>Samedi</th>
+                </tr>
+            <tr><th>Dimanche</th>
+                </tr>
+        </tbody>
+</table>
+<script>
+(function(){
+    var cycle=document.getElementById('id_cycle'), niveau=document.getElementById('id_niveau'), nniveau=document.getElementById('id_nniveau'), classe=document.getElementById('id_classe');
+    function filterOptions(select, matcher){
+        Array.prototype.forEach.call(select.options,function(option){
+            if(option.value===''){ option.style.display=''; return; }
+            option.style.display=matcher(option)?'':'none';
+            if(option.selected && option.style.display==='') return;
+            if(option.selected) select.value='';
+        });
+    }
+    function applyFilters(){
+        var cycleValue=cycle?cycle.value:'', niveauValue=niveau.value;
+        if(cycle) filterOptions(nniveau,function(option){ return !cycleValue || option.getAttribute('data-cycle')===cycleValue; });
+        if(cycle) filterOptions(niveau,function(option){ return !cycleValue || option.getAttribute('data-cycle')===cycleValue || option.getAttribute('data-cycle')===''; });
+        filterOptions(classe,function(option){
+            var byCycle=!cycleValue || option.getAttribute('data-cycle')===cycleValue || option.getAttribute('data-cycle')==='';
+            var byNiveau=!niveauValue || option.getAttribute('data-niveau')===niveauValue;
+            return byCycle && byNiveau;
+        });
+    }
+    if(cycle) cycle.onchange=applyFilters; niveau.onchange=applyFilters; nniveau.onchange=applyFilters; applyFilters();
+})();
+</script>
+                 <!-- /. ROW  -->
+
+                  <!-- /. ROW  --> 
+    </div>
+             <!-- /. PAGE INNER  -->
+        </div>
+         <!-- /. PAGE WRAPPER  -->
+        </div>
+
+
+<div class="modal fade" id="edit_pass">
+    <div class="modal-dialog">
+        <div class="modal-content col-md-6">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <h4 class="modal-title">Remplir les champs</h4>
+            </div>
+            <div
+                    class="modal-body">
+
+
+
+                <form accept-charset="UTF-8" role="form" method="POST" action="#">
+                    <input type="hidden" name="_token" value="NRHn26j1scny4hlNhlX5Yf06M86KV3mKVe6qnSyM">
+                    <fieldset>
+
+                        <div class="form-group">
+                            <label for="ancien_mot_de_passe">Ancien mot de passe : <span class="required">*</span></label>
+                            <input class="form-control" id="ancien_mot_de_passe" name="ancien_mot_de_passe" type="password"  value="" required autofocus>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="nouveau_mot_de_passe">Nouveau mot de passe : <span class="required">*</span></label>
+                            <input class="form-control" id="nouveau_mot_de_passe" name="nouveau_mot_de_passe" type="password"  value="" required >
+
+                        </div>
+                        <div class="form-group">
+                            <label for="password_again">Confirmer le mot de passe : <span class="required">*</span></label>
+                            <input class="form-control" id="password_again" name="password_again" type="password"  value="" required >
+
+                        </div>
+                        <a id="submit_new_pass" class="btn  btn-success" data-dismiss="modal">Confirmer</a>
+
+
+                    </fieldset>
+                </form>
+
+
+            </div>
+
+
+
+
+
+        </div>
+
+
+    </div>
+</div>
+    <div class="footer">
+      
+    
+            <div class="row">
+                <div class="col-md-12 copy" >
+                    &copy;  2017 SchoolConcept | by: <a href="http://youth-concept.com" style="color:#fff;" target="_blank">youth-concept</a>
+                </div>
+            </div>
+        </div>
+          
+
+     <!-- /. WRAPPER  -->
+    <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
+    <!-- JQUERY SCRIPTS -->
+
+
+<div class="modal fade" id="choose_level">
+    <div class="modal-dialog" style="width: 20%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <h4 class="modal-title">Remplir les champs</h4>
+            </div>
+            <div class="modal-body">
+
+
+
+                <form accept-charset="UTF-8" role="form" method="GET" id="choix_level_form" action="">
+                    <input type="hidden" name="id" id="id_select_classe" value=""/>
+                    <input type="hidden" name="option" id="option_select_classe" value=""/>
+
+                    <fieldset>
+                        <div class="form-group">
+                            <label for="cycle">Cycle : </label>
+                            <select  name="cycle" id="cycle_select_classe" form="choix_level_form" class="form-control" required>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="nniveau">Niveau : </label>
+                            <select  name="nniveau" id="nniveau_select_classe" form="choix_level_form" class="form-control" required>
+                                <option value="" disabled>Sélectionner un élément</option>
+                            </select>
+                        </div>
+
+                        <input type="hidden" name="_token" value="NRHn26j1scny4hlNhlX5Yf06M86KV3mKVe6qnSyM"/>
+                        <input class="btn  btn-success " type="submit" value="Confirmer" autofocus>
+
+
+                    </fieldset>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="confirm_delete_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #d9534f">
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <h4 class="modal-title" style="color: white">Remplir les champs</h4>
+            </div>
+            <div class="modal-body">
+
+                <form accept-charset="UTF-8" role="form" method="GET" id="confirm_delete_form" action="">
+                    <input type="hidden" name="id" id="confirm_delete_item_id" value=""/>
+
+                    <fieldset>
+                        <h4 id="confirm_delete_text">Êtes vous sure de vouloir supprimer cet élément?</h4>
+                        <div class="btn  btn-primary pull-right" style="margin-left: 10px"  class="close" data-dismiss="modal">Non</div>
+                        <input class="btn  btn-danger pull-right" type="submit" value="Oui">
+
+
+                    </fieldset>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="change-status-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" onclick="toggleScanStatus()">x</button>
+                <h4 class="modal-title">Remplir les champs</h4>
+            </div>
+            <div class="modal-body">
+
+                <form id="change-status-form" accept-charset="UTF-8" role="form" method="POST" action="http://127.0.0.1:8080/ISH/app/public/inscriptions/eleve/set-status?status=1&amp;id=">
+                    <input type="hidden" name="_token" value="NRHn26j1scny4hlNhlX5Yf06M86KV3mKVe6qnSyM">
+
+
+
+                    <div class="form-group">
+                        <label for="date_debut">Date de d&eacute;but : <span class="required">*</span></label>
+                        <input class="form-control" id="change_status-date_debut" name="date_debut" type="date"  value="" required autofocus />
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date_fin">Date de fin : <span class="required">*</span></label>
+                        <input class="form-control" id="change_status-date_fin" name="date_fin" type="date"   value="" required />
+
+                    </div>
+                    <div class="form-group">
+                        <label for="montant">Montant : </label>
+                        <input class="form-control" id="change_status-montant" name="montant" type="number"  value="" disable>
+
+                    </div>
+
+                    <input class="btn  btn-success " type="submit" value="Confirmer">
+
+                </form>
+
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+</body>
+<script>
+    var scanActivated = false;
+    function enableScan() {
+        scanActivated = true;
+
+        console.log('Scan active')
+
+        if ($('#qrcode-input')[0]) {
+            $('#qrcode-input')[0].addEventListener('focusout', giveFocus)
+        }
+    }
+
+    function disableScan() {
+        scanActivated = false;
+        console.log('Scan desactive')
+        if ($('#qrcode-input')[0]) {
+            $('#qrcode-input')[0].removeEventListener('focusout', giveFocus)
+        }
+    }
+
+    function giveFocus(e) {
+        e.target.focus();
+    }
+
+    $(function () {
+        $('#submit_new_pass').click(function () {
+            //$('#edit_pass').modal('hide');
+            $.post('http://127.0.0.1:8080/ISH/app/public/user-profile/edit-password',{ _token:'NRHn26j1scny4hlNhlX5Yf06M86KV3mKVe6qnSyM',ancien_mot_de_passe:$("#ancien_mot_de_passe").val(),nouveau_mot_de_passe:$("#nouveau_mot_de_passe").val(),password_again:$("#password_again").val() },function (data) {
+                $(".print-success-msg").find("ul").html('');
+                $(".print-error-msg").find("ul").html('');
+                $(".print-success-msg").css('display', 'none');
+                $(".print-error-msg").css('display', 'none');
+                if(data.success)
+                    printSuccessMsg(data);
+                else
+                {
+                	console.log(data);
+                    printErrorMsg(data);
+                }
+                	
+
+            });
+        });
+        function printErrorMsg (msg) {
+
+            
+            if(msg)
+            $(".print-error-msg").css('display', 'block');
+
+            $.each(msg, function (key, value) {
+                $(".print-error-msg").find("ul").append('<li>' + value + '</li>');
+            });
+
+        }
+        function printSuccessMsg (msg) {
+
+            if(msg)
+                $(".print-success-msg").css('display', 'block');
+
+            $.each(msg, function (key, value) {
+                $(".print-success-msg").find("ul").append('<li>' + value + '</li>');
+            });
+
+        }
+
+            jQuery.noConflict();
+            $( "#date_naiss, #date, #date_rec, .datepicker" ).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'yy/mm/dd',
+                yearRange: '1900:c+10'
+            });
+
+            $('#cycle_select_classe').on('change', function (e) {
+                if(e.target.value) {
+                    getNniveau(e.target.value);
+                }
+            })
+    });
+
+
+    function export_to_excel(idTable)
+    {
+
+        var tab_text="<table ><tr >";
+        var textRange; var j=0;
+        tab = document.getElementById(idTable); // id of table
+
+        for(j = 0 ; j < (tab.rows.length) ; j++)
+        {
+            tab_text=tab_text+tab.rows[j].innerHTML+"</tr>";
+            //tab_text=tab_text+"</tr>";
+        }
+
+        tab_text=tab_text+"</table>";
+        tab_text= tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+        tab_text= tab_text.replace(/<img[^>]*>/gi,""); // remove if u want images in your table
+        tab_text= tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input paras
+        tab_text= tab_text.replace(/<a[^>]*>|<\/a>/gi, "");
+        tab_text= tab_text.replace(/<div[^>]*>|<\/div>/gi, "");
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf("MSIE ");
+
+        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+        {
+            txtArea1.document.open("txt/html","replace");
+            txtArea1.document.write(tab_text);
+            txtArea1.document.close();
+            txtArea1.focus();
+            sa=txtArea1.document.execCommand("SaveAs",true,"dataExport.xls");
+        }
+        else                 //other browser not tested on IE 11
+            sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+
+
+        return (sa);
+    }
+
+    function getAllCycles() {
+        var jElement = $('#cycle_select_classe');
+        jElement.empty();
+        $('.loading_icon').css('display','inline');
+        $.ajax({
+            type: 'GET',
+            url: 'http://127.0.0.1:8080/ISH/app/public/admin/cycles/get-all',
+            timeout: 20000,
+            success: function (data) {
+                jElement.append('<option value="" disabled>'+ 'Sélectionner un élément' +'</option>');
+                var i = 0;
+                var selectedValue = -1;
+                $.each(data,function (key,val) {
+                    jElement.append('<option value="'+val.id+'">'+val.nom+'</option>');
+                    i++;
+                    if(i == 1) {
+                        selectedValue = val.id;
+                    }
+                })
+
+                //$('.loading_icon').css('display','none');
+                if(selectedValue != -1) {
+                    getNniveau(selectedValue);
+                }
+            },
+            error: function (data) {
+                $('.loading_icon').css('display','none');
+            }
+
+
+        });
+    }
+
+      function getNniveau(cycle) {
+            var jElement = $('#nniveau_select_classe');
+            jElement.empty();
+            $('.loading_icon').css('display','inline');
+            $.ajax({
+                type: 'GET',
+                url: 'http://127.0.0.1:8080/ISH/app/public/admin/nniveaux/get/'+cycle,
+                timeout: 20000,
+                success: function (data) {
+                    jElement.append('<option value="" disabled>'+ 'Sélectionner un élément' +'</option>');
+                    $.each(data,function (key,val) {
+                        jElement.append('<option value="'+val.id+'">'+val.nom+'</option>');
+                    })
+                    $('.loading_icon').css('display','none');
+                },
+                error: function (data) {
+                    $('.loading_icon').css('display','none');
+                }
+
+
+            });
+        }
+
+    function choose_level(id, actionUrl, option)
+    {
+        document.getElementById("id_select_classe").value = id;
+        document.getElementById("option_select_classe").value = option;
+        $('#choix_level_form').attr('action', actionUrl);
+        getAllCycles();
+    }
+
+    function fill_delete_modal(id, actionUrl, method, text)
+    {
+        var jForm = $('#confirm_delete_form');
+        if(id) {
+            document.getElementById("confirm_delete_item_id").value = id;
+        }
+        jForm.attr('action', actionUrl);
+        if(method) {
+            jForm.attr('method', method);
+        } else {
+            jForm.attr('method', 'GET');
+        }
+        if(text) {
+            $('#confirm_delete_text').html(text);
+        } else {
+            $('#confirm_delete_text').html('Êtes vous sure de vouloir supprimer cet élément?');
+
+        }
+
+        $('#confirm_delete_modal').modal('show');
+    }
+
+    $(function (){
+        $('#qrcode-input').on('change', function (e){
+            console.log('scanned', e.target.value);
+            var scanned = e.target.value;
+            e.target.value = "";
+            $('#scan-error-message').addClass('hidden');
+
+            $.ajax({
+                url : 'http://127.0.0.1:8080/ISH/app/public/inscriptions/eleve/process-scan',
+                type:'GET',
+                dataType:'html',
+                data:'scanned='+scanned,
+                beforeSend: function () {
+                    showLoader();
+                },
+                success: function (res) {
+
+                    console.log(res);
+
+
+                    if(res == 0) {
+                        hideLoader();
+                        $('#scan-error-message').removeClass('hidden');
+                        $('#status-container').addClass('hidden');
+
+
+                    } else {
+
+                        location.href = 'http://127.0.0.1:8080/ISH/app/public/inscriptions/eleve/status' + '?id=' + res + "&show_access=1"
+                    }
+                },
+
+                error: function (xhr) {
+                    console.error(xhr);
+                    hideLoader();
+                }
+
+            })
+        })
+
+
+        enableScan();
+        $('.autocomplete').chosen({width : '100%'});
+    })
+
+    function openChangeStatusModal(action) {
+        $('#change-status-form')[0].action = action
+        $('#change-status-modal').modal('show');
+    }
+
+    function allowStudentAccess(id) {
+        const action =  `http://127.0.0.1:8080/ISH/app/public/inscriptions/eleve/set-status?status=1&id=${id}`
+        openChangeStatusModal(action)
+    }
+
+</script>
+</html>

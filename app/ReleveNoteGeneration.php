@@ -15,6 +15,7 @@ class ReleveNoteGeneration extends Model {
         'id_nniveau',
         'periode_debut',
         'periode_fin',
+        'semestre',
         'nb_releves',
         'hash_generation',
         'contenu',

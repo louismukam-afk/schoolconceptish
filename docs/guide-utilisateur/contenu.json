@@ -1,0 +1,2397 @@
+{
+  "title": "SchoolConcept — IS-HINTEL",
+  "subtitle": "Manuel détaillé des procédures et support de formation",
+  "date": "21 octobre 2026",
+  "version": "2.0",
+  "chapters": [
+    {
+      "title": "Prendre en main le logiciel",
+      "paragraphs": [
+        "Ce guide s’adresse aux agents de scolarité, caissiers, responsables pédagogiques, enseignants, gestionnaires du personnel, comptables et administrateurs. Il explique les opérations du logiciel installé à l’INSTITUT SUPÉRIEUR HINTEL, à partir des interfaces réellement consultées le 21 octobre 2026.",
+        "Les captures utilisent un compte disposant de droits étendus. Certains boutons peuvent être absents avec votre compte : les fonctions disponibles dépendent des rôles, des permissions et du campus autorisé. Les effectifs, noms et montants figurant dans les captures sont ceux de l’installation consultée ; ils ne constituent pas des valeurs à reproduire.",
+        "La navigation et l’ouverture des formulaires ont été vérifiées en session réelle. Les procédures d’enregistrement, d’importation, de suppression, de paiement, de publication et de génération sauvegardée décrivent les formulaires et le code du projet ; leurs validations finales n’ont pas été exécutées pendant la rédaction. Les pages en erreur sont signalées dans l’inventaire des interfaces.",
+        "Le guide et ses images sont destinés à la formation interne : plusieurs écrans contiennent des informations sur les étudiants, le personnel et les opérations financières. Aucun mot de passe n’est reproduit dans ce document.",
+        "Cette édition ajoute les dépendances de configuration et des procédures par opération et par tutelle. Les aperçus locaux portent une légende distincte : ils illustrent les vues du projet sans sauvegarder de nouvelles générations. Les attestations pédagogiques utilisent un nom et des résultats fictifs clairement signalés. Les historiques présentés sont ceux de la session réelle."
+      ],
+      "tasks": [
+        {
+          "title": "Se connecter et choisir son campus",
+          "steps": [
+            "Depuis un ordinateur connecté à Internet, ouvrir le navigateur et saisir l’adresse https://ish.informatique-ht.cm. L’application est hébergée dans le cloud et s’utilise directement depuis cette adresse, sans lancer de serveur local sur le poste de l’utilisateur.",
+            "Saisir le nom d’utilisateur et le mot de passe personnels. Cocher « Se souvenir de moi » uniquement sur son poste individuel, puis cliquer sur « Se connecter ».",
+            "Si « Choix du campus » apparaît, sélectionner le campus et cliquer sur « Continuer ». Lors de la consultation, deux entrées de campus avaient le même libellé ; demander au responsable quel campus utiliser si cette situation persiste.",
+            "Vérifier le nom de l’établissement et l’année académique dans le bandeau supérieur. La session consultée affichait 2025-2026. Ne pas supposer que l’année affichée correspond à l’année civile actuelle.",
+            "Ouvrir le module souhaité depuis les grandes tuiles de l’accueil ou le menu latéral. En fin de travail, cliquer sur « Se déconnecter »."
+          ],
+          "result": "L’accueil est affiché dans le contexte du campus choisi. Le compte et le contexte doivent être vérifiés avant toute opération."
+        },
+        {
+          "title": "Se repérer et retrouver une information",
+          "steps": [
+            "Utiliser le menu de gauche pour changer de module et le fil de navigation en haut du contenu pour remonter à une rubrique.",
+            "Dans un champ « Effectuer une recherche », saisir le matricule ou une partie du nom puis cliquer sur « Chercher ». Comparer le matricule, le nom et la date de naissance avant d’ouvrir « Actions ».",
+            "Dans les tableaux qui proposent « Search », saisir un mot pour filtrer les lignes ; utiliser les pages du tableau lorsque des boutons de pagination sont présents. Ce filtre local ne remplace pas la recherche principale du logiciel.",
+            "Choisir les filtres dans leur ordre logique : campus, année, cycle, niveau, filière, spécialité, puis matière ou session. Attendre le chargement des listes dépendantes avant de continuer.",
+            "Si un tableau est vide, contrôler les filtres et les droits avant de créer un nouvel enregistrement. Faire défiler la page pour accéder aux champs et boutons situés plus bas."
+          ],
+          "result": "L’agent retrouve le bon dossier et sait dans quel contexte il travaille."
+        },
+        {
+          "title": "Modifier son mot de passe et comprendre le changement d’année",
+          "steps": [
+            "Depuis l’accueil, ouvrir « Modifier le mot de passe ».",
+            "Renseigner l’ancien mot de passe, le nouveau et sa confirmation. Le formulaire est contrôlé côté application ; le code impose au moins six caractères au nouveau mot de passe. Choisir un mot de passe personnel suffisamment long.",
+            "Valider, vérifier le message affiché, puis utiliser le nouveau mot de passe lors de la prochaine connexion.",
+            "Le bouton « Modifier » situé à côté de l’année académique ouvre un réglage d’administration. Il met à jour l’année de travail de l’application ; il ne sert pas simplement à filtrer son écran personnel. Le réserver au responsable habilité.",
+            "Pour consulter les années antérieures d’un étudiant, privilégier « Historique étudiant » et les historiques de relevés."
+          ],
+          "result": "Le compte reste personnel et l’année de travail est modifiée uniquement dans le cadre de la préparation d’une rentrée."
+        }
+      ]
+    },
+    {
+      "title": "Administration — configurer le logiciel dans le bon ordre",
+      "paragraphs": [
+        "Commencer par ce chapitre avant d’inscrire les étudiants ou de saisir des notes. Une liste vide provient souvent d’un paramètre préalable manquant. Le campus et l’année définissent le contexte ; le cycle, le niveau académique, la filière et la spécialité identifient le parcours. Les matières appartiennent à un programme de spécialité ; leurs sessions d’examen définissent les évaluations utilisables.",
+        "Une tutelle possède ses informations d’en-tête, ses spécialités associées et ses paramètres d’évaluation. Choisir un format de PV ne remplace pas ce paramétrage. Les formats BTS, HND, Soa, Ngaoundéré, Ebolowa et Bamenda existent dans le circuit des PV ; les attestations disposent de trois circuits spécifiques : Soa, Ngaoundéré et Ebolowa.",
+        "Les procédures de suppression décrivent les actions proposées par le projet ; elles ne doivent pas être exécutées pour apprendre sur des dossiers de travail. Une désinscription, une désactivation de personnel et une suppression d’historique ont des effets distincts. Si une action n’est pas proposée par l’interface ou le compte, le guide ne la remplace pas par une adresse à saisir."
+      ],
+      "table": [
+        [
+          "Ordre",
+          "Créer ou vérifier",
+          "Nécessaire pour"
+        ],
+        [
+          "1",
+          "Campus : identité, sigle, localisation et coordonnées",
+          "Reconnaître le site de travail et les en-têtes de documents."
+        ],
+        [
+          "2",
+          "Comptes autorisés, rôles et affectations aux campus",
+          "Permettre aux agents d’ouvrir leurs modules."
+        ],
+        [
+          "3",
+          "Année académique de travail",
+          "Rattacher inscriptions, notes, tarifs et cours au bon exercice."
+        ],
+        [
+          "4",
+          "Cycles puis niveaux académiques ; filières puis spécialités",
+          "Proposer des parcours cohérents dans les formulaires."
+        ],
+        [
+          "5",
+          "Affectations des spécialités aux campus et aux tutelles",
+          "Retrouver les bons groupes et la bonne tutelle."
+        ],
+        [
+          "6",
+          "Matières puis programmes : matière, cycle, niveau, semestre, code, coefficient et barème",
+          "Saisir des notes, programmer des cours et calculer les résultats."
+        ],
+        [
+          "7",
+          "Sessions d’examen : année, tutelle, programme, pondérations CC/TP/examen/rattrapage",
+          "Ouvrir la grille correspondant à une évaluation et calculer ses résultats."
+        ],
+        [
+          "8",
+          "Barèmes de scolarité, profils ancien/nouveau, frais",
+          "Déterminer les montants des inscriptions et règlements."
+        ],
+        [
+          "9",
+          "Banques, caisses d’entrée/sortie et affectations des utilisateurs",
+          "Recevoir les paiements et tracer les mouvements financiers."
+        ],
+        [
+          "10",
+          "Personnel, fonctions, taux ou salaires ; salles, jours et plages horaires",
+          "Affecter les enseignants, établir les emplois du temps et préparer les rémunérations."
+        ],
+        [
+          "11",
+          "Étudiants puis inscriptions annuelles",
+          "Constituer les groupes utilisables en scolarité et pédagogie."
+        ],
+        [
+          "12",
+          "Notes contrôlées, délibérations et décision de publication",
+          "Produire les PV, relevés, attestations et historiques exploitables."
+        ]
+      ],
+      "tasks": [
+        {
+          "title": "Vérifier l’établissement et préparer le campus",
+          "role": "Administrateur",
+          "path": "Administration → Campus",
+          "requires": [
+            "Compte habilité ; identité et coordonnées approuvées de l’établissement."
+          ],
+          "steps": [
+            "Ouvrir « Campus » et rechercher si le site existe déjà. Comparer nom, sigle et localisation ; deux campus peuvent porter un libellé semblable.",
+            "Utiliser le formulaire de création pour un nouveau campus ; renseigner les champs d’identité et de contact proposés. Prévoir un libellé qui distingue clairement chaque site.",
+            "Après validation, utiliser « Utilisateurs » sur la ligne du campus pour sélectionner les agents autorisés, puis enregistrer leurs affectations.",
+            "Ouvrir « Spécialités » sur cette même ligne et associer uniquement les formations proposées sur ce site.",
+            "Se reconnecter ou repasser par le choix du campus, sélectionner le site préparé et vérifier son nom dans le bandeau."
+          ],
+          "result": "Les agents retrouvent les formations du campus attendu.",
+          "figures": [
+            {
+              "file": "captures/admin-campus.png",
+              "caption": "Campus : les actions Utilisateurs et Spécialités servent aux affectations."
+            }
+          ],
+          "attention": "Ne pas supprimer un campus contenant des inscriptions ou des mouvements pour corriger son seul libellé ; corriger ses informations et vérifier ses rattachements."
+        },
+        {
+          "title": "Préparer une nouvelle année académique",
+          "role": "Administrateur responsable de la rentrée",
+          "path": "Bandeau supérieur → Année académique → Modifier",
+          "requires": [
+            "Date de bascule approuvée ; utilisateurs informés ; référentiels, tarifs et paramètres d’examen préparés pour la rentrée."
+          ],
+          "steps": [
+            "Terminer les contrôles de l’année sortante et conserver les états validés nécessaires.",
+            "Vérifier les cycles, niveaux, spécialités et affectations de campus. Préparer les tarifs qui seront utilisés dans le nouveau contexte.",
+            "Cliquer sur « Modifier » à côté de l’année. Saisir les deux années du nouvel exercice, dans l’ordre, puis confirmer.",
+            "Contrôler le bandeau à l’accueil et dans les modules avant d’effectuer une inscription ou une saisie.",
+            "Configurer ou vérifier les sessions d’examen de la nouvelle année. Les sessions de l’année précédente ne garantissent pas l’ouverture de la nouvelle grille."
+          ],
+          "result": "Le contexte de travail correspond à l’année de rentrée.",
+          "attention": "Ce réglage modifie le paramètre de l’application. Utiliser les historiques pour consulter une ancienne année plutôt que changer ce réglage pour une simple recherche."
+        },
+        {
+          "title": "Créer ou modifier : Cycles",
+          "role": "Administrateur",
+          "path": "Administration → Cycles",
+          "requires": [
+            "Connaître les libellés et l’ordre des cycles ; vérifier les référentiels de rattachement."
+          ],
+          "steps": [
+            "Ouvrir la rubrique et rechercher le libellé pour éviter un doublon.",
+            "Pour créer, utiliser le bouton d’ajout de la rubrique ou le formulaire de création visible. Pour modifier, sélectionner l’action d’édition sur la ligne existante ; conserver le même enregistrement.",
+            "Renseigner les libellés et l’ordre des cycles. Comparer les rattachements avec le parcours approuvé avant de confirmer.",
+            "Valider, rechercher à nouveau la ligne et vérifier les champs affichés.",
+            "Ouvrir ensuite un formulaire utilisant cette donnée : elle doit être disponible pour les niveaux académiques."
+          ],
+          "result": "Le référentiel existe une seule fois et ses dépendances restent cohérentes.",
+          "figures": [
+            {
+              "file": "captures/admin-cycles.png",
+              "caption": "Référentiel « Cycles » : liste et accès aux formulaires."
+            }
+          ]
+        },
+        {
+          "title": "Retirer une donnée du référentiel : Cycles",
+          "role": "Administrateur",
+          "path": "Administration → Cycles → ligne concernée → Supprimer",
+          "requires": [
+            "Donnée erronée ou inutilisée identifiée ; décision de retrait validée. Aucun niveau ni parcours ne doit encore utiliser le cycle à retirer."
+          ],
+          "steps": [
+            "Retrouver la ligne et contrôler son nom et son rattachement. Ne pas agir sur une ligne simplement parce qu’elle porte un nom proche.",
+            "Si une correction du libellé suffit, utiliser la modification plutôt qu’un retrait.",
+            "Utiliser « Supprimer » uniquement lorsqu’il est présent sur cette rubrique et autorisé au compte. Lire la confirmation éventuellement affichée ; annuler si le périmètre est incertain.",
+            "Après suppression autorisée, rechercher à nouveau la donnée et vérifier les formulaires dépendants. Si l’application refuse le retrait, relever son message et faire contrôler les dépendances."
+          ],
+          "result": "Le retrait ne laisse pas de parcours métier incohérent.",
+          "attention": "Certaines rubriques ne proposent pas de suppression dans leur écran. Dans ce cas, demander au responsable d’évaluer la correction ; ne pas saisir une adresse de suppression manuellement."
+        },
+        {
+          "title": "Créer ou modifier : Niveau",
+          "role": "Administrateur",
+          "path": "Administration → Niveau",
+          "requires": [
+            "Connaître le nom du niveau et son cycle de rattachement ; vérifier les référentiels de rattachement."
+          ],
+          "steps": [
+            "Ouvrir la rubrique et rechercher le libellé pour éviter un doublon.",
+            "Pour créer, utiliser le bouton d’ajout de la rubrique ou le formulaire de création visible. Pour modifier, sélectionner l’action d’édition sur la ligne existante ; conserver le même enregistrement.",
+            "Renseigner le nom du niveau et son cycle de rattachement. Comparer les rattachements avec le parcours approuvé avant de confirmer.",
+            "Valider, rechercher à nouveau la ligne et vérifier les champs affichés.",
+            "Ouvrir ensuite un formulaire utilisant cette donnée : elle doit être disponible pour les inscriptions et programmes du bon cycle."
+          ],
+          "result": "Le référentiel existe une seule fois et ses dépendances restent cohérentes.",
+          "figures": [
+            {
+              "file": "captures/admin-nniveaux.png",
+              "caption": "Référentiel « Niveau » : liste et accès aux formulaires."
+            }
+          ]
+        },
+        {
+          "title": "Retirer une donnée du référentiel : Niveau",
+          "role": "Administrateur",
+          "path": "Administration → Niveau → ligne concernée → Supprimer",
+          "requires": [
+            "Donnée erronée ou inutilisée identifiée ; décision de retrait validée. Vérifier programmes et inscriptions qui utilisent ce niveau."
+          ],
+          "steps": [
+            "Retrouver la ligne et contrôler son nom et son rattachement. Ne pas agir sur une ligne simplement parce qu’elle porte un nom proche.",
+            "Si une correction du libellé suffit, utiliser la modification plutôt qu’un retrait.",
+            "Utiliser « Supprimer » uniquement lorsqu’il est présent sur cette rubrique et autorisé au compte. Lire la confirmation éventuellement affichée ; annuler si le périmètre est incertain.",
+            "Après suppression autorisée, rechercher à nouveau la donnée et vérifier les formulaires dépendants. Si l’application refuse le retrait, relever son message et faire contrôler les dépendances."
+          ],
+          "result": "Le retrait ne laisse pas de parcours métier incohérent.",
+          "attention": "Certaines rubriques ne proposent pas de suppression dans leur écran. Dans ce cas, demander au responsable d’évaluer la correction ; ne pas saisir une adresse de suppression manuellement."
+        },
+        {
+          "title": "Créer ou modifier : Filières",
+          "role": "Administrateur",
+          "path": "Administration → Filières",
+          "requires": [
+            "Connaître le nom de la filière et les autres informations proposées ; vérifier les référentiels de rattachement."
+          ],
+          "steps": [
+            "Ouvrir la rubrique et rechercher le libellé pour éviter un doublon.",
+            "Pour créer, utiliser le bouton d’ajout de la rubrique ou le formulaire de création visible. Pour modifier, sélectionner l’action d’édition sur la ligne existante ; conserver le même enregistrement.",
+            "Renseigner le nom de la filière et les autres informations proposées. Comparer les rattachements avec le parcours approuvé avant de confirmer.",
+            "Valider, rechercher à nouveau la ligne et vérifier les champs affichés.",
+            "Ouvrir ensuite un formulaire utilisant cette donnée : elle doit être disponible pour le regroupement des spécialités."
+          ],
+          "result": "Le référentiel existe une seule fois et ses dépendances restent cohérentes.",
+          "figures": [
+            {
+              "file": "captures/admin-niveaux.png",
+              "caption": "Référentiel « Filières » : liste et accès aux formulaires."
+            }
+          ]
+        },
+        {
+          "title": "Retirer une donnée du référentiel : Filières",
+          "role": "Administrateur",
+          "path": "Administration → Filières → ligne concernée → Supprimer",
+          "requires": [
+            "Donnée erronée ou inutilisée identifiée ; décision de retrait validée. Contrôler toutes les spécialités rattachées à cette filière."
+          ],
+          "steps": [
+            "Retrouver la ligne et contrôler son nom et son rattachement. Ne pas agir sur une ligne simplement parce qu’elle porte un nom proche.",
+            "Si une correction du libellé suffit, utiliser la modification plutôt qu’un retrait.",
+            "Utiliser « Supprimer » uniquement lorsqu’il est présent sur cette rubrique et autorisé au compte. Lire la confirmation éventuellement affichée ; annuler si le périmètre est incertain.",
+            "Après suppression autorisée, rechercher à nouveau la donnée et vérifier les formulaires dépendants. Si l’application refuse le retrait, relever son message et faire contrôler les dépendances."
+          ],
+          "result": "Le retrait ne laisse pas de parcours métier incohérent.",
+          "attention": "Certaines rubriques ne proposent pas de suppression dans leur écran. Dans ce cas, demander au responsable d’évaluer la correction ; ne pas saisir une adresse de suppression manuellement."
+        },
+        {
+          "title": "Créer ou modifier : Spécialité(s)",
+          "role": "Administrateur",
+          "path": "Administration → Spécialité(s)",
+          "requires": [
+            "Connaître le nom de la spécialité, sa filière et ses paramètres proposés ; vérifier les référentiels de rattachement."
+          ],
+          "steps": [
+            "Ouvrir la rubrique et rechercher le libellé pour éviter un doublon.",
+            "Pour créer, utiliser le bouton d’ajout de la rubrique ou le formulaire de création visible. Pour modifier, sélectionner l’action d’édition sur la ligne existante ; conserver le même enregistrement.",
+            "Renseigner le nom de la spécialité, sa filière et ses paramètres proposés. Comparer les rattachements avec le parcours approuvé avant de confirmer.",
+            "Valider, rechercher à nouveau la ligne et vérifier les champs affichés.",
+            "Ouvrir ensuite un formulaire utilisant cette donnée : elle doit être disponible pour les inscriptions, programmes et cours."
+          ],
+          "result": "Le référentiel existe une seule fois et ses dépendances restent cohérentes.",
+          "figures": [
+            {
+              "file": "captures/admin-classes.png",
+              "caption": "Référentiel « Spécialité(s) » : liste et accès aux formulaires."
+            }
+          ]
+        },
+        {
+          "title": "Retirer une donnée du référentiel : Spécialité(s)",
+          "role": "Administrateur",
+          "path": "Administration → Spécialité(s) → ligne concernée → Supprimer",
+          "requires": [
+            "Donnée erronée ou inutilisée identifiée ; décision de retrait validée. Contrôler ses inscriptions, matières de programme, tutelles et campus."
+          ],
+          "steps": [
+            "Retrouver la ligne et contrôler son nom et son rattachement. Ne pas agir sur une ligne simplement parce qu’elle porte un nom proche.",
+            "Si une correction du libellé suffit, utiliser la modification plutôt qu’un retrait.",
+            "Utiliser « Supprimer » uniquement lorsqu’il est présent sur cette rubrique et autorisé au compte. Lire la confirmation éventuellement affichée ; annuler si le périmètre est incertain.",
+            "Après suppression autorisée, rechercher à nouveau la donnée et vérifier les formulaires dépendants. Si l’application refuse le retrait, relever son message et faire contrôler les dépendances."
+          ],
+          "result": "Le retrait ne laisse pas de parcours métier incohérent.",
+          "attention": "Certaines rubriques ne proposent pas de suppression dans leur écran. Dans ce cas, demander au responsable d’évaluer la correction ; ne pas saisir une adresse de suppression manuellement."
+        },
+        {
+          "title": "Créer ou modifier : Matières",
+          "role": "Administrateur",
+          "path": "Administration → Matières",
+          "requires": [
+            "Connaître le nom de matière et le nom dans la deuxième langue lorsqu’il est utilisé ; vérifier les référentiels de rattachement."
+          ],
+          "steps": [
+            "Ouvrir la rubrique et rechercher le libellé pour éviter un doublon.",
+            "Pour créer, utiliser le bouton d’ajout de la rubrique ou le formulaire de création visible. Pour modifier, sélectionner l’action d’édition sur la ligne existante ; conserver le même enregistrement.",
+            "Renseigner le nom de matière et le nom dans la deuxième langue lorsqu’il est utilisé. Comparer les rattachements avec le parcours approuvé avant de confirmer.",
+            "Valider, rechercher à nouveau la ligne et vérifier les champs affichés.",
+            "Ouvrir ensuite un formulaire utilisant cette donnée : elle doit être disponible pour les programmes et les notes."
+          ],
+          "result": "Le référentiel existe une seule fois et ses dépendances restent cohérentes.",
+          "figures": [
+            {
+              "file": "captures/admin-matieres.png",
+              "caption": "Référentiel « Matières » : liste et accès aux formulaires."
+            }
+          ]
+        },
+        {
+          "title": "Retirer une donnée du référentiel : Matières",
+          "role": "Administrateur",
+          "path": "Administration → Matières → ligne concernée → Supprimer",
+          "requires": [
+            "Donnée erronée ou inutilisée identifiée ; décision de retrait validée. Vérifier les programmes et notes existantes avant tout retrait."
+          ],
+          "steps": [
+            "Retrouver la ligne et contrôler son nom et son rattachement. Ne pas agir sur une ligne simplement parce qu’elle porte un nom proche.",
+            "Si une correction du libellé suffit, utiliser la modification plutôt qu’un retrait.",
+            "Utiliser « Supprimer » uniquement lorsqu’il est présent sur cette rubrique et autorisé au compte. Lire la confirmation éventuellement affichée ; annuler si le périmètre est incertain.",
+            "Après suppression autorisée, rechercher à nouveau la donnée et vérifier les formulaires dépendants. Si l’application refuse le retrait, relever son message et faire contrôler les dépendances."
+          ],
+          "result": "Le retrait ne laisse pas de parcours métier incohérent.",
+          "attention": "Certaines rubriques ne proposent pas de suppression dans leur écran. Dans ce cas, demander au responsable d’évaluer la correction ; ne pas saisir une adresse de suppression manuellement."
+        },
+        {
+          "title": "Créer ou modifier : Salles",
+          "role": "Administrateur",
+          "path": "Administration → Salles",
+          "requires": [
+            "Connaître le nom identifiant le local ; vérifier les référentiels de rattachement."
+          ],
+          "steps": [
+            "Ouvrir la rubrique et rechercher le libellé pour éviter un doublon.",
+            "Pour créer, utiliser le bouton d’ajout de la rubrique ou le formulaire de création visible. Pour modifier, sélectionner l’action d’édition sur la ligne existante ; conserver le même enregistrement.",
+            "Renseigner le nom identifiant le local. Comparer les rattachements avec le parcours approuvé avant de confirmer.",
+            "Valider, rechercher à nouveau la ligne et vérifier les champs affichés.",
+            "Ouvrir ensuite un formulaire utilisant cette donnée : elle doit être disponible pour la préparation des cours et horaires."
+          ],
+          "result": "Le référentiel existe une seule fois et ses dépendances restent cohérentes.",
+          "figures": [
+            {
+              "file": "captures/admin-salles.png",
+              "caption": "Référentiel « Salles » : liste et accès aux formulaires."
+            }
+          ]
+        },
+        {
+          "title": "Retirer une donnée du référentiel : Salles",
+          "role": "Administrateur",
+          "path": "Administration → Salles → ligne concernée → Supprimer",
+          "requires": [
+            "Donnée erronée ou inutilisée identifiée ; décision de retrait validée. Vérifier les séances et emplois du temps faisant référence au local."
+          ],
+          "steps": [
+            "Retrouver la ligne et contrôler son nom et son rattachement. Ne pas agir sur une ligne simplement parce qu’elle porte un nom proche.",
+            "Si une correction du libellé suffit, utiliser la modification plutôt qu’un retrait.",
+            "Utiliser « Supprimer » uniquement lorsqu’il est présent sur cette rubrique et autorisé au compte. Lire la confirmation éventuellement affichée ; annuler si le périmètre est incertain.",
+            "Après suppression autorisée, rechercher à nouveau la donnée et vérifier les formulaires dépendants. Si l’application refuse le retrait, relever son message et faire contrôler les dépendances."
+          ],
+          "result": "Le retrait ne laisse pas de parcours métier incohérent.",
+          "attention": "Certaines rubriques ne proposent pas de suppression dans leur écran. Dans ce cas, demander au responsable d’évaluer la correction ; ne pas saisir une adresse de suppression manuellement."
+        },
+        {
+          "title": "Créer ou modifier : Fonctions",
+          "role": "Administrateur",
+          "path": "Administration → Fonctions",
+          "requires": [
+            "Connaître le libellé de la fonction ; vérifier les référentiels de rattachement."
+          ],
+          "steps": [
+            "Ouvrir la rubrique et rechercher le libellé pour éviter un doublon.",
+            "Pour créer, utiliser le bouton d’ajout de la rubrique ou le formulaire de création visible. Pour modifier, sélectionner l’action d’édition sur la ligne existante ; conserver le même enregistrement.",
+            "Renseigner le libellé de la fonction. Comparer les rattachements avec le parcours approuvé avant de confirmer.",
+            "Valider, rechercher à nouveau la ligne et vérifier les champs affichés.",
+            "Ouvrir ensuite un formulaire utilisant cette donnée : elle doit être disponible pour les affectations du personnel."
+          ],
+          "result": "Le référentiel existe une seule fois et ses dépendances restent cohérentes.",
+          "figures": [
+            {
+              "file": "captures/admin-fonctions.png",
+              "caption": "Référentiel « Fonctions » : liste et accès aux formulaires."
+            }
+          ]
+        },
+        {
+          "title": "Retirer une donnée du référentiel : Fonctions",
+          "role": "Administrateur",
+          "path": "Administration → Fonctions → ligne concernée → Supprimer",
+          "requires": [
+            "Donnée erronée ou inutilisée identifiée ; décision de retrait validée. Vérifier les affectations des personnels concernés."
+          ],
+          "steps": [
+            "Retrouver la ligne et contrôler son nom et son rattachement. Ne pas agir sur une ligne simplement parce qu’elle porte un nom proche.",
+            "Si une correction du libellé suffit, utiliser la modification plutôt qu’un retrait.",
+            "Utiliser « Supprimer » uniquement lorsqu’il est présent sur cette rubrique et autorisé au compte. Lire la confirmation éventuellement affichée ; annuler si le périmètre est incertain.",
+            "Après suppression autorisée, rechercher à nouveau la donnée et vérifier les formulaires dépendants. Si l’application refuse le retrait, relever son message et faire contrôler les dépendances."
+          ],
+          "result": "Le retrait ne laisse pas de parcours métier incohérent.",
+          "attention": "Certaines rubriques ne proposent pas de suppression dans leur écran. Dans ce cas, demander au responsable d’évaluer la correction ; ne pas saisir une adresse de suppression manuellement."
+        },
+        {
+          "title": "Créer ou modifier : Jours",
+          "role": "Administrateur",
+          "path": "Administration → Jours",
+          "requires": [
+            "Connaître le nom du jour et son observation ; vérifier les référentiels de rattachement."
+          ],
+          "steps": [
+            "Ouvrir la rubrique et rechercher le libellé pour éviter un doublon.",
+            "Pour créer, utiliser le bouton d’ajout de la rubrique ou le formulaire de création visible. Pour modifier, sélectionner l’action d’édition sur la ligne existante ; conserver le même enregistrement.",
+            "Renseigner le nom du jour et son observation. Comparer les rattachements avec le parcours approuvé avant de confirmer.",
+            "Valider, rechercher à nouveau la ligne et vérifier les champs affichés.",
+            "Ouvrir ensuite un formulaire utilisant cette donnée : elle doit être disponible pour l’organisation des enseignements."
+          ],
+          "result": "Le référentiel existe une seule fois et ses dépendances restent cohérentes.",
+          "figures": [
+            {
+              "file": "captures/admin-jours.png",
+              "caption": "Référentiel « Jours » : liste et accès aux formulaires."
+            }
+          ]
+        },
+        {
+          "title": "Retirer une donnée du référentiel : Jours",
+          "role": "Administrateur",
+          "path": "Administration → Jours → ligne concernée → Supprimer",
+          "requires": [
+            "Donnée erronée ou inutilisée identifiée ; décision de retrait validée. Vérifier l’utilisation du jour dans les plannings."
+          ],
+          "steps": [
+            "Retrouver la ligne et contrôler son nom et son rattachement. Ne pas agir sur une ligne simplement parce qu’elle porte un nom proche.",
+            "Si une correction du libellé suffit, utiliser la modification plutôt qu’un retrait.",
+            "Utiliser « Supprimer » uniquement lorsqu’il est présent sur cette rubrique et autorisé au compte. Lire la confirmation éventuellement affichée ; annuler si le périmètre est incertain.",
+            "Après suppression autorisée, rechercher à nouveau la donnée et vérifier les formulaires dépendants. Si l’application refuse le retrait, relever son message et faire contrôler les dépendances."
+          ],
+          "result": "Le retrait ne laisse pas de parcours métier incohérent.",
+          "attention": "Certaines rubriques ne proposent pas de suppression dans leur écran. Dans ce cas, demander au responsable d’évaluer la correction ; ne pas saisir une adresse de suppression manuellement."
+        },
+        {
+          "title": "Créer ou modifier : Horaires",
+          "role": "Administrateur",
+          "path": "Administration → Horaires",
+          "requires": [
+            "Connaître l’intervalle, le type cours/pause, le nombre d’heures et le numéro d’ordre ; vérifier les référentiels de rattachement."
+          ],
+          "steps": [
+            "Ouvrir la rubrique et rechercher le libellé pour éviter un doublon.",
+            "Pour créer, utiliser le bouton d’ajout de la rubrique ou le formulaire de création visible. Pour modifier, sélectionner l’action d’édition sur la ligne existante ; conserver le même enregistrement.",
+            "Renseigner l’intervalle, le type cours/pause, le nombre d’heures et le numéro d’ordre. Comparer les rattachements avec le parcours approuvé avant de confirmer.",
+            "Valider, rechercher à nouveau la ligne et vérifier les champs affichés.",
+            "Ouvrir ensuite un formulaire utilisant cette donnée : elle doit être disponible pour l’ancien circuit d’emploi du temps."
+          ],
+          "result": "Le référentiel existe une seule fois et ses dépendances restent cohérentes.",
+          "figures": [
+            {
+              "file": "captures/admin-horaires.png",
+              "caption": "Référentiel « Horaires » : liste et accès aux formulaires."
+            }
+          ]
+        },
+        {
+          "title": "Retirer une donnée du référentiel : Horaires",
+          "role": "Administrateur",
+          "path": "Administration → Horaires → ligne concernée → Supprimer",
+          "requires": [
+            "Donnée erronée ou inutilisée identifiée ; décision de retrait validée. Vérifier les cours qui utilisent cet intervalle."
+          ],
+          "steps": [
+            "Retrouver la ligne et contrôler son nom et son rattachement. Ne pas agir sur une ligne simplement parce qu’elle porte un nom proche.",
+            "Si une correction du libellé suffit, utiliser la modification plutôt qu’un retrait.",
+            "Utiliser « Supprimer » uniquement lorsqu’il est présent sur cette rubrique et autorisé au compte. Lire la confirmation éventuellement affichée ; annuler si le périmètre est incertain.",
+            "Après suppression autorisée, rechercher à nouveau la donnée et vérifier les formulaires dépendants. Si l’application refuse le retrait, relever son message et faire contrôler les dépendances."
+          ],
+          "result": "Le retrait ne laisse pas de parcours métier incohérent.",
+          "attention": "Certaines rubriques ne proposent pas de suppression dans leur écran. Dans ce cas, demander au responsable d’évaluer la correction ; ne pas saisir une adresse de suppression manuellement."
+        },
+        {
+          "title": "Créer ou modifier : Frais",
+          "role": "Administrateur",
+          "path": "Administration → Frais",
+          "requires": [
+            "Connaître la nature des frais et les autres valeurs demandées par le formulaire ; vérifier les référentiels de rattachement."
+          ],
+          "steps": [
+            "Ouvrir la rubrique et rechercher le libellé pour éviter un doublon.",
+            "Pour créer, utiliser le bouton d’ajout de la rubrique ou le formulaire de création visible. Pour modifier, sélectionner l’action d’édition sur la ligne existante ; conserver le même enregistrement.",
+            "Renseigner la nature des frais et les autres valeurs demandées par le formulaire. Comparer les rattachements avec le parcours approuvé avant de confirmer.",
+            "Valider, rechercher à nouveau la ligne et vérifier les champs affichés.",
+            "Ouvrir ensuite un formulaire utilisant cette donnée : elle doit être disponible pour les paiements distincts de la pension."
+          ],
+          "result": "Le référentiel existe une seule fois et ses dépendances restent cohérentes.",
+          "figures": [
+            {
+              "file": "captures/admin-frais.png",
+              "caption": "Référentiel « Frais » : liste et accès aux formulaires."
+            }
+          ]
+        },
+        {
+          "title": "Retirer une donnée du référentiel : Frais",
+          "role": "Administrateur",
+          "path": "Administration → Frais → ligne concernée → Supprimer",
+          "requires": [
+            "Donnée erronée ou inutilisée identifiée ; décision de retrait validée. Vérifier les paiements déjà rattachés à la catégorie de frais."
+          ],
+          "steps": [
+            "Retrouver la ligne et contrôler son nom et son rattachement. Ne pas agir sur une ligne simplement parce qu’elle porte un nom proche.",
+            "Si une correction du libellé suffit, utiliser la modification plutôt qu’un retrait.",
+            "Utiliser « Supprimer » uniquement lorsqu’il est présent sur cette rubrique et autorisé au compte. Lire la confirmation éventuellement affichée ; annuler si le périmètre est incertain.",
+            "Après suppression autorisée, rechercher à nouveau la donnée et vérifier les formulaires dépendants. Si l’application refuse le retrait, relever son message et faire contrôler les dépendances."
+          ],
+          "result": "Le retrait ne laisse pas de parcours métier incohérent.",
+          "attention": "Certaines rubriques ne proposent pas de suppression dans leur écran. Dans ce cas, demander au responsable d’évaluer la correction ; ne pas saisir une adresse de suppression manuellement."
+        },
+        {
+          "title": "Configurer une tutelle et lui affecter les spécialités",
+          "role": "Administrateur pédagogique",
+          "path": "Administration → Tutelles académiques",
+          "requires": [
+            "Identité, faculté, logos et coordonnées officiels ; spécialités déjà créées."
+          ],
+          "steps": [
+            "Ouvrir le formulaire de tutelle ; saisir nom, ville, ministère, faculté, coordonnées et localisation.",
+            "Ajouter les logos et les libellés francophones et anglophones utilisés par les documents. Vérifier leur orthographe avec les informations institutionnelles.",
+            "Valider puis ouvrir « Spécialités » sur la ligne de la tutelle pour préparer ses rattachements.",
+            "Affecter les spécialités concernées ; vérifier ensuite leurs campus et leurs programmes.",
+            "Consulter un document de cette tutelle et contrôler les logos, la faculté, les noms, les intitulés de parcours et les signatures attendues."
+          ],
+          "result": "La tutelle peut être retrouvée dans le paramétrage des évaluations et les documents.",
+          "figures": [
+            {
+              "file": "captures/admin-tutelles.png",
+              "caption": "Tutelles académiques : identité, logos et accès aux spécialités."
+            }
+          ]
+        },
+        {
+          "title": "Créer le programme d’une spécialité",
+          "role": "Administrateur pédagogique",
+          "path": "Administration → Programme de Spécialité → spécialité → cycle et niveau",
+          "requires": [
+            "Matières, filière, spécialité, cycle et niveau déjà créés ; liste approuvée des matières, codes, semestres, coefficients et barèmes."
+          ],
+          "steps": [
+            "Ouvrir « Programme de Spécialité », sélectionner la spécialité puis le cycle et le niveau. Vérifier ces trois repères sur l’écran du programme.",
+            "Dans les matières disponibles, retrouver et sélectionner les enseignements à ajouter au programme.",
+            "Pour chaque matière retenue, compléter les champs du programme : code, coefficient, maximum, semestre et type selon les colonnes proposées.",
+            "Contrôler que le semestre et les valeurs correspondent à la maquette de formation, puis valider.",
+            "Vérifier la liste des matières déjà rattachées. Préparer les groupes de matières ou modules si le programme les utilise.",
+            "Configurer ensuite les sessions d’examen de ces matières pour l’année et la tutelle avant de demander la saisie des notes."
+          ],
+          "result": "Les matières du groupe sont sélectionnables dans les notes et dans les cours.",
+          "figures": [
+            {
+              "file": "captures/admin-programmes-selection-matieres-id-20-cycle-1-nniveau-6.png",
+              "caption": "Programme : matières rattachées et valeurs utilisées dans les calculs."
+            }
+          ]
+        },
+        {
+          "title": "Modifier ou retirer une matière du programme",
+          "role": "Administrateur pédagogique",
+          "path": "Administration → Programme de Spécialité → même spécialité, cycle et niveau",
+          "requires": [
+            "Programme existant ; impact pédagogique vérifié si des notes sont déjà saisies."
+          ],
+          "steps": [
+            "Ouvrir exactement le même contexte de programme, puis identifier la matière dans les enseignements rattachés.",
+            "Pour une correction, utiliser son formulaire d’édition et modifier le code, le semestre, le coefficient ou le maximum attendu, puis valider.",
+            "Pour un retrait, vérifier l’absence de notes et de cours qui doivent être conservés, puis utiliser l’action de suppression de la ligne de programme si le retrait est autorisé.",
+            "Contrôler les sessions d’examen et les documents dépendants. Les résultats calculés peuvent évoluer après un changement de programme.",
+            "Revoir les documents sauvegardés séparément ; une ancienne génération n’est pas nécessairement actualisée par la correction du programme."
+          ],
+          "result": "La maquette du parcours reste cohérente avec les données déjà utilisées."
+        },
+        {
+          "title": "Configurer les sessions d’examen d’une matière ou d’une tutelle",
+          "role": "Administrateur pédagogique",
+          "path": "Administration → Programme de Spécialité → Sessions ; ou Sessions examens globales",
+          "requires": [
+            "Programme complet ; année de travail vérifiée ; tutelle rattachée à la spécialité ; répartition approuvée des CC, TP, session normale et rattrapage."
+          ],
+          "steps": [
+            "Pour une matière, ouvrir ses sessions depuis la ligne du programme ; vérifier matière, spécialité, cycle, niveau, année et tutelle.",
+            "Pour un ensemble de matières, ouvrir « Sessions examens globales », choisir année, tutelle et les filtres de cycle, filière, spécialité, niveau et semestre.",
+            "Lire les compteurs de programmes ciblés et de sessions existantes avant de préparer une application globale.",
+            "Renseigner les pondérations de chaque semestre : CC, TP, session normale et rattrapage selon les champs proposés. Une pondération nulle peut rendre une saisie indisponible.",
+            "Contrôler les règles de calcul approuvées pour la tutelle ; confirmer seulement après vérification du périmètre.",
+            "Retourner dans les sessions d’une matière du groupe pour vérifier la configuration obtenue, puis ouvrir sa grille de notes.",
+            "Pour corriger ou retirer une session, revenir à la même matière et à la même année ; vérifier d’abord les notes qui utilisent ces paramètres."
+          ],
+          "result": "Les évaluations réellement prévues deviennent utilisables et leurs pondérations sont contrôlées.",
+          "figures": [
+            {
+              "file": "captures/admin-sessions-global.png",
+              "caption": "Sessions globales : filtres de tutelle et périmètre avant application."
+            }
+          ]
+        },
+        {
+          "title": "Préparer les tarifs et profils de scolarité",
+          "role": "Administrateur de la scolarité",
+          "path": "Administration → Scolarité",
+          "requires": [
+            "Parcours configurés ; montants, tranches et règles ancien/nouveau approuvés."
+          ],
+          "steps": [
+            "Choisir d’abord « Ancien style de scolarité » ou « Nouveau style de scolarité ». Ce choix organise les profils ; il est distinct du type d’étudiant ancien/nouveau.",
+            "Afficher les profils du style retenu et ouvrir l’ajout ou la modification du barème concerné.",
+            "Renseigner le contexte de parcours, les catégories et les montants proposés par le formulaire ; vérifier les tranches et les éventuels frais.",
+            "Valider puis ouvrir une préparation d’inscription avec le même profil, cycle, spécialité, niveau et type de scolarité.",
+            "Vérifier le tarif récupéré. Si aucun tarif ne correspond, corriger ce paramétrage avant de continuer l’inscription."
+          ],
+          "result": "Le formulaire d’inscription retrouve le barème correspondant.",
+          "figures": [
+            {
+              "file": "captures/admin-scolarites.png",
+              "caption": "Scolarité : choisir le style avant de préparer ou modifier un profil."
+            }
+          ]
+        },
+        {
+          "title": "Préparer banques, caisses et droits d’encaissement",
+          "role": "Administrateur financier",
+          "path": "Administration → Banques / Caisses → Affectations",
+          "requires": [
+            "Campus et utilisateurs existants ; comptes et caisses identifiés."
+          ],
+          "steps": [
+            "Créer ou vérifier les banques et leurs comptes. Distinguer les comptes par leurs libellés et leurs références.",
+            "Créer ou modifier les caisses en distinguant entrée et sortie ; vérifier les valeurs de référence proposées par le formulaire.",
+            "Ouvrir les affectations financières et sélectionner les utilisateurs autorisés pour chaque caisse ou banque.",
+            "Dans un formulaire de paiement, vérifier que l’agent retrouve la bonne caisse d’entrée ou la bonne banque.",
+            "Contrôler un état financier du même périmètre. Avant de retirer une source financière, examiner ses mouvements et ses affectations."
+          ],
+          "result": "Les paiements peuvent être affectés à une source autorisée et contrôlée.",
+          "figures": [
+            {
+              "file": "captures/admin-caisses.png",
+              "caption": "Caisses et accès aux affectations."
+            },
+            {
+              "file": "captures/admin-banques.png",
+              "caption": "Banques et comptes de réception."
+            }
+          ]
+        },
+        {
+          "title": "Modifier ou retirer un campus, une tutelle ou un tarif",
+          "role": "Administrateur habilité",
+          "path": "Administration → Campus / Tutelles académiques / Scolarité",
+          "requires": [
+            "Enregistrement exact identifié ; décisions et dépendances contrôlées."
+          ],
+          "steps": [
+            "Pour une correction, ouvrir l’édition de la ligne existante ; modifier les libellés, contacts, logos ou montants justifiés et vérifier le résultat dans la liste.",
+            "Avant de retirer un campus, examiner ses utilisateurs, spécialités, inscriptions et mouvements ; avant de retirer une tutelle, vérifier spécialités, sessions et documents.",
+            "Avant de retirer un tarif, identifier les inscriptions qui utilisent ce profil ; une modification de tarif peut changer l’interprétation d’une situation financière.",
+            "Utiliser « Supprimer » sur la ligne uniquement lorsque le retrait est approuvé et disponible, lire la confirmation éventuelle puis vérifier les listes et formulaires dépendants.",
+            "Si une dépendance empêche le retrait, relever le message et préparer la correction avec le responsable ; ne pas supprimer les dossiers dépendants pour forcer le retrait."
+          ],
+          "result": "Le référentiel est corrigé ou retiré avec ses dépendances examinées."
+        },
+        {
+          "title": "Corriger ou retirer une banque ou une caisse",
+          "role": "Administrateur financier",
+          "path": "Administration → Banques / Caisses",
+          "requires": [
+            "Source identifiée ; soldes, mouvements et utilisateurs autorisés examinés."
+          ],
+          "steps": [
+            "Ouvrir l’édition de la bonne source pour corriger son nom ou les informations autorisées.",
+            "Comparer ses coordonnées et son type entrée/sortie avec l’organisation du service, puis contrôler les formulaires de paiement.",
+            "Avant une suppression, consulter l’état financier et les affectations de la source.",
+            "Utiliser l’action « Supprimer » de la ligne seulement après décision du responsable ; vérifier les listes et destinations encore disponibles.",
+            "Conserver les justificatifs et faire examiner tout mouvement historique qui se rapporte à cette source."
+          ],
+          "result": "Les sources financières restent reconnaissables et les opérations peuvent être expliquées."
+        }
+      ]
+    },
+    {
+      "title": "Scolarité — créer, corriger, inscrire et retrouver les dossiers",
+      "paragraphs": [
+        "Dépendances : configuration du campus et du parcours → fiche étudiant → inscription annuelle → paiements, listes et documents. Un étudiant peut être enregistré sans être inscrit dans l’année active. Ne pas recréer sa fiche pour une réinscription.",
+        "Les fiches d’identité et les inscriptions doivent être corrigées dans leur formulaire respectif. La modification d’une adresse ou d’un téléphone n’est pas une modification de spécialité ; un changement de parcours se traite dans l’inscription."
+      ],
+      "tasks": [
+        {
+          "title": "Rechercher avant toute création",
+          "role": "Agent de scolarité",
+          "path": "Gestion des inscriptions → Inscription / Paiement / Opérations sur les étudiants",
+          "requires": [
+            "Nom ou matricule ; campus et année vérifiés."
+          ],
+          "steps": [
+            "Saisir d’abord le matricule, puis utiliser le nom si nécessaire ; cliquer sur « Chercher ».",
+            "Comparer nom complet, matricule, date et lieu de naissance.",
+            "Ouvrir « Actions » sur la ligne exacte ; choisir « Voir/Modifier », « Inscrire », « Ajouter un payement », « Paiement de frais » ou « Liste des versements » selon le besoin.",
+            "Si le dossier est introuvable, vérifier le campus et l’historique avant de créer une nouvelle identité."
+          ],
+          "result": "Le bon dossier est identifié sans doublon.",
+          "figures": [
+            {
+              "file": "captures/inscriptions-find.png",
+              "caption": "Recherche : choisir l’action sur la bonne ligne."
+            }
+          ]
+        },
+        {
+          "title": "Créer une fiche étudiant puis poursuivre vers l’inscription",
+          "role": "Agent de scolarité",
+          "path": "Gestion des inscriptions → Enregistrer un étudiant",
+          "requires": [
+            "Recherche sans dossier correspondant ; pièces d’identité, contacts et informations de scolarité antérieure."
+          ],
+          "steps": [
+            "Renseigner nom, naissance, sexe, nationalité et résidence en respectant les champs obligatoires.",
+            "Ajouter les contacts de l’étudiant et la photo lorsqu’elle est disponible.",
+            "Compléter les études antérieures, le financement et les renseignements complémentaires connus.",
+            "Faire défiler jusqu’aux sections père, mère et tuteur ; vérifier les contacts et le lien du tuteur.",
+            "Relire l’ensemble puis confirmer. Vérifier le message de succès.",
+            "Utiliser l’action d’inscription proposée ou rechercher la fiche puis « Actions → Inscrire ». La fiche seule ne constitue pas l’inscription annuelle."
+          ],
+          "result": "L’identité existe ; l’agent poursuit l’inscription sur ce même dossier.",
+          "figures": [
+            {
+              "file": "captures/inscriptions-enregistrement-create.png",
+              "caption": "Création d’une fiche étudiant ; les sections familiales se trouvent plus bas."
+            }
+          ]
+        },
+        {
+          "title": "Modifier les renseignements d’un étudiant",
+          "role": "Agent habilité",
+          "path": "Recherche étudiant → Actions → Voir/Modifier",
+          "requires": [
+            "Pièce ou demande justifiant la correction ; dossier exact retrouvé."
+          ],
+          "steps": [
+            "Vérifier le nom et le matricule de la fiche ouverte.",
+            "Corriger les seuls renseignements concernés : identité, naissance, contacts, photo ou données familiales selon le formulaire.",
+            "Vérifier les sections situées en bas de page puis confirmer.",
+            "Rechercher de nouveau le dossier pour contrôler l’information enregistrée.",
+            "Si la correction concerne une inscription, revenir à son formulaire spécifique plutôt que modifier seulement la fiche."
+          ],
+          "result": "La fiche existante est corrigée et l’identité reste unique.",
+          "figures": [
+            {
+              "file": "captures/inscriptions-enregistrement-edit-2004.png",
+              "caption": "Voir/Modifier : identité et informations du dossier existant."
+            }
+          ]
+        },
+        {
+          "title": "Créer une inscription ou réinscrire pour l’année",
+          "role": "Agent de scolarité",
+          "path": "Inscrire un étudiant enregistré → recherche → Actions → Inscrire",
+          "requires": [
+            "Fiche existante ; campus, année, parcours et tarif préparés ; caisse ou banque autorisée si règlement initial."
+          ],
+          "steps": [
+            "Vérifier l’identité en tête du formulaire.",
+            "Choisir le style/profil de scolarité, puis cycle, filière, spécialité et niveau académique.",
+            "Choisir le type de scolarité « Ancien » ou « Nouveau » d’après la situation de l’étudiant ; vérifier le campus affiché.",
+            "Contrôler le tarif récupéré et les informations de règlement initial proposées. En cas de tarif absent, revenir au paramétrage.",
+            "Compléter le mode et la source financière nécessaires, relire puis confirmer une seule fois.",
+            "Vérifier le succès, le matricule et le reçu proposé, puis retrouver l’étudiant dans la liste du parcours."
+          ],
+          "result": "L’inscription est rattachée au bon parcours de l’année active.",
+          "figures": [
+            {
+              "file": "captures/inscriptions-create-2004.png",
+              "caption": "Inscription : le profil, le type d’étudiant et le parcours se contrôlent séparément."
+            }
+          ]
+        },
+        {
+          "title": "Corriger l’inscription annuelle",
+          "role": "Agent habilité à modifier les inscriptions",
+          "path": "Dossier inscrit / listes → opération de modification de l’inscription",
+          "requires": [
+            "Inscription de l’année retrouvée ; changement de parcours ou de type approuvé."
+          ],
+          "steps": [
+            "Retrouver le dossier et l’inscription de l’année active ; vérifier le campus.",
+            "Ouvrir la modification de l’inscription lorsque l’action est disponible pour le compte.",
+            "Corriger cycle, filière, spécialité, niveau ou type ancien/nouveau ; contrôler la compatibilité des listes.",
+            "Valider puis vérifier la liste du groupe de destination.",
+            "Faire vérifier séparément la scolarité, les versements et les résultats si le changement de parcours a des conséquences sur ces données."
+          ],
+          "result": "Le parcours de l’inscription existante est corrigé sans inscription concurrente."
+        },
+        {
+          "title": "Désinscrire puis rétablir une inscription",
+          "role": "Responsable de scolarité",
+          "path": "Listes / opérations sur l’étudiant → désinscription ou rétablissement",
+          "requires": [
+            "Étudiant, campus et année vérifiés ; décision administrative."
+          ],
+          "steps": [
+            "Vérifier que l’action concerne l’inscription de l’année, et non la fiche complète.",
+            "Utiliser la désinscription prévue par l’interface et confirmer si demandé. Le code marque l’inscription comme désinscrite.",
+            "Contrôler les listes d’inscrits et de désinscrits.",
+            "Pour un retour autorisé, utiliser l’action de rétablissement de l’inscription puis contrôler son retour dans la liste."
+          ],
+          "result": "Le statut annuel est changé ou rétabli sans effacer l’identité.",
+          "attention": "La suppression définitive de la fiche étudiant est une autre action. Son impact sur les inscriptions, notes, parents et paiements doit être examiné par le responsable ; ne pas l’utiliser pour une simple désinscription."
+        },
+        {
+          "title": "Importer les fiches et les inscriptions en deux étapes",
+          "role": "Agent habilité aux imports",
+          "path": "Importer les étudiants ; puis Importer les inscriptions",
+          "requires": [
+            "Modèles téléchargés ; données contrôlées ; parcours et tarifs préparés."
+          ],
+          "steps": [
+            "Télécharger le modèle des étudiants et compléter les colonnes obligatoires, une ligne par étudiant. Conserver les en-têtes.",
+            "Contrôler identités, dates, sexe, nationalité et résidence ; choisir le fichier puis importer une seule fois.",
+            "Lire les résultats et retrouver des fiches importées avant de poursuivre.",
+            "Télécharger le modèle des inscriptions ; reprendre les identifiants des parcours affichés dans cette installation.",
+            "Renseigner les étudiants déjà identifiés et les données annuelles ; importer puis vérifier plusieurs inscriptions dans les listes.",
+            "Corriger les erreurs signalées avant toute reprise. Vérifier ce qui a déjà été enregistré pour éviter une seconde création."
+          ],
+          "result": "Les identités sont préparées avant leurs inscriptions annuelles."
+        },
+        {
+          "title": "Afficher une liste de scolarité exploitable",
+          "role": "Agent de scolarité",
+          "path": "Gestion des inscriptions → Afficher les listes",
+          "requires": [
+            "Étudiants inscrits ; type de liste et groupe connus."
+          ],
+          "steps": [
+            "Choisir le type de liste : inscrits, parents, accès, frais, bourses ou désinscrits selon les choix présentés.",
+            "Sélectionner spécialité, cycle et niveau lorsque demandés ; contrôler le campus et l’année.",
+            "Afficher et vérifier l’effectif, les identités et les colonnes utiles.",
+            "Utiliser les commandes d’impression ou d’export effectivement présentes ; ouvrir l’aperçu et vérifier titre, pages et période.",
+            "Conserver le fichier avec un nom précisant année, groupe et type de liste."
+          ],
+          "result": "L’état est identifiable et peut être utilisé par le service destinataire.",
+          "figures": [
+            {
+              "file": "captures/inscriptions-selection-listes.png",
+              "caption": "Choisir le type de liste avant le groupe."
+            }
+          ]
+        },
+        {
+          "title": "Retrouver le parcours d’un étudiant et les effectifs",
+          "role": "Agent de scolarité",
+          "path": "Historique étudiant ; Effectifs par cycle",
+          "requires": [
+            "Identité retrouvée ; périmètre de comparaison défini."
+          ],
+          "steps": [
+            "Ouvrir « Historique étudiant », chercher le dossier puis consulter ses différentes années.",
+            "Distinguer parcours, paiements et résultats disponibles pour chaque inscription.",
+            "Ouvrir « Effectifs par cycle » pour une vue des groupes ; contrôler l’année et le campus.",
+            "Comparer ces effectifs à une liste d’inscrits utilisant les mêmes critères."
+          ],
+          "result": "Les informations individuelles et les totaux sont rapprochés sur le même périmètre."
+        },
+        {
+          "title": "Préparer photos, cartes, certificats et fiches d’examen",
+          "role": "Agent de scolarité",
+          "path": "Gestion des inscriptions → Photos / Cartes / Certificat de scolarité / Fiches",
+          "requires": [
+            "Identités vérifiées ; inscription du groupe ; photos pour les cartes."
+          ],
+          "steps": [
+            "Pour une photo, ouvrir « Ajouter les photos », choisir la spécialité puis le contexte, sélectionner le fichier pour le bon étudiant et vérifier le résultat.",
+            "Pour une carte, choisir une spécialité ou rechercher un étudiant ; contrôler photo, nom et matricule avant impression.",
+            "Pour un certificat, choisir cycle, filière, spécialité et niveau puis « Générer les certificats » ; vérifier l’année et les identités.",
+            "Pour une fiche de notes ou de présence, ouvrir « Fiches », choisir le type d’évaluation puis le groupe.",
+            "Vérifier l’aperçu et le nombre de pages avant de conserver ou imprimer le document."
+          ],
+          "result": "Le document correspond au bon étudiant ou au bon groupe."
+        }
+      ]
+    },
+    {
+      "title": "Versements — encaisser après l’inscription et contrôler les paiements",
+      "paragraphs": [
+        "Dépendances : étudiant inscrit → règlement justifié → caisse ou banque autorisée → reçu → liste des versements et état financier. Le paiement d’inscription initial et les versements ultérieurs ne se saisissent pas nécessairement depuis le même formulaire.",
+        "Un montant restant dû, une bourse et un versement ne représentent pas la même information. Le mode de paiement décrit le moyen utilisé ; le type d’opération choisit la source comptable caisse ou banque."
+      ],
+      "tasks": [
+        {
+          "title": "Lister les versements d’un étudiant",
+          "role": "Caissier / agent de scolarité autorisé",
+          "path": "Recherche étudiant → Actions → Liste des versements",
+          "requires": [
+            "Matricule ou nom ; année et campus du dossier."
+          ],
+          "steps": [
+            "Ouvrir « Inscription / Paiement / Opérations sur les étudiants » et rechercher le matricule.",
+            "Vérifier l’identité puis cliquer sur « Actions » sur cette ligne.",
+            "Choisir « Liste des versements ».",
+            "Contrôler le nom du dossier, l’année du bandeau, les dates, motifs, numéros et montants des règlements.",
+            "Ouvrir le reçu d’une ligne lorsque la commande est proposée. Pour une autre année, consulter d’abord « Historique étudiant »."
+          ],
+          "result": "Les paiements existants sont consultés sans en créer un nouveau.",
+          "figures": [
+            {
+              "file": "captures/inscriptions-payement-list-2004.png",
+              "caption": "Liste des versements : vérifier l’année et le dossier."
+            }
+          ]
+        },
+        {
+          "title": "Recevoir un paiement après l’inscription",
+          "role": "Caissier habilité",
+          "path": "Gestion des inscriptions → Gestion des paiements ; ou recherche étudiant → Actions → Ajouter un payement",
+          "requires": [
+            "Étudiant inscrit ; somme reçue et justificatif ; caisse d’entrée ou banque affectée à l’agent."
+          ],
+          "steps": [
+            "Rechercher l’étudiant par son matricule et contrôler ses versements déjà enregistrés.",
+            "Choisir « Ajouter un payement » ; vérifier nom, matricule et campus en tête du formulaire.",
+            "Renseigner le montant reçu, un motif précis et le montant en lettres lorsqu’il est demandé.",
+            "Choisir le mode de paiement : bancaire, Orange Money ou espèces, suivant le règlement réel.",
+            "Choisir le type d’opération : « Espèce / Caisse » ou « Banque ». Pour la caisse, choisir la caisse d’entrée ; pour la banque, choisir le compte et compléter numéro de versement et références.",
+            "Comparer dossier, montant, justificatif et destination des fonds ; confirmer une seule fois.",
+            "Revenir à « Liste des versements » pour vérifier la nouvelle ligne, puis contrôler et imprimer le reçu proposé.",
+            "Consulter l’état de caisse de la même période et de la même source pour rapprocher le mouvement."
+          ],
+          "result": "Le paiement ultérieur est rattaché à l’étudiant et à la bonne source financière.",
+          "figures": [
+            {
+              "file": "captures/inscriptions-payement-create-2004.png",
+              "caption": "Formulaire de paiement après inscription : montant, motif et source."
+            }
+          ]
+        },
+        {
+          "title": "Recevoir des frais distincts de la pension",
+          "role": "Caissier habilité",
+          "path": "Recherche étudiant → Actions → Paiement de frais",
+          "requires": [
+            "Catégorie de frais préparée ; étudiant identifié ; justificatif et source autorisée."
+          ],
+          "steps": [
+            "Ouvrir « Paiement de frais » sur le bon dossier.",
+            "Choisir la nature des frais dans la liste proposée et renseigner les éléments financiers demandés.",
+            "Vérifier le mode, le type d’opération et la caisse ou banque retenue.",
+            "Confirmer puis consulter les versements et le justificatif pour vérifier l’affectation."
+          ],
+          "result": "Le versement est reconnu comme frais spécifiques, distinct de la pension.",
+          "figures": [
+            {
+              "file": "captures/inscriptions-payement-create-frais-2004.png",
+              "caption": "Paiement de frais : choisir la bonne nature."
+            }
+          ]
+        },
+        {
+          "title": "Corriger le montant d’un versement",
+          "role": "Responsable habilité aux corrections financières",
+          "path": "Liste des versements → édition de la ligne",
+          "requires": [
+            "Versement identifié par sa référence ; correction justifiée et validée."
+          ],
+          "steps": [
+            "Retrouver la ligne exacte et comparer étudiant, numéro, date et montant au justificatif.",
+            "Ouvrir l’édition proposée au compte. Le contrôleur de correction met à jour le montant et le montant en lettres ; il ne constitue pas une correction complète de tous les champs financiers.",
+            "Renseigner les valeurs justifiées, confirmer puis vérifier la ligne.",
+            "Faire rapprocher le reçu, la situation de l’étudiant et le mouvement de caisse ou banque par le responsable comptable."
+          ],
+          "result": "La correction est contrôlée sur le dossier et dans les états financiers.",
+          "attention": "La mise à jour du paiement ne garantit pas, à elle seule, un rééquilibrage de tous les mouvements financiers. Le code consulté ne propose pas de suppression opérationnelle d’un versement dans ce contrôleur : ne pas inventer un effacement ou remplacer un paiement par un montant arbitraire."
+        },
+        {
+          "title": "Créer, modifier ou retirer une bourse",
+          "role": "Responsable de scolarité habilité",
+          "path": "Gestion des inscriptions → Bourse d’études",
+          "requires": [
+            "Décision de bourse ; étudiant et année identifiés."
+          ],
+          "steps": [
+            "Consulter les bourses existantes pour l’étudiant et l’année.",
+            "Pour créer, cliquer sur « Créer », choisir l’étudiant et l’année, saisir le montant puis confirmer.",
+            "Pour corriger, utiliser la modification de la ligne et vérifier année et montant avant validation.",
+            "Pour retirer, contrôler la décision de retrait puis utiliser « Supprimer » si proposé ; confirmer après vérification de la ligne.",
+            "Reconsulter la liste et la situation financière de l’étudiant."
+          ],
+          "result": "La bourse correspond à la décision applicable à l’année ; elle n’est pas comptabilisée comme espèces reçues."
+        },
+        {
+          "title": "Éditer un état de caisse et préparer un transfert",
+          "role": "Responsable financier",
+          "path": "Mon état de caisse / Administration → État caisse/banque → Transfert caisse",
+          "requires": [
+            "Période définie ; sources autorisées ; transfert approuvé si nécessaire."
+          ],
+          "steps": [
+            "Dans l’état financier, choisir dates, source, caisse ou banque puis afficher.",
+            "Comparer entrées, sorties, solde de période et solde actuel ; rapprocher les pièces du détail.",
+            "Pour transférer, ouvrir « Transfert caisse » et choisir le type : caisse vers caisse, caisse vers banque ou banque vers banque.",
+            "Renseigner source, destination, montant, date, référence et motif ; vérifier les deux destinations avant confirmation.",
+            "Contrôler les mouvements des deux sources et conserver les justificatifs du transfert."
+          ],
+          "result": "Les soldes et les transferts sont expliqués par les mouvements correspondants."
+        }
+      ]
+    },
+    {
+      "title": "Notes — préparer, créer, modifier, contrôler et délibérer",
+      "paragraphs": [
+        "Chaîne de dépendances : matière → programme du cycle, niveau et semestre → session d’examen de l’année et de la tutelle → inscription des étudiants → autorisation de l’enseignant → évaluation non verrouillée → saisie des notes → contrôle et documents.",
+        "La grille principale sert à la création et à la modification : une valeur est créée si aucune note n’existe pour l’étudiant, la matière, l’évaluation et l’année ; une valeur existante est mise à jour lorsqu’elle change. La saisie principale se fait sur 20 et le logiciel applique la pondération de la session. Ne pas saisir une note déjà pondérée."
+      ],
+      "table": [
+        [
+          "Besoin",
+          "Point d’entrée",
+          "Contrôle préalable"
+        ],
+        [
+          "Saisir ou corriger",
+          "Notes et PV par session → Modifier",
+          "Programme, session, pondération, droits et verrou."
+        ],
+        [
+          "Afficher et produire un PV",
+          "Notes et PV par session → Afficher",
+          "Même contexte de groupe et format de tutelle."
+        ],
+        [
+          "Importer",
+          "Importer les notes → spécialité",
+          "Modèle, identifiants et session de la spécialité."
+        ],
+        [
+          "Délibérer",
+          "Affichage du groupe → Délibérations",
+          "Décision du jury et périmètre de semestre."
+        ],
+        [
+          "Relevé ou attestation",
+          "Circuit de document de la tutelle",
+          "Notes contrôlées et conditions d’admission."
+        ]
+      ],
+      "tasks": [
+        {
+          "title": "Créer une note dans le circuit principal",
+          "role": "Enseignant affecté ou responsable pédagogique autorisé",
+          "path": "Étudiants et notes → Notes et PV par session → Modifier",
+          "requires": [
+            "Étudiants inscrits dans le groupe ; matière du programme ; session d’examen de l’année avec pondération positive ; évaluation ouverte ; enseignant affecté si le compte est enseignant."
+          ],
+          "steps": [
+            "Choisir le cycle, le niveau et la filière ; sélectionner la spécialité. Attendre que les listes dépendantes soient chargées.",
+            "Dans la liste des matières, cliquer sur la matière à évaluer.",
+            "Dans le choix du type de note, sélectionner CC 1 ou 2, session normale 1 ou 2, TP 1 ou 2, ou le circuit de rattrapage prévu ; confirmer ce choix pour ouvrir la grille.",
+            "Vérifier l’intitulé de la matière, l’année, le type d’évaluation et le pourcentage affiché.",
+            "Repérer chaque étudiant et saisir sa note sur 20. Contrôler la liste complète et la feuille validée de l’enseignant.",
+            "Lorsque la grille propose une case d’activation à côté d’une note, l’utiliser pour rendre la cellule modifiable si nécessaire.",
+            "Cliquer sur « Confirmer » pour enregistrer les valeurs ; attendre le retour à la liste des matières et le message de résultat.",
+            "Revenir dans la même évaluation ou dans « Afficher » pour contrôler les valeurs enregistrées. Le responsable vérifiera ensuite les résultats pondérés."
+          ],
+          "result": "Les notes du bon groupe et de la bonne évaluation sont enregistrées.",
+          "figures": [
+            {
+              "file": "captures/v2-note-matieres.png",
+              "caption": "Aperçu local de la liste des matières du groupe ; aucune note enregistrée."
+            },
+            {
+              "file": "captures/v2-note-grille.png",
+              "caption": "Aperçu local de la grille de saisie. Les verrous réels doivent être ouverts par le responsable avant utilisation."
+            }
+          ],
+          "attention": "Les champs de rattrapage peuvent être désactivés dans la grille principale. Ne pas les contourner : utiliser le circuit de rattrapage ou la délibération prévu par le responsable."
+        },
+        {
+          "title": "Modifier une note déjà saisie",
+          "role": "Enseignant affecté ou responsable pédagogique habilité",
+          "path": "Notes et PV par session → Modifier → même groupe → même matière → même type de note",
+          "requires": [
+            "Correction de note approuvée ; contexte d’origine retrouvé ; évaluation non verrouillée."
+          ],
+          "steps": [
+            "Reprendre exactement campus, année, cycle, niveau, spécialité, matière et évaluation de la saisie initiale.",
+            "Ouvrir la grille : les notes existantes apparaissent dans les cellules. Vérifier le nom de l’étudiant à corriger.",
+            "Corriger la valeur sur 20 ; relire les autres valeurs avant validation de la grille.",
+            "Cliquer sur « Confirmer », puis rouvrir la même évaluation et vérifier la valeur.",
+            "Contrôler le résultat dans l’affichage des notes. Si un PV, un relevé ou une attestation a déjà été produit, examiner les documents concernés avant leur nouvelle diffusion."
+          ],
+          "result": "La note existante est corrigée ; les documents dépendants sont identifiés.",
+          "attention": "Vider une cellule ne supprime pas une note : le contrôleur principal ignore les valeurs vides ou non numériques. La grille ne propose pas de suppression générale de notes visible. Ne pas remplacer une note par zéro pour simuler une suppression."
+        },
+        {
+          "title": "Traiter une grille qui ne s’ouvre pas",
+          "role": "Responsable pédagogique",
+          "path": "Administration → Programme / Sessions / Verrouiller les notes",
+          "requires": [
+            "Contexte exact signalé par l’enseignant."
+          ],
+          "steps": [
+            "Vérifier que l’étudiant est inscrit dans le groupe de l’année active et que la matière figure dans le programme du cycle et du niveau.",
+            "Vérifier l’existence d’une session d’examen pour cette matière et cette année, et la pondération de l’évaluation choisie.",
+            "Vérifier le verrou de modification de cette évaluation. Ouvrir ou fermer la saisie selon la décision pédagogique.",
+            "Si le compte est enseignant, vérifier son affectation à la matière et au groupe.",
+            "Réessayer la même sélection après correction du paramètre manquant ; ne pas saisir dans une autre année ou une autre matière pour contourner le refus."
+          ],
+          "result": "La cause du refus est traitée sans altérer le contexte des notes."
+        },
+        {
+          "title": "Saisir dans un circuit Soa, Ngaoundéré ou Ebolowa",
+          "role": "Agent pédagogique habilité",
+          "path": "Étudiants et notes → Notes de Soa / Notes de Ngaoundéré / Notes et PV Ebolowa → Modifier",
+          "requires": [
+            "Tutelle et circuit confirmés ; programme et étudiants du groupe."
+          ],
+          "steps": [
+            "Choisir le circuit de la tutelle demandé par le responsable.",
+            "Cliquer sur « Modifier », sélectionner la spécialité et les paramètres de cycle et niveau.",
+            "Choisir la matière puis l’évaluation présentée par ce circuit.",
+            "Lire le barème de la grille ; reporter les notes selon ce barème, puis confirmer.",
+            "Reprendre « Afficher » dans ce même circuit pour vérifier les résultats.",
+            "Si le lien Ebolowa ouvre le circuit général, faire confirmer le circuit actif avant saisie : plusieurs routes du projet utilisent des chemins proches."
+          ],
+          "result": "La note est saisie dans le circuit attendu par la tutelle.",
+          "attention": "Ne pas transposer automatiquement le barème ou les choix de la grille principale dans un ancien circuit. Vérifier le libellé et le maximum affichés."
+        },
+        {
+          "title": "Importer les notes d’une spécialité",
+          "role": "Responsable autorisé aux imports",
+          "path": "Étudiants et notes → Importer les notes → Importer notes sur la spécialité",
+          "requires": [
+            "Mêmes prérequis que la saisie ; fichier issu du modèle de la spécialité."
+          ],
+          "steps": [
+            "Filtrer le contexte, puis cliquer sur « Importer notes » sur la bonne spécialité.",
+            "Télécharger le modèle de ce contexte ; repérer les identifiants de programmes et de sessions affichés.",
+            "Compléter les matricules et les valeurs attendues, sans changer les en-têtes ; vérifier année, matière et session.",
+            "Relire le fichier avec la feuille de référence puis lancer l’import une seule fois.",
+            "Lire les résultats et les lignes rejetées ; consulter ensuite plusieurs notes dans la grille ou l’affichage pour vérifier le contenu.",
+            "Avant de reprendre un import corrigé, vérifier ce qui a déjà été enregistré."
+          ],
+          "result": "Les notes sont importées puis vérifiées dans leur contexte pédagogique."
+        },
+        {
+          "title": "Afficher les notes et préparer une délibération",
+          "role": "Responsable pédagogique / jury",
+          "path": "Notes et PV par session → Afficher → groupe → Délibérations",
+          "requires": [
+            "Notes contrôlées ; semestre et mode normal ou rattrapage connus ; décisions du jury disponibles."
+          ],
+          "steps": [
+            "Ouvrir l’affichage du groupe avec le cycle et le niveau adéquats.",
+            "Examiner les matières et choisir l’évaluation ou les résultats du semestre.",
+            "Ouvrir la délibération correspondant au semestre et au mode demandé.",
+            "Relire les étudiants et les valeurs ; préparer uniquement les décisions approuvées.",
+            "Appliquer les décisions avec les droits adaptés puis contrôler l’affichage des résultats et les documents concernés."
+          ],
+          "result": "La décision est rattachée au bon étudiant et au bon semestre.",
+          "figures": [
+            {
+              "file": "captures/v2-note-afficher.png",
+              "caption": "Affichage du groupe : accès aux résultats, formats de PV et délibérations."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "PV, relevés, attestations et historiques — procédure par tutelle",
+      "paragraphs": [
+        "Les captures de modèles présentées ici proviennent des vues du projet rendues localement sans enregistrer de génération dans la base. Les exemples de PV et de relevés servent à reconnaître les formats ; leur groupe d’illustration ne certifie pas un rattachement administratif à une tutelle. Les attestations portent un étudiant fictif clairement nommé « EXEMPLE PÉDAGOGIQUE » ; elles ne constituent pas des attestations délivrées.",
+        "Les historiques ont été capturés dans la session réelle. Une liste vide signifie qu’aucune génération du format n’a été trouvée dans la base consultée ; elle n’est pas remplie artificiellement pour illustrer le guide.",
+        "Attention au circuit principal des PV : la commande « Générer le PV » et certaines ouvertures de résultats enregistrent un historique automatiquement. Le code de visualisation d’un ancien PV redirige vers le calcul à partir des notes actuelles ; il ne constitue donc pas, dans cette version, une garantie de copie figée. Pour conserver une pièce validée, sauvegarder aussi le PDF validé."
+      ],
+      "table": [
+        [
+          "Format",
+          "PV",
+          "Relevés",
+          "Attestations",
+          "Historique"
+        ],
+        [
+          "BTS francophone",
+          "Format BTS / Francophone dans Afficher",
+          "Relevés de notes BTS par session",
+          "Pas d’entrée distincte observée",
+          "Historique des relevés BTS ; historique des PV du groupe."
+        ],
+        [
+          "HND anglophone",
+          "Format HND / Anglophone dans Afficher",
+          "Circuit dédié de transcript HND non observé dans le menu",
+          "Pas d’entrée distincte observée",
+          "Historique des PV du groupe, filtre HND."
+        ],
+        [
+          "Soa",
+          "Format Licence / SOA",
+          "Relevé de notes Soa",
+          "Attestations de réussite SOA",
+          "Historiques distincts relevés / attestations ; PV filtrables."
+        ],
+        [
+          "Ngaoundéré",
+          "Format Licence / Ngaoundéré",
+          "Relevé de notes Ngaoundéré",
+          "Attestations de réussite Ngaoundéré",
+          "Historiques distincts relevés / attestations ; PV filtrables."
+        ],
+        [
+          "Ebolowa",
+          "Format Licence / Ebolowa",
+          "Relevé de notes Ebolowa",
+          "Attestations de réussite Ebolowa",
+          "Historiques distincts relevés / attestations ; PV filtrables."
+        ],
+        [
+          "Bamenda",
+          "Format Licence / Bamenda",
+          "Bamenda transcripts",
+          "Pas d’entrée distincte observée",
+          "Bamenda transcripts history ; PV filtrables."
+        ]
+      ],
+      "tasks": [
+        {
+          "title": "Afficher et générer un PV — BTS",
+          "role": "Responsable pédagogique",
+          "path": "Étudiants et notes → Notes et PV par session → Afficher → groupe → Génération des procès-verbaux",
+          "requires": [
+            "Programme et sessions de la tutelle configurés ; groupe inscrit ; notes et décisions contrôlées ; format BTS applicable au groupe."
+          ],
+          "steps": [
+            "Sélectionner cycle, niveau, filière et spécialité dans « Afficher ».",
+            "Dans « Visualiser / générer un PV », choisir semestre 1, semestre 2 ou bilan annuel.",
+            "Choisir le format « BTS / Francophone ». Renseigner les dates de période si elles sont nécessaires à l’état.",
+            "Contrôler le périmètre puis utiliser « Générer le PV ». Cette commande peut ajouter une génération à l’historique.",
+            "Vérifier l’en-tête de tutelle, l’année, le groupe, les matières, crédits ou coefficients, notes, moyennes et décisions.",
+            "Utiliser l’impression du document, vérifier format papier et orientation, puis enregistrer le PDF validé avec un nom identifiant groupe, année, semestre et tutelle."
+          ],
+          "result": "Le PV BTS est contrôlé et exploitable pour la validation pédagogique.",
+          "figures": [
+            {
+              "file": "captures/v2-pv-bts.png",
+              "caption": "Aperçu du modèle de PV BTS — rendu local sans génération sauvegardée."
+            }
+          ]
+        },
+        {
+          "title": "Afficher puis sauvegarder des relevés — BTS",
+          "role": "Responsable pédagogique",
+          "path": "Étudiants et notes → Releves de notes BTS par session",
+          "requires": [
+            "Tutelle et groupe configurés ; notes validées ; année et période connues."
+          ],
+          "steps": [
+            "Ouvrir « Releves de notes BTS par session » et vérifier le campus et l’année du bandeau.",
+            "Choisir le cycle et le niveau, puis la filière et la spécialité.",
+            "Utiliser l’action d’affichage ou de génération proposée. Dans la fenêtre de génération, contrôler le groupe, le semestre lorsqu’il est demandé et la période.",
+            "Pour un simple aperçu, utiliser l’affichage disponible. Pour conserver une génération, choisir explicitement « Générer et sauvegarder » ou « Generate and save » selon le circuit.",
+            "Vérifier les identités, notes, mentions, crédits, en-têtes et signatures attendues avant diffusion.",
+            "Après sauvegarde, ouvrir l’historique de ce même format pour retrouver la génération ; enregistrer le PDF validé."
+          ],
+          "result": "Le relevé BTS est affiché dans son format, puis sauvegardé seulement si l’archivage est demandé.",
+          "figures": [
+            {
+              "file": "captures/v2-releve-bts.png",
+              "caption": "Aperçu local du relevé BTS — aucune génération sauvegardée."
+            }
+          ]
+        },
+        {
+          "title": "Rechercher, ouvrir et gérer l’historique des relevés — BTS",
+          "role": "Agent habilité à consulter les résultats",
+          "path": "Releves de notes BTS par session → Historique ",
+          "requires": [
+            "Au moins une génération sauvegardée pour trouver un résultat ; année et groupe recherchés."
+          ],
+          "steps": [
+            "Ouvrir le lien d’historique depuis la page du format BTS.",
+            "Utiliser les filtres disponibles ou le champ de recherche ; retrouver année, spécialité, cycle, niveau et période.",
+            "Comparer la date de génération et le nombre de relevés. Une ligne à zéro doit être examinée avant diffusion.",
+            "Choisir « Ouvrir / imprimer » sur la bonne ligne ; vérifier le contenu avant réimpression.",
+            "Pour corriger le contenu, revenir aux données sources et produire une nouvelle génération autorisée ; ne pas tenter de modifier une cellule du tableau d’historique.",
+            "Si « Supprimer » est présent, vérifier la ligne et la décision de retrait avant confirmation. La suppression vise cette génération sauvegardée ; elle ne constitue pas une suppression des notes sources."
+          ],
+          "result": "Le document est retrouvé dans l’historique propre à BTS.",
+          "figures": [
+            {
+              "file": "captures/eleves-releves-bts-historique.png",
+              "caption": "Historique réel des relevés BTS ; une liste vide est conservée telle quelle."
+            }
+          ]
+        },
+        {
+          "title": "Afficher et générer un PV — HND",
+          "role": "Responsable pédagogique",
+          "path": "Étudiants et notes → Notes et PV par session → Afficher → groupe → Génération des procès-verbaux",
+          "requires": [
+            "Programme et sessions de la tutelle configurés ; groupe inscrit ; notes et décisions contrôlées ; format HND applicable au groupe."
+          ],
+          "steps": [
+            "Sélectionner cycle, niveau, filière et spécialité dans « Afficher ».",
+            "Dans « Visualiser / générer un PV », choisir semestre 1, semestre 2 ou bilan annuel.",
+            "Choisir le format « HND / Anglophone ». Renseigner les dates de période si elles sont nécessaires à l’état.",
+            "Contrôler le périmètre puis utiliser « Générer le PV ». Cette commande peut ajouter une génération à l’historique.",
+            "Vérifier l’en-tête de tutelle, l’année, le groupe, les matières, crédits ou coefficients, notes, moyennes et décisions.",
+            "Utiliser l’impression du document, vérifier format papier et orientation, puis enregistrer le PDF validé avec un nom identifiant groupe, année, semestre et tutelle."
+          ],
+          "result": "Le PV HND est contrôlé et exploitable pour la validation pédagogique.",
+          "figures": [
+            {
+              "file": "captures/v2-pv-hnd.png",
+              "caption": "Aperçu du modèle de PV HND — rendu local sans génération sauvegardée."
+            }
+          ]
+        },
+        {
+          "title": "Afficher et générer un PV — Soa",
+          "role": "Responsable pédagogique",
+          "path": "Étudiants et notes → Notes et PV par session → Afficher → groupe → Génération des procès-verbaux",
+          "requires": [
+            "Programme et sessions de la tutelle configurés ; groupe inscrit ; notes et décisions contrôlées ; format Soa applicable au groupe."
+          ],
+          "steps": [
+            "Sélectionner cycle, niveau, filière et spécialité dans « Afficher ».",
+            "Dans « Visualiser / générer un PV », choisir semestre 1, semestre 2 ou bilan annuel.",
+            "Choisir le format « Licence / Soa ». Renseigner les dates de période si elles sont nécessaires à l’état.",
+            "Contrôler le périmètre puis utiliser « Générer le PV ». Cette commande peut ajouter une génération à l’historique.",
+            "Vérifier l’en-tête de tutelle, l’année, le groupe, les matières, crédits ou coefficients, notes, moyennes et décisions.",
+            "Utiliser l’impression du document, vérifier format papier et orientation, puis enregistrer le PDF validé avec un nom identifiant groupe, année, semestre et tutelle."
+          ],
+          "result": "Le PV Soa est contrôlé et exploitable pour la validation pédagogique.",
+          "figures": [
+            {
+              "file": "captures/v2-pv-licence_soa.png",
+              "caption": "Aperçu du modèle de PV Soa — rendu local sans génération sauvegardée."
+            }
+          ]
+        },
+        {
+          "title": "Afficher puis sauvegarder des relevés — Soa",
+          "role": "Responsable pédagogique",
+          "path": "Étudiants et notes → Relevé de notes Soa",
+          "requires": [
+            "Tutelle et groupe configurés ; notes validées ; année et période connues."
+          ],
+          "steps": [
+            "Ouvrir « Relevé de notes Soa » et vérifier le campus et l’année du bandeau.",
+            "Choisir le cycle et le niveau, puis la filière et la spécialité.",
+            "Utiliser l’action d’affichage ou de génération proposée. Dans la fenêtre de génération, contrôler le groupe, le semestre lorsqu’il est demandé et la période.",
+            "Pour un simple aperçu, utiliser l’affichage disponible. Pour conserver une génération, choisir explicitement « Générer et sauvegarder » ou « Generate and save » selon le circuit.",
+            "Vérifier les identités, notes, mentions, crédits, en-têtes et signatures attendues avant diffusion.",
+            "Après sauvegarde, ouvrir l’historique de ce même format pour retrouver la génération ; enregistrer le PDF validé."
+          ],
+          "result": "Le relevé Soa est affiché dans son format, puis sauvegardé seulement si l’archivage est demandé.",
+          "figures": [
+            {
+              "file": "captures/v2-releve-soa.png",
+              "caption": "Aperçu local du relevé Soa — aucune génération sauvegardée."
+            }
+          ],
+          "attention": "L’écran de sélection Soa a bloqué le navigateur lors de la visite initiale. Le modèle peut être rendu localement ; le parcours de sélection interactif reste à vérifier après correction."
+        },
+        {
+          "title": "Rechercher, ouvrir et gérer l’historique des relevés — Soa",
+          "role": "Agent habilité à consulter les résultats",
+          "path": "Relevé de notes Soa → Historique ",
+          "requires": [
+            "Au moins une génération sauvegardée pour trouver un résultat ; année et groupe recherchés."
+          ],
+          "steps": [
+            "Ouvrir le lien d’historique depuis la page du format Soa.",
+            "Utiliser les filtres disponibles ou le champ de recherche ; retrouver année, spécialité, cycle, niveau et période.",
+            "Comparer la date de génération et le nombre de relevés. Une ligne à zéro doit être examinée avant diffusion.",
+            "Choisir « Ouvrir / imprimer » sur la bonne ligne ; vérifier le contenu avant réimpression.",
+            "Pour corriger le contenu, revenir aux données sources et produire une nouvelle génération autorisée ; ne pas tenter de modifier une cellule du tableau d’historique.",
+            "Si « Supprimer » est présent, vérifier la ligne et la décision de retrait avant confirmation. La suppression vise cette génération sauvegardée ; elle ne constitue pas une suppression des notes sources."
+          ],
+          "result": "Le document est retrouvé dans l’historique propre à Soa.",
+          "figures": [
+            {
+              "file": "captures/eleves-releves-soa-historique.png",
+              "caption": "Historique réel des relevés Soa ; une liste vide est conservée telle quelle."
+            }
+          ],
+          "attention": "Aucune route de suppression de relevé Soa n’a été identifiée dans les routes actives consultées. Si le bouton est absent ou ne fonctionne pas, demander une intervention technique ; ne pas transposer l’action d’un autre format."
+        },
+        {
+          "title": "Générer et afficher une attestation de réussite — Soa",
+          "role": "Responsable pédagogique habilité",
+          "path": "Étudiants et notes → Attestations de réussite Soa",
+          "requires": [
+            "Étudiant admis selon les résultats et règles du programme ; données d’identité contrôlées ; notes et relevés de la tutelle vérifiés."
+          ],
+          "steps": [
+            "Ouvrir le circuit d’attestation Soa ; choisir cycle, niveau, filière puis spécialité.",
+            "Ouvrir la fenêtre « Générer les attestations » et contrôler le groupe et les dates de période.",
+            "Vérifier les résultats d’admission avant de confirmer la génération. Le logiciel sauvegarde une génération d’attestations.",
+            "Ouvrir les attestations proposées ; contrôler identité, naissance, matricule, diplôme, spécialité, année, moyenne, mention et signatures attendues.",
+            "Si aucune attestation n’est produite, vérifier les résultats et l’admissibilité du groupe avant toute nouvelle tentative.",
+            "Conserver le PDF validé ou imprimer après vérification du format A4/A3 proposé."
+          ],
+          "result": "Les attestations produites correspondent aux étudiants admis du groupe et à la bonne tutelle.",
+          "figures": [
+            {
+              "file": "captures/v2-attestation-soa.png",
+              "caption": "Modèle d’attestation Soa — exemple pédagogique à identité et résultats fictifs, non délivré."
+            }
+          ]
+        },
+        {
+          "title": "Consulter ou supprimer un historique d’attestations — Soa",
+          "role": "Responsable pédagogique habilité",
+          "path": "Attestations de réussite Soa → Historique",
+          "requires": [
+            "Génération recherchée identifiée ; autorisation de retrait si suppression."
+          ],
+          "steps": [
+            "Ouvrir l’historique depuis le circuit d’attestation Soa.",
+            "Rechercher la spécialité et l’année ; comparer cycle, niveau, période, date et nombre d’attestations.",
+            "Choisir « Ouvrir / imprimer » pour la bonne ligne, puis vérifier les documents.",
+            "En cas de correction, corriger l’identité ou les résultats sources et produire une nouvelle génération approuvée.",
+            "Pour retirer l’historique, utiliser « Supprimer » sur la ligne exacte et lire la confirmation ; contrôler ensuite la liste.",
+            "Conserver la traçabilité des PDF déjà délivrés : supprimer un historique ne retire pas les copies déjà remises."
+          ],
+          "result": "L’historique propre aux attestations Soa est utilisé correctement.",
+          "figures": [
+            {
+              "file": "captures/eleves-attestations-reussite-soa-historique.png",
+              "caption": "Historique réel des attestations Soa."
+            }
+          ],
+          "attention": "Dans cette version, l’ouverture d’une génération d’attestation vide peut tenter de la reconstruire à partir des données disponibles. Une réouverture ne doit donc pas être assimilée sans contrôle à la consultation d’un fichier PDF immuable."
+        },
+        {
+          "title": "Afficher et générer un PV — Ngaoundéré",
+          "role": "Responsable pédagogique",
+          "path": "Étudiants et notes → Notes et PV par session → Afficher → groupe → Génération des procès-verbaux",
+          "requires": [
+            "Programme et sessions de la tutelle configurés ; groupe inscrit ; notes et décisions contrôlées ; format Ngaoundéré applicable au groupe."
+          ],
+          "steps": [
+            "Sélectionner cycle, niveau, filière et spécialité dans « Afficher ».",
+            "Dans « Visualiser / générer un PV », choisir semestre 1, semestre 2 ou bilan annuel.",
+            "Choisir le format « Licence / Ngaoundéré ». Renseigner les dates de période si elles sont nécessaires à l’état.",
+            "Contrôler le périmètre puis utiliser « Générer le PV ». Cette commande peut ajouter une génération à l’historique.",
+            "Vérifier l’en-tête de tutelle, l’année, le groupe, les matières, crédits ou coefficients, notes, moyennes et décisions.",
+            "Utiliser l’impression du document, vérifier format papier et orientation, puis enregistrer le PDF validé avec un nom identifiant groupe, année, semestre et tutelle."
+          ],
+          "result": "Le PV Ngaoundéré est contrôlé et exploitable pour la validation pédagogique.",
+          "figures": [
+            {
+              "file": "captures/v2-pv-licence_ngaoundere.png",
+              "caption": "Aperçu du modèle de PV Ngaoundéré — rendu local sans génération sauvegardée."
+            }
+          ]
+        },
+        {
+          "title": "Afficher puis sauvegarder des relevés — Ngaoundéré",
+          "role": "Responsable pédagogique",
+          "path": "Étudiants et notes → Releve de notes Ngaoundere",
+          "requires": [
+            "Tutelle et groupe configurés ; notes validées ; année et période connues."
+          ],
+          "steps": [
+            "Ouvrir « Releve de notes Ngaoundere » et vérifier le campus et l’année du bandeau.",
+            "Choisir le cycle et le niveau, puis la filière et la spécialité.",
+            "Utiliser l’action d’affichage ou de génération proposée. Dans la fenêtre de génération, contrôler le groupe, le semestre lorsqu’il est demandé et la période.",
+            "Pour un simple aperçu, utiliser l’affichage disponible. Pour conserver une génération, choisir explicitement « Générer et sauvegarder » ou « Generate and save » selon le circuit.",
+            "Vérifier les identités, notes, mentions, crédits, en-têtes et signatures attendues avant diffusion.",
+            "Après sauvegarde, ouvrir l’historique de ce même format pour retrouver la génération ; enregistrer le PDF validé."
+          ],
+          "result": "Le relevé Ngaoundéré est affiché dans son format, puis sauvegardé seulement si l’archivage est demandé.",
+          "figures": [
+            {
+              "file": "captures/eleves-releves-ndere.png",
+              "caption": "Sélection des relevés Ngaoundéré ; l’aperçu final est actuellement bloqué par une vue d’en-tête manquante."
+            }
+          ],
+          "attention": "La vue perso.header_releve_tutelle manque dans cette installation : l’affichage final des relevés Ngaoundéré doit être rétabli avant la formation pratique. Ne pas utiliser un relevé d’une autre tutelle pour remplacer ce document."
+        },
+        {
+          "title": "Rechercher, ouvrir et gérer l’historique des relevés — Ngaoundéré",
+          "role": "Agent habilité à consulter les résultats",
+          "path": "Releve de notes Ngaoundere → Historique ",
+          "requires": [
+            "Au moins une génération sauvegardée pour trouver un résultat ; année et groupe recherchés."
+          ],
+          "steps": [
+            "Ouvrir le lien d’historique depuis la page du format Ngaoundéré.",
+            "Utiliser les filtres disponibles ou le champ de recherche ; retrouver année, spécialité, cycle, niveau et période.",
+            "Comparer la date de génération et le nombre de relevés. Une ligne à zéro doit être examinée avant diffusion.",
+            "Choisir « Ouvrir / imprimer » sur la bonne ligne ; vérifier le contenu avant réimpression.",
+            "Pour corriger le contenu, revenir aux données sources et produire une nouvelle génération autorisée ; ne pas tenter de modifier une cellule du tableau d’historique.",
+            "Si « Supprimer » est présent, vérifier la ligne et la décision de retrait avant confirmation. La suppression vise cette génération sauvegardée ; elle ne constitue pas une suppression des notes sources."
+          ],
+          "result": "Le document est retrouvé dans l’historique propre à Ngaoundéré.",
+          "figures": [
+            {
+              "file": "captures/eleves-releves-ndere-historique.png",
+              "caption": "Historique réel des relevés Ngaoundéré ; une liste vide est conservée telle quelle."
+            }
+          ]
+        },
+        {
+          "title": "Générer et afficher une attestation de réussite — Ngaoundéré",
+          "role": "Responsable pédagogique habilité",
+          "path": "Étudiants et notes → Attestations de réussite Ngaoundéré",
+          "requires": [
+            "Étudiant admis selon les résultats et règles du programme ; données d’identité contrôlées ; notes et relevés de la tutelle vérifiés."
+          ],
+          "steps": [
+            "Ouvrir le circuit d’attestation Ngaoundéré ; choisir cycle, niveau, filière puis spécialité.",
+            "Ouvrir la fenêtre « Générer les attestations » et contrôler le groupe et les dates de période.",
+            "Vérifier les résultats d’admission avant de confirmer la génération. Le logiciel sauvegarde une génération d’attestations.",
+            "Ouvrir les attestations proposées ; contrôler identité, naissance, matricule, diplôme, spécialité, année, moyenne, mention et signatures attendues.",
+            "Si aucune attestation n’est produite, vérifier les résultats et l’admissibilité du groupe avant toute nouvelle tentative.",
+            "Conserver le PDF validé ou imprimer après vérification du format A4/A3 proposé."
+          ],
+          "result": "Les attestations produites correspondent aux étudiants admis du groupe et à la bonne tutelle.",
+          "figures": [
+            {
+              "file": "captures/v2-attestation-ndere.png",
+              "caption": "Modèle d’attestation Ngaoundéré — exemple pédagogique à identité et résultats fictifs, non délivré."
+            }
+          ]
+        },
+        {
+          "title": "Consulter ou supprimer un historique d’attestations — Ngaoundéré",
+          "role": "Responsable pédagogique habilité",
+          "path": "Attestations de réussite Ngaoundéré → Historique",
+          "requires": [
+            "Génération recherchée identifiée ; autorisation de retrait si suppression."
+          ],
+          "steps": [
+            "Ouvrir l’historique depuis le circuit d’attestation Ngaoundéré.",
+            "Rechercher la spécialité et l’année ; comparer cycle, niveau, période, date et nombre d’attestations.",
+            "Choisir « Ouvrir / imprimer » pour la bonne ligne, puis vérifier les documents.",
+            "En cas de correction, corriger l’identité ou les résultats sources et produire une nouvelle génération approuvée.",
+            "Pour retirer l’historique, utiliser « Supprimer » sur la ligne exacte et lire la confirmation ; contrôler ensuite la liste.",
+            "Conserver la traçabilité des PDF déjà délivrés : supprimer un historique ne retire pas les copies déjà remises."
+          ],
+          "result": "L’historique propre aux attestations Ngaoundéré est utilisé correctement.",
+          "figures": [
+            {
+              "file": "captures/eleves-attestations-reussite-ndere-historique.png",
+              "caption": "Historique réel des attestations Ngaoundéré."
+            }
+          ],
+          "attention": "Dans cette version, l’ouverture d’une génération d’attestation vide peut tenter de la reconstruire à partir des données disponibles. Une réouverture ne doit donc pas être assimilée sans contrôle à la consultation d’un fichier PDF immuable."
+        },
+        {
+          "title": "Afficher et générer un PV — Ebolowa",
+          "role": "Responsable pédagogique",
+          "path": "Étudiants et notes → Notes et PV par session → Afficher → groupe → Génération des procès-verbaux",
+          "requires": [
+            "Programme et sessions de la tutelle configurés ; groupe inscrit ; notes et décisions contrôlées ; format Ebolowa applicable au groupe."
+          ],
+          "steps": [
+            "Sélectionner cycle, niveau, filière et spécialité dans « Afficher ».",
+            "Dans « Visualiser / générer un PV », choisir semestre 1, semestre 2 ou bilan annuel.",
+            "Choisir le format « Licence / Ebolowa ». Renseigner les dates de période si elles sont nécessaires à l’état.",
+            "Contrôler le périmètre puis utiliser « Générer le PV ». Cette commande peut ajouter une génération à l’historique.",
+            "Vérifier l’en-tête de tutelle, l’année, le groupe, les matières, crédits ou coefficients, notes, moyennes et décisions.",
+            "Utiliser l’impression du document, vérifier format papier et orientation, puis enregistrer le PDF validé avec un nom identifiant groupe, année, semestre et tutelle."
+          ],
+          "result": "Le PV Ebolowa est contrôlé et exploitable pour la validation pédagogique.",
+          "figures": [
+            {
+              "file": "captures/v2-pv-licence_ebolowa.png",
+              "caption": "Aperçu du modèle de PV Ebolowa — rendu local sans génération sauvegardée."
+            }
+          ]
+        },
+        {
+          "title": "Afficher puis sauvegarder des relevés — Ebolowa",
+          "role": "Responsable pédagogique",
+          "path": "Étudiants et notes → Releve de notes Ebolowa",
+          "requires": [
+            "Tutelle et groupe configurés ; notes validées ; année et période connues."
+          ],
+          "steps": [
+            "Ouvrir « Releve de notes Ebolowa » et vérifier le campus et l’année du bandeau.",
+            "Choisir le cycle et le niveau, puis la filière et la spécialité.",
+            "Utiliser l’action d’affichage ou de génération proposée. Dans la fenêtre de génération, contrôler le groupe, le semestre lorsqu’il est demandé et la période.",
+            "Pour un simple aperçu, utiliser l’affichage disponible. Pour conserver une génération, choisir explicitement « Générer et sauvegarder » ou « Generate and save » selon le circuit.",
+            "Vérifier les identités, notes, mentions, crédits, en-têtes et signatures attendues avant diffusion.",
+            "Après sauvegarde, ouvrir l’historique de ce même format pour retrouver la génération ; enregistrer le PDF validé."
+          ],
+          "result": "Le relevé Ebolowa est affiché dans son format, puis sauvegardé seulement si l’archivage est demandé.",
+          "figures": [
+            {
+              "file": "captures/v2-releve-ebolowa.png",
+              "caption": "Aperçu local du relevé Ebolowa — aucune génération sauvegardée."
+            }
+          ]
+        },
+        {
+          "title": "Rechercher, ouvrir et gérer l’historique des relevés — Ebolowa",
+          "role": "Agent habilité à consulter les résultats",
+          "path": "Releve de notes Ebolowa → Historique ",
+          "requires": [
+            "Au moins une génération sauvegardée pour trouver un résultat ; année et groupe recherchés."
+          ],
+          "steps": [
+            "Ouvrir le lien d’historique depuis la page du format Ebolowa.",
+            "Utiliser les filtres disponibles ou le champ de recherche ; retrouver année, spécialité, cycle, niveau et période.",
+            "Comparer la date de génération et le nombre de relevés. Une ligne à zéro doit être examinée avant diffusion.",
+            "Choisir « Ouvrir / imprimer » sur la bonne ligne ; vérifier le contenu avant réimpression.",
+            "Pour corriger le contenu, revenir aux données sources et produire une nouvelle génération autorisée ; ne pas tenter de modifier une cellule du tableau d’historique.",
+            "Si « Supprimer » est présent, vérifier la ligne et la décision de retrait avant confirmation. La suppression vise cette génération sauvegardée ; elle ne constitue pas une suppression des notes sources."
+          ],
+          "result": "Le document est retrouvé dans l’historique propre à Ebolowa.",
+          "figures": [
+            {
+              "file": "captures/eleves-releve-estic-historique.png",
+              "caption": "Historique réel des relevés Ebolowa ; une liste vide est conservée telle quelle."
+            }
+          ]
+        },
+        {
+          "title": "Générer et afficher une attestation de réussite — Ebolowa",
+          "role": "Responsable pédagogique habilité",
+          "path": "Étudiants et notes → Attestations de réussite Ebolowa",
+          "requires": [
+            "Étudiant admis selon les résultats et règles du programme ; données d’identité contrôlées ; notes et relevés de la tutelle vérifiés."
+          ],
+          "steps": [
+            "Ouvrir le circuit d’attestation Ebolowa ; choisir cycle, niveau, filière puis spécialité.",
+            "Ouvrir la fenêtre « Générer les attestations » et contrôler le groupe et les dates de période.",
+            "Vérifier les résultats d’admission avant de confirmer la génération. Le logiciel sauvegarde une génération d’attestations.",
+            "Ouvrir les attestations proposées ; contrôler identité, naissance, matricule, diplôme, spécialité, année, moyenne, mention et signatures attendues.",
+            "Si aucune attestation n’est produite, vérifier les résultats et l’admissibilité du groupe avant toute nouvelle tentative.",
+            "Conserver le PDF validé ou imprimer après vérification du format A4/A3 proposé."
+          ],
+          "result": "Les attestations produites correspondent aux étudiants admis du groupe et à la bonne tutelle.",
+          "figures": [
+            {
+              "file": "captures/v2-attestation-ebolowa.png",
+              "caption": "Modèle d’attestation Ebolowa — exemple pédagogique à identité et résultats fictifs, non délivré."
+            }
+          ]
+        },
+        {
+          "title": "Consulter ou supprimer un historique d’attestations — Ebolowa",
+          "role": "Responsable pédagogique habilité",
+          "path": "Attestations de réussite Ebolowa → Historique",
+          "requires": [
+            "Génération recherchée identifiée ; autorisation de retrait si suppression."
+          ],
+          "steps": [
+            "Ouvrir l’historique depuis le circuit d’attestation Ebolowa.",
+            "Rechercher la spécialité et l’année ; comparer cycle, niveau, période, date et nombre d’attestations.",
+            "Choisir « Ouvrir / imprimer » pour la bonne ligne, puis vérifier les documents.",
+            "En cas de correction, corriger l’identité ou les résultats sources et produire une nouvelle génération approuvée.",
+            "Pour retirer l’historique, utiliser « Supprimer » sur la ligne exacte et lire la confirmation ; contrôler ensuite la liste.",
+            "Conserver la traçabilité des PDF déjà délivrés : supprimer un historique ne retire pas les copies déjà remises."
+          ],
+          "result": "L’historique propre aux attestations Ebolowa est utilisé correctement.",
+          "figures": [
+            {
+              "file": "captures/eleves-attestations-reussite-ebolowa-historique.png",
+              "caption": "Historique réel des attestations Ebolowa."
+            }
+          ],
+          "attention": "Dans cette version, l’ouverture d’une génération d’attestation vide peut tenter de la reconstruire à partir des données disponibles. Une réouverture ne doit donc pas être assimilée sans contrôle à la consultation d’un fichier PDF immuable."
+        },
+        {
+          "title": "Afficher et générer un PV — Bamenda",
+          "role": "Responsable pédagogique",
+          "path": "Étudiants et notes → Notes et PV par session → Afficher → groupe → Génération des procès-verbaux",
+          "requires": [
+            "Programme et sessions de la tutelle configurés ; groupe inscrit ; notes et décisions contrôlées ; format Bamenda applicable au groupe."
+          ],
+          "steps": [
+            "Sélectionner cycle, niveau, filière et spécialité dans « Afficher ».",
+            "Dans « Visualiser / générer un PV », choisir semestre 1, semestre 2 ou bilan annuel.",
+            "Choisir le format « Licence / Bamenda ». Renseigner les dates de période si elles sont nécessaires à l’état.",
+            "Contrôler le périmètre puis utiliser « Générer le PV ». Cette commande peut ajouter une génération à l’historique.",
+            "Vérifier l’en-tête de tutelle, l’année, le groupe, les matières, crédits ou coefficients, notes, moyennes et décisions.",
+            "Utiliser l’impression du document, vérifier format papier et orientation, puis enregistrer le PDF validé avec un nom identifiant groupe, année, semestre et tutelle."
+          ],
+          "result": "Le PV Bamenda est contrôlé et exploitable pour la validation pédagogique.",
+          "figures": [
+            {
+              "file": "captures/v2-pv-licence_bamenda.png",
+              "caption": "Aperçu du modèle de PV Bamenda — rendu local sans génération sauvegardée."
+            }
+          ]
+        },
+        {
+          "title": "Afficher puis sauvegarder des relevés — Bamenda",
+          "role": "Responsable pédagogique",
+          "path": "Étudiants et notes → Bamenda transcripts",
+          "requires": [
+            "Tutelle et groupe configurés ; notes validées ; année et période connues."
+          ],
+          "steps": [
+            "Ouvrir « Bamenda transcripts » et vérifier le campus et l’année du bandeau.",
+            "Choisir le cycle et le niveau, puis la filière et la spécialité.",
+            "Utiliser l’action d’affichage ou de génération proposée. Dans la fenêtre de génération, contrôler le groupe, le semestre lorsqu’il est demandé et la période.",
+            "Pour un simple aperçu, utiliser l’affichage disponible. Pour conserver une génération, choisir explicitement « Générer et sauvegarder » ou « Generate and save » selon le circuit.",
+            "Vérifier les identités, notes, mentions, crédits, en-têtes et signatures attendues avant diffusion.",
+            "Après sauvegarde, ouvrir l’historique de ce même format pour retrouver la génération ; enregistrer le PDF validé."
+          ],
+          "result": "Le relevé Bamenda est affiché dans son format, puis sauvegardé seulement si l’archivage est demandé.",
+          "figures": [
+            {
+              "file": "captures/v2-releve-bamenda.png",
+              "caption": "Aperçu local du relevé Bamenda — aucune génération sauvegardée."
+            }
+          ]
+        },
+        {
+          "title": "Rechercher, ouvrir et gérer l’historique des relevés — Bamenda",
+          "role": "Agent habilité à consulter les résultats",
+          "path": "Bamenda transcripts → Historique  / Bamenda transcripts history",
+          "requires": [
+            "Au moins une génération sauvegardée pour trouver un résultat ; année et groupe recherchés."
+          ],
+          "steps": [
+            "Ouvrir le lien d’historique depuis la page du format Bamenda.",
+            "Utiliser les filtres disponibles ou le champ de recherche ; retrouver année, spécialité, cycle, niveau et période.",
+            "Comparer la date de génération et le nombre de relevés. Une ligne à zéro doit être examinée avant diffusion.",
+            "Choisir « Ouvrir / imprimer » sur la bonne ligne ; vérifier le contenu avant réimpression.",
+            "Pour corriger le contenu, revenir aux données sources et produire une nouvelle génération autorisée ; ne pas tenter de modifier une cellule du tableau d’historique.",
+            "Si « Supprimer » est présent, vérifier la ligne et la décision de retrait avant confirmation. La suppression vise cette génération sauvegardée ; elle ne constitue pas une suppression des notes sources."
+          ],
+          "result": "Le document est retrouvé dans l’historique propre à Bamenda.",
+          "figures": [
+            {
+              "file": "captures/eleves-releves-bamenda-historique.png",
+              "caption": "Historique réel des relevés Bamenda ; une liste vide est conservée telle quelle."
+            }
+          ]
+        },
+        {
+          "title": "Consulter l’historique des PV par format de tutelle",
+          "role": "Responsable pédagogique",
+          "path": "Affichage du groupe → Historique des PV",
+          "requires": [
+            "Spécialité, cycle, niveau et format du PV recherchés."
+          ],
+          "steps": [
+            "Ouvrir le groupe dans « Afficher », puis « Historique des PV ».",
+            "Choisir année, semestre ou bilan et format : BTS, HND, Soa, Ngaoundéré, Ebolowa ou Bamenda selon les filtres affichés.",
+            "Renseigner les autres filtres de période si nécessaires puis lancer la recherche.",
+            "Lire les dates, types et états des générations retournées. La base consultée ne contenait pas de PV sauvegardé à la date des captures.",
+            "Lorsqu’une ligne existe, utiliser la visualisation proposée puis contrôler le résultat avec le PDF validé conservé par le service."
+          ],
+          "result": "La recherche utilise le format de tutelle du PV concerné.",
+          "figures": [
+            {
+              "file": "captures/eleves-notes-pv-historique-20-cycle-1-nniveau-6.png",
+              "caption": "Historique réel des PV du groupe ; les filtres permettent de distinguer les formats."
+            }
+          ]
+        },
+        {
+          "title": "Produire une liste de rattrapage et un bilan annuel",
+          "role": "Responsable pédagogique",
+          "path": "Affichage du groupe → PV rattrapages / Bilan annuel",
+          "requires": [
+            "Résultats des semestres et décisions du jury contrôlés."
+          ],
+          "steps": [
+            "Pour le rattrapage, choisir le semestre et le format de tutelle dans le bloc prévu ; vérifier la période et le format papier A4 ou A3.",
+            "Lancer la liste ou le PV de rattrapage, puis vérifier les étudiants et matières concernés.",
+            "Pour le bilan annuel, choisir « Bilan annuel » dans le circuit de PV avec le même format de tutelle.",
+            "Contrôler les résultats des deux semestres, les crédits et décisions affichés.",
+            "Enregistrer les PDF validés en distinguant clairement rattrapage et bilan annuel."
+          ],
+          "result": "Les états servent à préparer la session ou la validation annuelle du bon groupe."
+        }
+      ]
+    },
+    {
+      "title": "Personnel et emplois du temps — préparer, programmer, modifier et contrôler",
+      "paragraphs": [
+        "Dépendances : dossier personnel et affectations → programme de spécialité → matière du bon semestre → plages horaires → cours et séances → emplois du temps par groupe ou enseignant → progression et heures réalisées → contrôle avant rémunération.",
+        "Les pages de planning de l’installation consultée déclenchent une initialisation de plages horaires qui échoue en base. Les images de formulaires de ce chapitre sont des aperçus locaux des vues du projet, sans initialisation ni enregistrement. Elles montrent le parcours prévu ; son usage interactif doit être vérifié après remise en service."
+      ],
+      "tasks": [
+        {
+          "title": "Créer puis modifier un personnel",
+          "role": "Gestionnaire RH",
+          "path": "Gestion du personnel → 1. Personnel",
+          "requires": [
+            "Identité, contacts et situation professionnelle connus ; campus actif."
+          ],
+          "steps": [
+            "Rechercher la personne avant de cliquer sur « Ajouter un nouveau personnel ».",
+            "Renseigner identité, naissance, nationalité, diplôme, adresse et téléphone ; compléter les informations professionnelles disponibles.",
+            "Choisir les types et paramètres d’horaires proposés ; compléter catégorie, échelon, recrutement et taux selon la situation approuvée.",
+            "Valider puis retrouver la personne dans la liste.",
+            "Pour corriger, ouvrir le nom ou le lien d’édition de cette même personne, modifier les renseignements justifiés puis vérifier la liste."
+          ],
+          "result": "Le dossier du personnel est unique et ses paramètres sont contrôlés.",
+          "figures": [
+            {
+              "file": "captures/personnel-list.png",
+              "caption": "Liste du personnel : recherche, ajout, import et exports."
+            },
+            {
+              "file": "captures/personnel-list-fenetre-add_cycle.png",
+              "caption": "Formulaire d’ajout du personnel."
+            }
+          ]
+        },
+        {
+          "title": "Affecter une fonction et gérer l’activité du personnel",
+          "role": "Gestionnaire RH",
+          "path": "Gestion du personnel → Affectation entités ; liste du personnel → Activer/Désactiver",
+          "requires": [
+            "Dossier existant ; fonction et entité préparées."
+          ],
+          "steps": [
+            "Rechercher la personne dans « Affectation entités ».",
+            "Choisir la fonction et l’entité correspondant au poste, puis enregistrer et vérifier les affectations.",
+            "Pour un départ ou une suspension du travail, utiliser « Désactiver » sur la bonne ligne de personnel selon la décision RH.",
+            "Pour un retour autorisé, utiliser « Activer » puis contrôler son retour dans la liste adéquate.",
+            "Avant une suppression définitive proposée ailleurs, examiner cours, présences et paiements ; privilégier le statut adapté lorsque les données doivent être conservées."
+          ],
+          "result": "Le statut de travail et les affectations reflètent la décision RH."
+        },
+        {
+          "title": "Créer ou modifier une plage horaire",
+          "role": "Gestionnaire des emplois du temps",
+          "path": "Gestion du personnel → Plages horaires",
+          "requires": [
+            "Jours de travail et organisation approuvés ; page remise en service pour l’utilisation réelle."
+          ],
+          "steps": [
+            "Ouvrir la liste des plages, vérifier qu’une plage identique n’existe pas.",
+            "Renseigner libellé, heures de début et de fin, type de plage, type de personnel, période de journée, format, ordre et durée payable selon le formulaire.",
+            "Vérifier la distinction entre cours, pause et plage de travail permanent ; enregistrer.",
+            "Pour corriger, ouvrir l’édition de la plage existante, modifier les valeurs puis contrôler la liste.",
+            "Avant de supprimer une plage, vérifier toutes les séances et emplois permanents qui l’utilisent."
+          ],
+          "result": "La plage peut être utilisée dans une séance et sa durée est compréhensible.",
+          "figures": [
+            {
+              "file": "captures/v2-emploi-plages.png",
+              "caption": "Aperçu local des plages horaires ; l’initialisation automatique de la page réelle n’a pas été exécutée."
+            }
+          ]
+        },
+        {
+          "title": "Créer un emploi du temps en programmant les cours",
+          "role": "Gestionnaire des emplois du temps",
+          "path": "Gestion du personnel → Cours enseignants → création du cours",
+          "requires": [
+            "Enseignant actif ; matière présente au programme du cycle, niveau et semestre ; plages disponibles ; période connue."
+          ],
+          "steps": [
+            "Ouvrir la création du cours et choisir l’enseignant.",
+            "Sélectionner cycle, niveau académique, filière et spécialité, puis semestre.",
+            "Choisir « UE / Matière » dans la liste filtrée par le programme. Si elle est vide, vérifier programme et semestre avant de continuer.",
+            "Renseigner dates de début et de fin, volume prévu et statut.",
+            "Dans « Séances hebdomadaires », choisir un jour et une plage ; cliquer sur « Ajouter une séance » pour chaque occurrence hebdomadaire supplémentaire.",
+            "Utiliser « Retirer » pour enlever une ligne de séance non souhaitée avant validation.",
+            "Relire les jours, périodes et plages puis cliquer sur « Enregistrer ». Le contrôleur vérifie notamment les conflits de l’enseignant.",
+            "Ouvrir « Emplois spécialités » et « Emplois enseignants » pour vérifier le planning obtenu dans les deux vues."
+          ],
+          "result": "Le cours et ses séances composent un emploi du temps cohérent.",
+          "figures": [
+            {
+              "file": "captures/v2-emploi-creer.png",
+              "caption": "Aperçu local du formulaire : contexte du cours et séances hebdomadaires."
+            }
+          ]
+        },
+        {
+          "title": "Modifier ou supprimer un cours programmé",
+          "role": "Gestionnaire des emplois du temps",
+          "path": "Cours enseignants → cours concerné → Modifier / Supprimer",
+          "requires": [
+            "Cours identifié ; changement de période ou de séance approuvé ; heures déjà réalisées examinées."
+          ],
+          "steps": [
+            "Filtrer la liste par enseignant, spécialité et période pour retrouver le cours exact.",
+            "Pour modifier, ouvrir son édition ; corriger matière ou contexte si autorisé, dates, volume, statut ou séances.",
+            "Vérifier les occurrences hebdomadaires puis enregistrer. La mise à jour remplace les séances du cours dans le code consulté.",
+            "Contrôler les emplois par enseignant et par spécialité après modification.",
+            "Pour supprimer, vérifier les dépendances puis utiliser l’action de suppression de ce cours et la confirmation proposée.",
+            "Vérifier que le cours et ses séances ont disparu du planning ; rapprocher les heures ou pièces déjà produites avant leur traitement ultérieur."
+          ],
+          "result": "Le planning reflète la décision et les états dépendants sont examinés."
+        },
+        {
+          "title": "Afficher et imprimer un emploi du temps",
+          "role": "Enseignant / gestionnaire habilité",
+          "path": "Gestion du personnel → Emplois spécialités ou Emplois enseignants",
+          "requires": [
+            "Cours enregistrés ; groupe ou enseignant identifié."
+          ],
+          "steps": [
+            "Choisir la vue du groupe ou celle de l’enseignant selon le destinataire.",
+            "Renseigner les filtres de cycle, niveau, spécialité, enseignant ou période présents.",
+            "Vérifier cours, jours et plages sur l’état affiché.",
+            "Utiliser la commande d’impression disponible et vérifier l’aperçu avant diffusion.",
+            "Conserver un fichier dont le nom indique le groupe ou l’enseignant et la période."
+          ],
+          "result": "Le destinataire peut reconnaître son planning et sa période.",
+          "figures": [
+            {
+              "file": "captures/v2-emploi-specialites.png",
+              "caption": "Aperçu local de consultation par spécialité."
+            },
+            {
+              "file": "captures/v2-emploi-enseignants.png",
+              "caption": "Aperçu local de consultation par enseignant."
+            }
+          ]
+        },
+        {
+          "title": "Préparer l’emploi d’un permanent et son salaire",
+          "role": "Gestionnaire RH / financier",
+          "path": "Emplois permanents ; Salaires permanents ; Taux horaires",
+          "requires": [
+            "Personnel actif ; jours et plages permanents ; base de rémunération approuvée."
+          ],
+          "steps": [
+            "Dans les emplois permanents, choisir la personne, les jours, la plage et les dates de validité puis enregistrer.",
+            "Vérifier la présence du planning ; utiliser la modification ou le retrait de l’affectation lorsque la situation change.",
+            "Pour un salaire permanent, sélectionner la personne, le type de salaire et le montant de référence, puis contrôler la liste.",
+            "Pour un taux horaire, rechercher la personne et renseigner le taux approuvé dans son circuit dédié.",
+            "Vérifier séparément les paiements : préparer un salaire ou un taux ne signifie pas que la personne a été payée."
+          ],
+          "result": "Planning de travail et base de rémunération sont prêts pour les contrôles de présence."
+        },
+        {
+          "title": "Suivre les progressions, heures et pointages",
+          "role": "Gestionnaire RH / pédagogique",
+          "path": "Fiches de progression ; Volumes horaires ; Décompte heures",
+          "requires": [
+            "Cours et période connus ; justificatifs de progression ou de présence."
+          ],
+          "steps": [
+            "Dans les fiches de progression, choisir l’enseignant puis consulter ses cours et les fiches disponibles ou manquantes.",
+            "Comparer le volume prévu du cours et le volume affiché par spécialité.",
+            "Dans le décompte, choisir enseignant et dates ; lire les heures réalisées avant toute utilisation en rémunération.",
+            "Pour importer des pointages, renseigner libellé, dates et fichier puis vérifier le résultat de l’import. Pour une correction justifiée, utiliser le circuit de saisie manuelle et contrôler le résultat.",
+            "Utiliser les exports CSV ou « Imprimer / PDF » proposés pour constituer l’état de contrôle.",
+            "Les actions de consolidation, nettoyage ou suppression d’import doivent viser le bon lot et être rapprochées des états déjà utilisés."
+          ],
+          "result": "Les heures exploitables sont rapprochées des cours et des présences."
+        },
+        {
+          "title": "Importer le personnel et exporter une liste de travail",
+          "role": "Gestionnaire RH habilité",
+          "path": "Gestion du personnel → Personnel → Télécharger le template / Importer le personnel",
+          "requires": [
+            "Fichier de personnel contrôlé ; recherche préalable des personnes déjà présentes."
+          ],
+          "steps": [
+            "Télécharger le modèle depuis la liste du personnel ; conserver ses en-têtes et une ligne par personne.",
+            "Compléter les champs requis et les paramètres professionnels correspondant aux colonnes du modèle.",
+            "Cliquer sur « Importer le personnel », sélectionner le fichier Excel ou CSV attendu puis valider l’import une seule fois.",
+            "Lire le résultat et rechercher plusieurs personnes pour contrôler leurs dossiers et leurs statuts.",
+            "Pour transmettre un état, filtrer la liste puis utiliser « Excel », « PDF » ou « Imprimer » ; vérifier que le document correspond au personnel actif ou au filtre retenu."
+          ],
+          "result": "Les personnes importées sont contrôlées et la liste transmise identifie son périmètre.",
+          "figures": [
+            {
+              "file": "captures/personnel-list-fenetre-import_personnel.png",
+              "caption": "Fenêtre réelle d’import du personnel."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Comptabilité — dépenses, paiements du personnel, budgets et états",
+      "paragraphs": [
+        "Dépendances : source financière et utilisateurs autorisés → catégorie budgétaire → ligne budgétaire → dépense ou paiement → bilan et justificatifs. Les états exploitables doivent préciser période, campus et source ; les totaux de pages différentes ne se comparent pas sans vérifier ces périmètres."
+      ],
+      "tasks": [
+        {
+          "title": "Créer, modifier et consulter une catégorie et une ligne budgétaire",
+          "role": "Responsable comptable",
+          "path": "Comptabilité → Catégorie de budget / Ligne budgétaire",
+          "requires": [
+            "Budget et catégories approuvés ; dates et montants de référence."
+          ],
+          "steps": [
+            "Consulter les catégories existantes ; créer la catégorie manquante dans le formulaire prévu puis vérifier son libellé.",
+            "Ouvrir « Ligne budgétaire » puis « Nouvelle ligne ». Renseigner le rattachement, le nom, les dates et le montant proposés par le formulaire.",
+            "Enregistrer puis ouvrir le rapport de la ligne ou de la catégorie.",
+            "Pour corriger, utiliser l’édition de la ligne ou de la catégorie ; vérifier l’impact des changements sur les mouvements déjà rattachés.",
+            "Pour supprimer une ligne ou une catégorie, contrôler d’abord les dépenses qui l’utilisent, puis utiliser l’action proposée uniquement si le retrait est approuvé.",
+            "Imprimer le rapport disponible pour constituer un état de suivi."
+          ],
+          "result": "Les opérations peuvent être suivies selon un budget identifié.",
+          "figures": [
+            {
+              "file": "captures/comptabilite-ligne.png",
+              "caption": "Lignes budgétaires : création et accès au suivi."
+            }
+          ]
+        },
+        {
+          "title": "Créer une sortie de caisse pour une facture",
+          "role": "Agent comptable habilité",
+          "path": "Comptabilité → Payer une facture → Nouvelle facture",
+          "requires": [
+            "Facture approuvée ; bénéficiaire, ligne budgétaire et caisse de sortie identifiés."
+          ],
+          "steps": [
+            "Rechercher les sorties existantes pour vérifier que la facture n’a pas déjà été réglée.",
+            "Ouvrir « Nouvelle facture », renseigner bénéficiaire, motif, montant, source et affectation budgétaire selon le formulaire.",
+            "Comparer les données avec la pièce approuvée puis confirmer une seule fois.",
+            "Vérifier la ligne de sortie, son justificatif et son apparition dans le bilan des sorties.",
+            "Si une correction est nécessaire, utiliser uniquement l’action autorisée du dossier ; vérifier ensuite source et budget avec le responsable. Ne pas créer un second règlement pour corriger le premier."
+          ],
+          "result": "La dépense est identifiable, justifiée et rapprochée de son budget.",
+          "figures": [
+            {
+              "file": "captures/admin-retrait.png",
+              "caption": "Sorties de caisse : recherche et Nouvelle facture."
+            }
+          ]
+        },
+        {
+          "title": "Payer un membre du personnel et retrouver ses paiements",
+          "role": "Agent comptable habilité",
+          "path": "Comptabilité → Payer un personnel → recherche",
+          "requires": [
+            "Personnel identifié ; heures ou salaire contrôlés ; période et montant approuvés."
+          ],
+          "steps": [
+            "Rechercher la personne et comparer son identité avec la pièce à payer.",
+            "Afficher ses paiements existants et vérifier la période pour éviter un double règlement.",
+            "Ouvrir la création du paiement proposée sur la personne ; renseigner les montants et éléments du règlement demandés.",
+            "Relire période, bénéficiaire, motif et source financière puis confirmer une fois.",
+            "Consulter la liste de paiements et le bulletin ou reçu proposé, puis rapprocher la sortie dans le bilan."
+          ],
+          "result": "Le règlement est rattaché à la bonne personne et à la bonne période."
+        },
+        {
+          "title": "Afficher les bilans des entrées, sorties et budgets",
+          "role": "Responsable comptable",
+          "path": "Comptabilité → Bilan des entrées / Bilan des sorties ; rapports de budget",
+          "requires": [
+            "Période, campus et source de comparaison définis."
+          ],
+          "steps": [
+            "Ouvrir le bilan souhaité et choisir les critères proposés.",
+            "Contrôler les totaux puis examiner les lignes et références qui les composent.",
+            "Comparer les encaissements aux reçus et les sorties aux pièces approuvées.",
+            "Ouvrir le rapport d’une ligne ou catégorie pour vérifier son affectation et sa consommation.",
+            "Utiliser la commande d’export ou d’impression disponible, puis vérifier titre, période, totaux et pages de l’aperçu.",
+            "Conserver le fichier validé avec sa période et son périmètre ; noter les écarts et les références à examiner."
+          ],
+          "result": "Les états sont exploitables et leur périmètre est explicite."
+        }
+      ]
+    },
+    {
+      "title": "Contrôles d’accès, discipline, publication et corrections",
+      "paragraphs": [
+        "Les autorisations conditionnent les boutons et les listes disponibles. Le guide montre un compte étendu : une personne disposant seulement d’un rôle de scolarité ou d’enseignant n’a pas nécessairement les mêmes actions. Les pages de rôles et de journal de l’installation locale présentent des vues manquantes ; les opérations correspondantes restent à vérifier après correction."
+      ],
+      "tasks": [
+        {
+          "title": "Activer un utilisateur et lui donner le bon périmètre",
+          "role": "Administrateur",
+          "path": "Administration → Utilisateurs ; Campus ; Rôles et permissions",
+          "requires": [
+            "Compte identifié ; poste et responsabilités connus."
+          ],
+          "steps": [
+            "Rechercher le nom d’utilisateur et comparer nom complet et personnel associé.",
+            "Vérifier l’état actif ; activer ou désactiver selon la décision du responsable.",
+            "Contrôler les campus affectés et les sources financières autorisées le cas échéant.",
+            "Lorsque la page de rôles fonctionne, associer le rôle et les permissions de lecture, création, modification ou suppression nécessaires au poste.",
+            "Faire contrôler l’accès avec ce profil : menus, groupes, caisses et actions doivent correspondre au périmètre attribué."
+          ],
+          "result": "Le titulaire retrouve uniquement les fonctions et données de son poste."
+        },
+        {
+          "title": "Gérer le verrou des notes et la visibilité du portail étudiant",
+          "role": "Responsable pédagogique",
+          "path": "Administration → Verrouiller la modification des notes",
+          "requires": [
+            "Calendrier de saisie et décision de publication."
+          ],
+          "steps": [
+            "Identifier l’évaluation et le semestre dans la partie verrouillage des notes.",
+            "Utiliser l’activation ou la désactivation selon la décision d’ouverture de saisie puis contrôler l’état affiché.",
+            "Pour l’accès étudiant aux notes, choisir campus, dates, objectif et message de blocage dans la partie portail.",
+            "Confirmer la décision puis contrôler le statut affiché ; une ouverture du portail ne doit pas être confondue avec une réouverture de la grille de saisie.",
+            "Vérifier ensuite le parcours avec le profil concerné sans saisir de données d’essai dans un dossier réel."
+          ],
+          "result": "Saisie et publication suivent deux décisions clairement identifiées."
+        },
+        {
+          "title": "Effectuer l’appel et consulter un état disciplinaire",
+          "role": "Agent de discipline / enseignant habilité",
+          "path": "Étudiants et notes → Effectuer l’appel en salle par spécialité / Discipline",
+          "requires": [
+            "Étudiants inscrits ; groupe et séance identifiés."
+          ],
+          "steps": [
+            "Choisir le groupe et les paramètres de cycle, niveau, date ou séance proposés.",
+            "Vérifier la liste avant de renseigner présences et absences selon les choix de l’écran.",
+            "Relire les lignes puis enregistrer.",
+            "Pour consulter ou traiter une justification, rechercher l’étudiant ou l’état de sa spécialité ; vérifier la période et les pièces disponibles.",
+            "Afficher l’état disciplinaire puis utiliser l’impression proposée après contrôle des identités et dates."
+          ],
+          "result": "Les éléments de discipline concernent le bon étudiant et la bonne séance."
+        },
+        {
+          "title": "Rechercher l’origine d’une correction et retirer un état obsolète",
+          "role": "Responsable du module",
+          "path": "Dossier concerné ; Journal des opérations ; historique du document",
+          "requires": [
+            "Référence du dossier, période et action à expliquer."
+          ],
+          "steps": [
+            "Retrouver l’opération dans son module avec sa référence et son contexte.",
+            "Lorsque le journal est disponible, filtrer l’utilisateur, les dates et l’action pour consulter les événements utiles.",
+            "Contrôler la différence entre correction des données sources et retrait d’un document sauvegardé.",
+            "Remplacer un PDF obsolète dans le circuit de diffusion après validation du document corrigé ; ne pas supposer qu’une suppression d’historique retire les copies déjà diffusées.",
+            "Signaler les incohérences avec module, écran, campus, année, référence et message exact."
+          ],
+          "result": "La correction est expliquée et les documents diffusés restent identifiables."
+        }
+      ]
+    },
+    {
+      "title": "Trouver une information — quel module et quel état utiliser ?",
+      "paragraphs": [
+        "Cette table relie une question de travail à sa source. Pour une même personne, l’identité, le parcours annuel, les versements et les résultats peuvent relever de rubriques différentes."
+      ],
+      "table": [
+        [
+          "Information recherchée",
+          "Par où passer",
+          "Ce dont on a besoin"
+        ],
+        [
+          "Identité, contacts, parents",
+          "Recherche étudiant → Voir/Modifier",
+          "Nom ou matricule ; vérifier la personne."
+        ],
+        [
+          "Parcours et inscriptions antérieures",
+          "Historique étudiant",
+          "Dossier étudiant ; année recherchée."
+        ],
+        [
+          "Inscription du groupe actuel",
+          "Afficher les listes → inscrits",
+          "Campus, année, cycle, niveau et spécialité."
+        ],
+        [
+          "Versements d’un étudiant",
+          "Recherche → Actions → Liste des versements",
+          "Matricule, campus et année des règlements."
+        ],
+        [
+          "Paiement ultérieur à l’inscription",
+          "Gestion des paiements / Ajouter un payement",
+          "Étudiant inscrit, justificatif et caisse ou banque."
+        ],
+        [
+          "Bourse accordée",
+          "Bourse d’études",
+          "Étudiant et année de décision."
+        ],
+        [
+          "Effectif",
+          "Effectifs par cycle puis liste correspondante",
+          "Même périmètre de comparaison."
+        ],
+        [
+          "Matières du parcours",
+          "Administration → Programme de Spécialité",
+          "Spécialité, cycle, niveau, semestre."
+        ],
+        [
+          "Pondération d’une évaluation",
+          "Sessions de la matière / Sessions examens globales",
+          "Programme, année et tutelle."
+        ],
+        [
+          "Note à corriger",
+          "Notes → Modifier → matière → évaluation",
+          "Contexte d’origine et droits de saisie."
+        ],
+        [
+          "PV du groupe",
+          "Notes → Afficher → Génération des procès-verbaux",
+          "Groupe, semestre, format de tutelle et période."
+        ],
+        [
+          "Relevé déjà sauvegardé",
+          "Historique des relevés du format concerné",
+          "Tutelle, année, groupe et date de génération."
+        ],
+        [
+          "Attestation déjà sauvegardée",
+          "Historique des attestations de la tutelle",
+          "Tutelle, année, groupe et génération."
+        ],
+        [
+          "Cours d’un enseignant",
+          "Cours enseignants / Emplois enseignants",
+          "Personnel, période et année."
+        ],
+        [
+          "Planning d’un groupe",
+          "Emplois spécialités",
+          "Cycle, niveau, spécialité et période."
+        ],
+        [
+          "Heures réalisées",
+          "Décompte heures",
+          "Enseignant, dates et pointages contrôlés."
+        ],
+        [
+          "Règlement d’un personnel",
+          "Comptabilité → Payer un personnel → liste",
+          "Personne et période."
+        ],
+        [
+          "Dépense et justificatif",
+          "Payer une facture / Bilan des sorties",
+          "Référence, bénéficiaire, période et budget."
+        ],
+        [
+          "Solde et mouvements d’une source",
+          "État caisse/banque",
+          "Dates, source et utilisateurs concernés."
+        ],
+        [
+          "Consommation du budget",
+          "Rapport de ligne ou de catégorie",
+          "Catégorie, ligne et période."
+        ],
+        [
+          "Qui peut agir ?",
+          "Utilisateurs, campus, affectations financières et rôles",
+          "Compte exact, rôle et périmètre."
+        ]
+      ]
+    },
+    {
+      "title": "Résoudre les difficultés courantes",
+      "paragraphs": [
+        "Pour signaler un incident, indiquer le module, l’action effectuée, le campus, l’année, le message exact et la référence du dossier. Joindre une capture utile en évitant d’exposer un mot de passe. Les erreurs réellement rencontrées pendant la visite sont recensées à la fin du guide."
+      ],
+      "table": [
+        [
+          "Situation",
+          "Contrôles et action"
+        ],
+        [
+          "La connexion échoue",
+          "Vérifier le nom d’utilisateur, la casse du mot de passe et l’état du compte auprès de l’administrateur. Ne pas créer un second compte pour contourner un accès refusé."
+        ],
+        [
+          "L’adresse ish.informatique-ht.cm ne répond pas",
+          "Vérifier la connexion Internet et l’orthographe de l’adresse https://ish.informatique-ht.cm, puis réessayer. Si le problème persiste, contacter le responsable informatique pour vérifier la disponibilité de l’application hébergée dans le cloud."
+        ],
+        [
+          "Un menu ou une action manque",
+          "Faire vérifier les rôles, permissions et campus autorisés du compte."
+        ],
+        [
+          "La liste d’un niveau ou d’une spécialité est vide",
+          "Contrôler le campus, l’année, le cycle et les dépendances entre filière, spécialité et niveau. Attendre le chargement des listes."
+        ],
+        [
+          "Un étudiant est introuvable",
+          "Rechercher par matricule puis par une partie du nom, vérifier le campus et consulter son historique avant d’enregistrer une nouvelle fiche."
+        ],
+        [
+          "Un tarif n’apparaît pas",
+          "Faire contrôler le profil de scolarité et le barème du cycle, du niveau et de la spécialité choisis."
+        ],
+        [
+          "Un import est rejeté",
+          "Télécharger le modèle de cette version, conserver les colonnes et vérifier les identifiants, formats de dates et valeurs attendues. Lire le compte rendu avant reprise."
+        ],
+        [
+          "La validation semble ne pas avoir répondu",
+          "Rechercher d’abord le dossier, le paiement ou l’import avant de cliquer à nouveau. Une seconde validation peut créer un doublon."
+        ],
+        [
+          "La note ne peut pas être modifiée",
+          "Vérifier la session, les droits et les verrous avec le responsable pédagogique."
+        ],
+        [
+          "Le document imprimé est tronqué",
+          "Ouvrir l’aperçu du navigateur, vérifier l’orientation, le format de papier, les marges et l’échelle ; préférer la commande d’impression du document si elle existe."
+        ],
+        [
+          "Une page affiche une erreur serveur",
+          "Conserver le message, l’adresse et le contexte, puis transmettre au responsable technique. Ne pas relancer une opération de paiement ou de génération sans vérification préalable."
+        ]
+      ]
+    },
+    {
+      "title": "Organiser la formation des utilisateurs",
+      "paragraphs": [
+        "Prévoir les exercices sur une base de formation ou avec des dossiers explicitement réservés aux essais. Les montants et identités d’exercice doivent être fictifs. L’animateur montre d’abord la procédure, le participant la reproduit, puis explique les contrôles effectués."
+      ],
+      "table": [
+        [
+          "Séance",
+          "Exercice",
+          "Critère de réussite"
+        ],
+        [
+          "1 — Prise en main, 30 min",
+          "Se connecter, choisir le campus, retrouver l’année et ouvrir les modules.",
+          "Le participant sait expliquer son contexte de travail et se déconnecter."
+        ],
+        [
+          "2 — Scolarité, 60 min",
+          "Rechercher un étudiant, remplir une fiche de formation, préparer une inscription et consulter une liste.",
+          "Aucun doublon ; identité, parcours et année correctement identifiés."
+        ],
+        [
+          "3 — Encaissement, 45 min",
+          "Préparer un règlement fictif, distinguer mode et source, consulter le reçu et l’état de caisse.",
+          "Montant, motif, étudiant et destination financière cohérents."
+        ],
+        [
+          "4 — Pédagogie, 60 min",
+          "Retrouver une grille, préparer un import de notes et choisir le bon format de relevé.",
+          "Groupe, matière, session et format maîtrisés avant validation."
+        ],
+        [
+          "5 — Ressources humaines, 45 min",
+          "Retrouver un enseignant, son cours, son emploi du temps et ses heures.",
+          "Le participant rapproche planning, progression et décompte."
+        ],
+        [
+          "6 — Responsables, 60 min",
+          "Consulter un bilan, une ligne budgétaire, les droits et le journal.",
+          "Le participant interprète le périmètre des états et sait faire remonter un incident."
+        ]
+      ],
+      "tasks": [
+        {
+          "title": "Vérifier l’autonomie à la fin de la formation",
+          "steps": [
+            "Demander au participant de retrouver un étudiant par son matricule et d’expliquer la différence entre fiche et inscription.",
+            "Lui faire identifier le campus, l’année, le cycle et le niveau d’un dossier avant toute préparation d’opération.",
+            "Lui faire expliquer les contrôles précédant un paiement ou une saisie de notes.",
+            "Lui demander de retrouver une opération existante et un document sans les recréer.",
+            "Présenter un cas de liste vide ou de permission manquante et vérifier qu’il sait qui contacter.",
+            "Clore la session et noter les points à reprendre dans le prochain accompagnement."
+          ],
+          "result": "Le participant peut effectuer les tâches de son poste et identifier les situations nécessitant un responsable."
+        }
+      ]
+    }
+  ]
+}

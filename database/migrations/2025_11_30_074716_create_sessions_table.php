@@ -12,6 +12,10 @@ class CreateSessionsTable extends Migration {
 	 */
 	public function up()
 	{
+		if (Schema::hasTable('sessions_exam')) {
+			return;
+		}
+
 		Schema::create('sessions_exam', function(Blueprint $table)
 		{
 			$table->increments('id');
@@ -37,7 +41,9 @@ class CreateSessionsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('sessions_exam');
+		if (Schema::hasTable('sessions_exam')) {
+			Schema::drop('sessions_exam');
+		}
 	}
 
 }

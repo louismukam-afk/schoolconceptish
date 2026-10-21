@@ -27,7 +27,7 @@
 
 </div>
 <div class="titre-ecole" style="font-size: large; font-family: 'Arial Black'; text-align: center;">
-    INSTITUT SUPERIEUR HINTEL
+    CENTRE DE FORMATION HINTEL
 </div>
 
 <div class="footer " style="text-align-all: center; color: red; font-family: 'Arial Black';font-size: large;" >

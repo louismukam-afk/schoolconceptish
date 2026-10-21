@@ -268,7 +268,7 @@
 
                                 <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="canal_decouvert">Par quel canal avez-vous connu l'institut supérieur Hintel </label>
+                                    <label for="canal_decouvert">Par quel canal avez-vous connu le Centre de Formation Hintel </label>
                                     <select form="enregistrer_eleve_form" id="canal_decouvert" name="canal_decouvert" class="form-control">
                                         <option value="depliant" @if(strcmp(old('canal_decouvert'),'depliant')==0) selected @endif>Dépliant reçus en chemin</option>
                                         <option value="concour" @if(strcmp(old('canal_decouvert'),'concour')==0) selected @endif>Après un concours</option>
@@ -294,14 +294,14 @@
                                 
                                 </div>
                                 <div class="form-group">
-                                <label for="chaine"> Entrez le nom de la chaine de télévision par lequel vous avez connu l'institut supérieur hintel</label>
+                                <label for="chaine"> Entrez le nom de la chaine de télévision par lequel vous avez connu le Centre de Formation Hintel</label>
                                 <input class="form-control" id="chaine" name="chaine" type="text"  value="{{ old('chaine') }}"  >
                                </div>
                                <div class="row">
                                 <legend>Données comportementales </div>
                                 <div class="col-md-4">
                                 <div class="form-group">
-                                <label for="site_internet">Avez-vous déjà visité le site de l'institut supérieur hintel ? </label>
+                                <label for="site_internet">Avez-vous déjà visité le site de le Centre de Formation Hintel ? </label>
                                     <select form="enregistrer_eleve_form" id="site_internet" name="site_internet" class="form-control">
                                         <option value="oui" @if(strcmp(old('site_internet'),'oui')==0) selected @endif>OUI</option>
                                         <option value="non" @if(strcmp(old('site_internet'),'non')==0) selected @endif>NON</option>

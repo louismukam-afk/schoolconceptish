@@ -1,6 +1,7 @@
 <?php namespace gesecole\Http\Controllers\user;
 
 use gesecole\Action;
+use gesecole\Campus;
 use gesecole\Functions;
 use gesecole\Http\Requests;
 use gesecole\Http\Controllers\Controller;
@@ -10,6 +11,8 @@ use gesecole\Role;
 use gesecole\User;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 
@@ -72,9 +75,11 @@ class userController extends Controller {
         }*/
 
         $p=personnel::orderBy('nom')->get();
+        $campus=Campus::orderBy('nom')->get();
 
         $values['utilisateurs']=$u;
         $values['personnels']=$p;
+        $values['campus']=$campus;
         if(session('success')){
             Session::forget('success');
             $values['success']=true;
@@ -101,6 +106,7 @@ class userController extends Controller {
             $u->id_personnel=$personnel;
         }
         $u->save();
+        $this->syncUserCampus($u->id, (array) $request->input('campus', array()));
         session(['success'=>true]);
         return redirect()->action('user\userController@index');
     }
@@ -111,11 +117,77 @@ class userController extends Controller {
         $u->active=0;
         $u->id_personnel=0;
         $u->save();
+        DB::table('campus_user')->where('id_user', '=', $u->id)->delete();
         session(['success'=>true]);
 
         return redirect()->action('user\userController@index');
 
 
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $this->validate($request, array(
+            'id' => 'required|numeric',
+            'password' => 'required|min:6|confirmed',
+        ));
+
+        $u = User::find($request->input('id'));
+        if(!$u) {
+            return redirect()->action('user\userController@index');
+        }
+
+        $u->password = Hash::make($request->input('password'));
+        $u->save();
+
+        session(array('success' => true));
+        return redirect()->action('user\userController@index');
+    }
+
+    private function syncUserCampus($idUser, $campusIds)
+    {
+        $campusIds = array_values(array_filter($campusIds));
+        $now = date('Y-m-d H:i:s');
+        $currentUser = Auth::user();
+        $currentUserId = $currentUser ? $currentUser->id : null;
+
+        if(count($campusIds) > 0) {
+            DB::table('campus_user')
+                ->where('id_user', '=', $idUser)
+                ->whereNotIn('id_campus', $campusIds)
+                ->delete();
+        }
+        else {
+            DB::table('campus_user')
+                ->where('id_user', '=', $idUser)
+                ->delete();
+        }
+
+        foreach($campusIds as $idCampus) {
+            $pivot = DB::table('campus_user')
+                ->where('id_user', '=', $idUser)
+                ->where('id_campus', '=', $idCampus)
+                ->first();
+
+            if($pivot) {
+                DB::table('campus_user')
+                    ->where('id', '=', $pivot->id)
+                    ->update(array(
+                        'id_last_editor' => $currentUserId,
+                        'updated_at' => $now
+                    ));
+            }
+            else {
+                DB::table('campus_user')->insert(array(
+                    'id_user' => $idUser,
+                    'id_campus' => $idCampus,
+                    'id_creator' => $currentUserId,
+                    'id_last_editor' => $currentUserId,
+                    'created_at' => $now,
+                    'updated_at' => $now
+                ));
+            }
+        }
     }
 	public function create()
 	{

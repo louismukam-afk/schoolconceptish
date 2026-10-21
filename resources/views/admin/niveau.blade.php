@@ -15,6 +15,7 @@
             <th>#</th>
             <th>@lang('admin.nom')</th>
             <th>@lang('admin.nom_anglais')</th>
+            <th>Domaine</th>
             <th></th>
             </thead>
             <tbody>
@@ -26,11 +27,12 @@
                     <td>
                         {{$n->nom_anglais}}
                     </td>
+                    <td>{{$n->domaines}}</td>
                     <td>
                         <div class="btn-group">
                             <a href="#" class=" btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a style="color: white" class="btn-primary"  data-toggle="modal" data-backdrop="false" href="#edit_niveau" onclick="editer_niveau({{$n->id}},'{{$n->nom}}','{{$n->nom_anglais}}')"><span class="glyphicon glyphicon-pencil"  ></span> {{  trans('admin.edit')  }}</a></li>
+                                <li><a style="color: white" class="btn-primary"  data-toggle="modal" data-backdrop="false" href="#edit_niveau" onclick="editer_niveau({{$n->id}},'{{addslashes($n->nom)}}','{{addslashes($n->nom_anglais)}}','{{addslashes($n->domaines)}}')"><span class="glyphicon glyphicon-pencil"  ></span> {{  trans('admin.edit')  }}</a></li>
                                 <li>
                                     <a style="color: white" href="{{ URL::to('/admin/niveaux/destroy/').'/'.$n->id }}"   class="btn-danger"><span class="glyphicon glyphicon-trash"></span> @lang('admin.del')</a>
                                 </li>
@@ -72,6 +74,10 @@
                                     <label>{{  trans('admin.nom_anglais')  }} : </label>
                                     <input class="form-control"  name="nom_anglais" type="text"  value="{{ old('nom_anglais') }}">
 
+                                </div>
+                                <div class="form-group">
+                                    <label>Domaine : </label>
+                                    <input class="form-control" name="domaines" type="text" value="{{ old('domaines') }}">
                                 </div>
                                 <input class="btn  btn-success " type="submit" value="{{  trans('admin.confirmer')  }}">
 
@@ -121,6 +127,10 @@
                                         <input class="form-control" id="edit_nom_anglais" name="nom_anglais" type="text"  value="{{ old('nom_anglais') }}" >
 
                                     </div>
+                                    <div class="form-group">
+                                        <label>Domaine : </label>
+                                        <input class="form-control" id="edit_domaines" name="domaines" type="text" value="{{ old('domaines') }}">
+                                    </div>
                                     <input class="btn  btn-success " type="submit" value="{{  trans('admin.confirmer')  }}">
 
 
@@ -145,12 +155,13 @@
     </div>
 
     <script>
-        function editer_niveau(id,nom,nom_anglais)
+        function editer_niveau(id,nom,nom_anglais,domaines)
         {
 
             document.getElementById("edit_id_niveau").value = id;
             document.getElementById("edit_nom").value = nom;
             document.getElementById("edit_nom_anglais").value = nom_anglais;
+            document.getElementById("edit_domaines").value = domaines || '';
 
         }
     </script>

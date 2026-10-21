@@ -118,18 +118,29 @@ if(session('nom_etab')==null){
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand logo" href="#">
-                    <img src="{{URL::asset('img/school-concept.png')}}" />
+                    <?php
+                        $campusHeader = $selected_inscription->campus;
+                        $campusLogo = 'img/school-concept.png';
+                        if($campusHeader && $campusHeader->logo) {
+                            $campusLogo = $campusHeader->logo;
+                        }
+                    ?>
+                    <img src="{{ URL::asset($campusLogo) }}" />
 
                 </a>
             </div>
-            <div class="nom-etab"><strong>{{session('nom_etab')}}</strong></div>
+            <div class="nom-etab">
+                <strong>
+                    {{ $selected_inscription->campus ? $selected_inscription->campus->nom : session('nom_etab') }}
+                </strong>
+            </div>
 
 
             <span class="logout-spn" >
 
                     <a href="{{ url('/gestion/login/etudiant/disconnect_user') }}">{{  trans('admin.logout')  }}</a>
                 </span>
-            <div ><span class="annee">{{  trans('admin.year')  }} <span>{{  $selected_inscription->annee_scolaire }}</span></span></div>
+            <div ><span class="annee">Annee academique <span>{{  $selected_inscription->annee_scolaire }}</span></span></div>
             <div class="langage ">
                 <div class="lang dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle"><strong style="color: white">@lang('admin.langage') :</strong> @if(App::getLocale()=='fr')Francais @else English @endif <span class="caret"></span></a>
                     <ul class="dropdown-menu navbar-inverse">
@@ -167,96 +178,161 @@ if(session('nom_etab')==null){
                     @yield('breadcrumb')
                 </ul>
                 <h3 style="text-align:center;" > {{  trans('admin.notess')  }}  <strong> {{$eleve->nom}} </strong></h3>
+                <h4>
+                    <strong>Campus</strong> :
+                    {{ $selected_inscription->campus ? $selected_inscription->campus->nom : session('nom_etab') }}
+                    @if($selected_inscription->campus && $selected_inscription->campus->sigle)
+                        ({{ $selected_inscription->campus->sigle }})
+                    @endif
+                </h4>
+                <h4><strong>Annee academique</strong> : {{$selected_inscription->annee_scolaire}}</h4>
                 <h4 >   <strong>{{  trans('admin.cycle')  }}</strong> : {{$selected_inscription->cycle->nom}} </h4>
                 <h4 >  <strong> {{  trans('admin.special')  }}</strong> : {{$selected_inscription->classe->getNom()}} </h4>
                 <h4 ><strong>{{  trans('admin.niveauss')  }}</strong>  : {{$selected_inscription->nniveau->nom }} </h4>
 
-                <table class="table"  border="2"  style="margin-top: 15px; border: 2">
-                    <thead>
+                <div class="row" style="margin-top: 15px;">
+                    @foreach(array(1, 2) as $semestre)
+                        <div class="col-md-6">
+                            <div class="panel panel-info">
+                                <div class="panel-heading">
+                                    <strong>Semestre {{ $semestre }}</strong>
+                                </div>
+                                <div class="panel-body">
+                                    <h4>
+                                        Credits valides :
+                                        <strong>{{ isset($credits_stats[$semestre]) ? $credits_stats[$semestre]['valides'] : 0 }}</strong>
+                                        /
+                                        <strong>{{ isset($credits_stats[$semestre]) ? $credits_stats[$semestre]['prevus'] : 0 }}</strong>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
 
-                   <tr>
-                       <th rowspan="2">#</th>
-                       <th rowspan="2">{{  trans('admin.matiere')  }}</th>
-                       <td colspan="4">{{  trans('admin.semestre')  }} </td>
-                       <td colspan="4">{{  trans('admin.semestre')  }} 2</td>
-
-                   </tr>
-                   <tr>
-                       <th>{{  trans('admin.note_cc1')  }}</th>
-                       <th>{{  trans('admin.note_sn1')  }}</th>
-                       <th>{{  trans('admin.note_Rattrapage1')  }}</th>
-                       <th> Total /20 </th>
-                       <th>{{  trans('admin.note_cc2')  }}</th>
-                       <th>{{  trans('admin.note_sn2')  }}</th>
-                       <th>{{  trans('admin.note_Rattrapage2')  }}</th>
-                       <th> Total /20 </th>
-                   </tr>
-                    </thead>
-                    <tbody>
-                    <?php $i=1; ?>
-                    @foreach($matieres as $m)
-
-
-                        <tr>
-                            <?php $s1=0 ; $s1=0 ;?>
-                            <td>{{$i++}}</td>
-                            <td><strong>{{$m->getNom()}}</strong></td>
-                            <td>
-                                @foreach($notes as $n)
-                                    @if($n->id_matiere == $m->id && $n->sequence == 1)
-                                        {{round($n->note / 1.5, 2)}}
-                                    @endif
-                                @endforeach
-                            </td>
-                            <td>
-                                @foreach($notes as $n)
-                                    @if($n->id_matiere == $m->id && $n->sequence == 3)
-                                        {{round($n->note / 3.5, 2)}}
-                                    @endif
-                                @endforeach
-                            </td>
-                            <td>
-                                @foreach($notes as $n)
-                                    @if($n->id_matiere == $m->id && $n->sequence == 5)
-                                        {{round($n->note / 3.5, 2)}}
-                                    @endif
-                                @endforeach
-                            </td>
-                            <td>
-                           
-                           </td>
-                           
-                          
-                            <td>
-                                @foreach($notes as $n)
-                                    @if($n->id_matiere == $m->id && $n->sequence == 2)
-                                        {{round($n->note / 1.5, 2)}}
-                                    @endif
-                                @endforeach
-                            </td>
-                            <td>
-                                @foreach($notes as $n)
-                                    @if($n->id_matiere == $m->id && $n->sequence == 4)
-                                        {{round($n->note / 3.5, 2)}}
-                                    @endif
-                                @endforeach
-                            </td>
-
-                            <td>
-                                @foreach($notes as $n)
-                                    @if($n->id_matiere == $m->id && $n->sequence == 6)
-                                        {{round($n->note / 3.5, 2)}}
-                                    @endif
-                                @endforeach
-                            </td>
-                            <td></td>
-                        </tr>
-
-
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <strong>Matieres de la specialite avec notes publiees ou examens composes</strong>
+                    </div>
+                    <div class="panel-body">
+                        @foreach(array(1, 2) as $semestre)
+                            <h4>Semestre {{ $semestre }}</h4>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>{{ trans('admin.matiere') }}</th>
+                                        <th>Credit</th>
+                                        <th>CC</th>
+                                        <th>SN</th>
+                                        <th>Rattrapage</th>
+                                        <th>TPE</th>
+                                        <th>Total normal /100</th>
+                                        <th>Total retenu /100</th>
+                                        <th>Decision</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php $i=1; ?>
+                                    @forelse($matieres_avec_notes_par_semestre[$semestre] as $row)
+                                        <tr>
+                                            <td>{{ $i++ }}</td>
+                                            <td><strong>{{ $row['matiere']->getNom() }}</strong></td>
+                                            <td>{{ $row['credit'] }}</td>
+                                            <td>{{ $row['cc'] !== null ? $row['cc'] : '' }}</td>
+                                            <td>{{ $row['sn'] !== null ? $row['sn'] : '' }}</td>
+                                            <td>
+                                                {{ $row['rattrapage'] !== null ? $row['rattrapage'] : '' }}
+                                                @if($row['rattrapage'] !== null && $row['rattrapage_retenu'])
+                                                    <span class="label label-info">retenue</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $row['tpe'] !== null ? $row['tpe'] : '' }}</td>
+                                            <td>{{ $row['final_compose'] ? $row['normal_total'] : '' }}</td>
+                                            <td><strong>{{ $row['final_compose'] ? $row['total'] : '' }}</strong></td>
+                                            <td>
+                                                @if($row['is_validated'])
+                                                    <span class="label label-success">Validee</span>
+                                                @elseif($row['final_compose'] || $row['class_has_notes'])
+                                                    <span class="label label-warning">A rattraper</span>
+                                                @else
+                                                    <span class="label label-default">En attente</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="10" class="text-center">Aucune note publiee pour ce semestre.</td>
+                                        </tr>
+                                    @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
                         @endforeach
+                    </div>
+                </div>
 
-                    </tbody>
-                </table>
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        <strong>Matieres de la specialite sans notes pour la classe</strong>
+                    </div>
+                    <div class="panel-body">
+                        @foreach(array(1, 2) as $semestre)
+                            <h4>Semestre {{ $semestre }}</h4>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>{{ trans('admin.matiere') }}</th>
+                                        <th>Credit</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php $j=1; ?>
+                                    @forelse($matieres_sans_notes_par_semestre[$semestre] as $row)
+                                        <tr>
+                                            <td>{{ $j++ }}</td>
+                                            <td><strong>{{ $row['matiere']->getNom() }}</strong></td>
+                                            <td>{{ $row['credit'] }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center">Toutes les matieres de ce semestre ont au moins une note enregistree.</td>
+                                        </tr>
+                                    @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <strong>Liste des matieres a rattraper par semestre</strong>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            @foreach(array(1, 2) as $semestre)
+                                <div class="col-md-6">
+                                    <h4>Semestre {{ $semestre }}</h4>
+                                    <ul class="list-group">
+                                        @forelse($rattrapages_semestre[$semestre] as $row)
+                                            <li class="list-group-item">
+                                                <strong>{{ $row['matiere']->getNom() }}</strong>
+                                                <span class="pull-right">{{ $row['final_compose'] ? $row['total'].'/100' : 'Note manquante' }}</span>
+                                            </li>
+                                        @empty
+                                            <li class="list-group-item">Aucune matiere a rattraper.</li>
+                                        @endforelse
+                                    </ul>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
 
             </div>
 

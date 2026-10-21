@@ -47,6 +47,35 @@ class bts_releveSessionController extends Controller {
         return view('eleves/classe_releves_bts', $values);
     }
 
+    public function history(Request $request, $idClasse = null)
+    {
+        $query = ReleveNoteGeneration::where('type', 'bts')
+            ->orderBy('created_at', 'desc');
+
+        if ($idClasse) {
+            $query->where('id_classe', (int) $idClasse);
+        }
+        if ($request->input('cycle')) {
+            $query->where('id_cycle', (int) $request->input('cycle'));
+        }
+        if ($request->input('nniveau')) {
+            $query->where('id_nniveau', (int) $request->input('nniveau'));
+        }
+        if ($request->input('annee_academique')) {
+            $query->where('annee_academique', $request->input('annee_academique'));
+        }
+
+        $classe = $idClasse ? classe::find($idClasse) : null;
+
+        return view('eleves/releves_bts_historique', array(
+            'titre' => 'Historique des releves BTS',
+            'generations' => $query->get(),
+            'classe' => $classe,
+            'cycle' => $request->input('cycle') ? cycle::find($request->input('cycle')) : null,
+            'nniveau' => $request->input('nniveau') ? NNiveau::find($request->input('nniveau')) : null,
+        ));
+    }
+
     public function create(Request $request)
     {
         $context = $this->validateContext($request);
@@ -106,7 +135,7 @@ public function generate(Request $request)
 
     public function printSaved($id)
     {
-        $generation = ReleveNoteGeneration::findOrFail($id);
+        $generation = ReleveNoteGeneration::where('type', 'bts')->findOrFail($id);
         $payload = json_decode($generation->contenu);
 
         $values = array(
@@ -124,6 +153,15 @@ public function generate(Request $request)
         );
 
         return view('eleves/print_releves_bts', $values);
+    }
+
+    public function destroy($id)
+    {
+        $generation = ReleveNoteGeneration::where('type', 'bts')->findOrFail($id);
+        $generation->delete();
+
+        return redirect()->to('/eleves/releves_bts/historique')
+            ->with('success', 'Historique de releve BTS supprime avec succes.');
     }
 
     private function validateContext(Request $request)

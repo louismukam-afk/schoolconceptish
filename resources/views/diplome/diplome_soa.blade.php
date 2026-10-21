@@ -43,8 +43,8 @@
                 </div>
 
                         <p class="texte1">Le DOYEN DE LA FACULTE DES SCIENCES ECONOMIQUES ET GESTION de<strong> l’UNIVERSITÉ DE YAOUNDE II -SOA</strong> et
-                                le Président du Conseil d’Etablissement de <strong>l’INSTITUT SUPERIEUR HINTEL </strong>certifient que: / The DEAN OF THE FACULTY OF ECONOMICS AND MANAGEMENT  of the <strong>UNIVERSITY OF YAOUNDE II  -SOA</strong>
-                                and the Chairman of the <strong> HINTEL HIGHER INSTITUTE </strong> hereby certify that: </p>
+                                le Président du Conseil d’Etablissement de <strong>l’CENTRE DE FORMATION HINTEL </strong>certifient que: / The DEAN OF THE FACULTY OF ECONOMICS AND MANAGEMENT  of the <strong>UNIVERSITY OF YAOUNDE II  -SOA</strong>
+                                and the Chairman of the <strong> HINTEL TRAINING CENTER </strong> hereby certify that: </p>
 
                 <div class="nom-matricule-container">
                     <div class="nom">
@@ -83,8 +83,8 @@
                     <p style="text-align: right;"><strong>YAOUNDE Le ..........................</strong></p>
                     <div class="signature">
                     <div class="dep1">
-                        <p><strong><u>Le Directeur de l'Institut Supérieur Hintel</u></strong></p>
-                        <p><strong class="traduction">The Director of the Hintel Higher Institute</strong></p>
+                        <p><strong><u>Le Directeur de l'Centre de Formation Hintel</u></strong></p>
+                        <p><strong class="traduction">The Director of the Hintel Training Center</strong></p>
 
 
                     </div>

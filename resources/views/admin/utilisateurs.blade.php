@@ -36,6 +36,7 @@
             <th>Role </th>
 
             <th>{{  trans('admin.actif')  }}</th>
+            <th>Actions</th>
             </thead>
             <tbody>
             <?php $i=1; ?>
@@ -51,15 +52,18 @@
                     </td>
                     <td><a href="{{route('action_management',$u->id)}}" class="btn btn-warning btn-xs"><span class="glyphicon glyphicon-lock"></span> {{trans_choice('admin.action',1)}}</a></td>
 
-                @if($u->active==1)
-                    <td>{{trans('inscription.oui')}}</td>
-                    <td>
-                        <a  class="btn btn-danger btn-xs"   href="{{url('utilisateurs/desactiver/'.$u->id)}}"> <span class="glyphicon glyphicon-ban-circle"></span> {{  trans('admin.desactiver')  }}</a>
-                        @else
+                    @if($u->active==1)
+                        <td>{{trans('inscription.oui')}}</td>
+                        <td>
+                            <a class="btn btn-danger btn-xs" href="{{url('utilisateurs/desactiver/'.$u->id)}}"><span class="glyphicon glyphicon-ban-circle"></span> {{ trans('admin.desactiver') }}</a>
+                            <a class="btn btn-primary btn-xs" data-toggle="modal" data-backdrop="false" href="#reset_password_user" data-username="{{$u->name}}" onclick="reset_password_utilisateur({{$u->id}}, this.getAttribute('data-username'))"><span class="glyphicon glyphicon-refresh"></span> Mot de passe</a>
+                        </td>
+                    @else
                         <td>{{trans('inscription.non')}}</td>
                         <td>
-                            <a  class="btn btn-success btn-xs"  data-toggle="modal" data-backdrop="false" href="#edit_classe" onclick="activer_utilisateur({{$u->id}})"><span class="glyphicon glyphicon-ok"  ></span> {{  trans('admin.activer')  }}</a>
-
+                            <a class="btn btn-success btn-xs" data-toggle="modal" data-backdrop="false" href="#edit_classe" onclick="activer_utilisateur({{$u->id}})"><span class="glyphicon glyphicon-ok"></span> {{ trans('admin.activer') }}</a>
+                            <a class="btn btn-primary btn-xs" data-toggle="modal" data-backdrop="false" href="#reset_password_user" data-username="{{$u->name}}" onclick="reset_password_utilisateur({{$u->id}}, this.getAttribute('data-username'))"><span class="glyphicon glyphicon-refresh"></span> Mot de passe</a>
+                        </td>
                     @endif
                 </tr>
             @endforeach
@@ -95,6 +99,16 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                <div class="form-group">
+                                    <label>Campus autorises : </label>
+                                    @if(isset($campus))
+                                        @foreach($campus as $cp)
+                                            <div class="checkbox">
+                                                <label><input type="checkbox" name="campus[]" value="{{ $cp->id }}"> {{ $cp->nom }}</label>
+                                            </div>
+                                        @endforeach
+                                    @endif
+                                </div>
                                 <input class="btn  btn-success " type="submit" value="{{  trans('admin.confirmer')  }}">
 
 
@@ -116,11 +130,47 @@
 
     </div>
 
+        <div class="modal fade" id="reset_password_user">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">x</button>
+                        <h4 class="modal-title">Modifier le mot de passe</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form accept-charset="UTF-8" role="form" method="POST" id="reset_password_user_form" action="{{ url('/utilisateurs/reset-password') }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
+                            <input type="hidden" name="id" id="id_reset_password_utilisateur" value=""/>
+                            <fieldset>
+                                <div class="alert alert-info">
+                                    Utilisateur : <strong id="reset_password_username"></strong>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nouveau mot de passe : </label>
+                                    <input type="password" name="password" class="form-control" required minlength="6">
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirmer le mot de passe : </label>
+                                    <input type="password" name="password_confirmation" class="form-control" required minlength="6">
+                                </div>
+                                <input class="btn btn-primary" type="submit" value="Enregistrer">
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     <script>
         function activer_utilisateur(id)
         {
             document.getElementById("id_utilisateur").value = id;
 
+        }
+
+        function reset_password_utilisateur(id, username)
+        {
+            document.getElementById("id_reset_password_utilisateur").value = id;
+            document.getElementById("reset_password_username").innerHTML = username;
         }
     </script>
 <?php

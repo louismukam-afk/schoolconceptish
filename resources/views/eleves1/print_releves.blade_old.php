@@ -16,7 +16,7 @@
            
             <div class="content">
             <div class="titre1">
-              <p><strong>INSTITUT SUPERIEUR HINTEL (IS-HINTEL)</strong></p>
+              <p><strong>INSTITUT SUPERIEUR AZIMUT (IS-AZIMUT)</strong></p>
     <p>Email & Facebook: institutsuphintel@yahoo.fr/Web hintelhotel.com</p>
      <p>BP:4615 Yaounde-Cameroon Tel:(+237) 677 61 67 19 /(+237 697 04 26 87</p>
      <p>Fax:(+237)220 04 68 Site web:hintelhotel.com</p>

@@ -1,0 +1,440 @@
+{
+  "title": "SchoolConcept — IS-HINTEL",
+  "subtitle": "Guide d’utilisation et support de formation",
+  "date": "21 octobre 2026",
+  "version": "1.1",
+  "chapters": [
+    {
+      "title": "Prendre en main le logiciel",
+      "paragraphs": [
+        "Ce guide s’adresse aux agents de scolarité, caissiers, responsables pédagogiques, enseignants, gestionnaires du personnel, comptables et administrateurs. Il explique les opérations du logiciel installé à l’INSTITUT SUPÉRIEUR HINTEL, à partir des interfaces réellement consultées le 21 octobre 2026.",
+        "Les captures utilisent un compte disposant de droits étendus. Certains boutons peuvent être absents avec votre compte : les fonctions disponibles dépendent des rôles, des permissions et du campus autorisé. Les effectifs, noms et montants figurant dans les captures sont ceux de l’installation consultée ; ils ne constituent pas des valeurs à reproduire.",
+        "La navigation et l’ouverture des formulaires ont été vérifiées en session réelle. Les procédures d’enregistrement, d’importation, de suppression, de paiement, de publication et de génération sauvegardée décrivent les formulaires et le code du projet ; leurs validations finales n’ont pas été exécutées pendant la rédaction. Les pages en erreur sont signalées dans l’inventaire des interfaces.",
+        "Le guide et ses images sont destinés à la formation interne : plusieurs écrans contiennent des informations sur les étudiants, le personnel et les opérations financières. Aucun mot de passe n’est reproduit dans ce document."
+      ],
+      "tasks": [
+        {
+          "title": "Se connecter et choisir son campus",
+          "steps": [
+            "Depuis un ordinateur connecté à Internet, ouvrir le navigateur et saisir l’adresse https://ish.informatique-ht.cm. L’application est hébergée dans le cloud et s’utilise directement depuis cette adresse, sans lancer de serveur local sur le poste de l’utilisateur.",
+            "Saisir le nom d’utilisateur et le mot de passe personnels. Cocher « Se souvenir de moi » uniquement sur son poste individuel, puis cliquer sur « Se connecter ».",
+            "Si « Choix du campus » apparaît, sélectionner le campus et cliquer sur « Continuer ». Lors de la consultation, deux entrées de campus avaient le même libellé ; demander au responsable quel campus utiliser si cette situation persiste.",
+            "Vérifier le nom de l’établissement et l’année académique dans le bandeau supérieur. La session consultée affichait 2025-2026. Ne pas supposer que l’année affichée correspond à l’année civile actuelle.",
+            "Ouvrir le module souhaité depuis les grandes tuiles de l’accueil ou le menu latéral. En fin de travail, cliquer sur « Se déconnecter »."
+          ],
+          "result": "L’accueil est affiché dans le contexte du campus choisi. Le compte et le contexte doivent être vérifiés avant toute opération."
+        },
+        {
+          "title": "Se repérer et retrouver une information",
+          "steps": [
+            "Utiliser le menu de gauche pour changer de module et le fil de navigation en haut du contenu pour remonter à une rubrique.",
+            "Dans un champ « Effectuer une recherche », saisir le matricule ou une partie du nom puis cliquer sur « Chercher ». Comparer le matricule, le nom et la date de naissance avant d’ouvrir « Actions ».",
+            "Dans les tableaux qui proposent « Search », saisir un mot pour filtrer les lignes ; utiliser les pages du tableau lorsque des boutons de pagination sont présents. Ce filtre local ne remplace pas la recherche principale du logiciel.",
+            "Choisir les filtres dans leur ordre logique : campus, année, cycle, niveau, filière, spécialité, puis matière ou session. Attendre le chargement des listes dépendantes avant de continuer.",
+            "Si un tableau est vide, contrôler les filtres et les droits avant de créer un nouvel enregistrement. Faire défiler la page pour accéder aux champs et boutons situés plus bas."
+          ],
+          "result": "L’agent retrouve le bon dossier et sait dans quel contexte il travaille."
+        },
+        {
+          "title": "Modifier son mot de passe et comprendre le changement d’année",
+          "steps": [
+            "Depuis l’accueil, ouvrir « Modifier le mot de passe ».",
+            "Renseigner l’ancien mot de passe, le nouveau et sa confirmation. Le formulaire est contrôlé côté application ; le code impose au moins six caractères au nouveau mot de passe. Choisir un mot de passe personnel suffisamment long.",
+            "Valider, vérifier le message affiché, puis utiliser le nouveau mot de passe lors de la prochaine connexion.",
+            "Le bouton « Modifier » situé à côté de l’année académique ouvre un réglage d’administration. Il met à jour l’année de travail de l’application ; il ne sert pas simplement à filtrer son écran personnel. Le réserver au responsable habilité.",
+            "Pour consulter les années antérieures d’un étudiant, privilégier « Historique étudiant » et les historiques de relevés."
+          ],
+          "result": "Le compte reste personnel et l’année de travail est modifiée uniquement dans le cadre de la préparation d’une rentrée."
+        }
+      ]
+    },
+    {
+      "title": "Gérer les étudiants et les inscriptions",
+      "paragraphs": [
+        "L’enregistrement crée la fiche d’identité et les coordonnées de l’étudiant. L’inscription rattache ce dossier à une année académique, un cycle, un niveau et une spécialité. Un paiement enregistre une somme reçue et son affectation. Toujours rechercher un étudiant avant de créer une nouvelle fiche.",
+        "Les renseignements marqués d’un astérisque doivent être complétés. Un champ facultatif ne doit pas être rempli avec une valeur inventée. Les dates, l’orthographe du nom et les coordonnées des parents doivent être vérifiées à partir des pièces du dossier."
+      ],
+      "tasks": [
+        {
+          "title": "Enregistrer un nouvel étudiant",
+          "steps": [
+            "Ouvrir « Gestion des inscriptions » puis rechercher d’abord l’étudiant dans « Inscription / Paiement / Opérations sur les étudiants ».",
+            "Si aucun dossier correspondant n’existe, revenir au module et ouvrir « Enregistrer un étudiant ».",
+            "Compléter l’identité : nom, date et lieu de naissance, sexe, nationalité et lieu de résidence. Le champ « Né vers » sert à l’indication d’une naissance approximative lorsque le dossier le justifie.",
+            "Renseigner le téléphone, le numéro WhatsApp, l’adresse électronique, les origines géographiques et la situation de l’étudiant lorsqu’ils sont connus.",
+            "Compléter les études antérieures : diplôme présenté, spécialité ou série, moyenne, année et pays d’obtention, dernier établissement, langues et activité professionnelle.",
+            "Renseigner la source de financement, le canal par lequel l’étudiant a connu l’établissement et les informations complémentaires demandées. Ajouter les coordonnées du père, de la mère et du tuteur dans leurs sections respectives.",
+            "Ajouter une photo si elle est disponible. Relire l’ensemble du formulaire jusqu’en bas avant de confirmer.",
+            "Après l’enregistrement, vérifier le message de succès et utiliser le lien d’inscription proposé pour poursuivre la scolarisation."
+          ],
+          "result": "La fiche d’identité existe ; l’inscription annuelle doit encore être créée si elle n’a pas déjà été réalisée."
+        },
+        {
+          "title": "Inscrire ou réinscrire un étudiant enregistré",
+          "steps": [
+            "Ouvrir « Inscrire un étudiant enregistré » ou retrouver le dossier dans la recherche des étudiants.",
+            "Sur la ligne du bon étudiant, ouvrir « Actions » puis « Inscrire ».",
+            "Contrôler le matricule et le nom en tête du formulaire. Choisir le profil de scolarité proposé, puis le cycle, la filière, la spécialité et le niveau académique compatibles.",
+            "Indiquer le type de scolarité « Ancien » ou « Nouveau » selon la situation réelle. Ce type et le profil de scolarité sont des réglages distincts.",
+            "Vérifier le barème récupéré par le logiciel, les montants demandés et les renseignements financiers présents sur le formulaire. Si aucun tarif compatible n’apparaît, faire vérifier le paramétrage de la scolarité.",
+            "Vérifier une dernière fois le campus et l’année du bandeau, puis confirmer. Le code prévoit la génération automatique du matricule si l’étudiant n’en possède pas encore.",
+            "Vérifier le message de succès et le reçu proposé. Retrouver ensuite l’étudiant dans les listes du cycle et du niveau choisis."
+          ],
+          "result": "L’étudiant est inscrit dans le parcours de l’année de travail. Ne pas répéter la validation si un doute subsiste : rechercher d’abord l’inscription créée."
+        },
+        {
+          "title": "Importer des étudiants ou des inscriptions",
+          "steps": [
+            "Choisir « Importer les étudiants » pour des fiches d’identité, ou « Importer les inscriptions » pour des rattachements annuels. Préparer les étudiants avant leurs inscriptions.",
+            "Télécharger le modèle depuis l’écran concerné. Conserver les en-têtes sans les renommer et saisir une seule ligne par étudiant ou inscription.",
+            "Pour les étudiants, compléter notamment nom, date de naissance, lieu de naissance, sexe, nationalité et résidence. Respecter les valeurs M ou F et les formats de date indiqués dans le tableau d’aide.",
+            "Pour les inscriptions, reprendre les identifiants des cycles, filières, spécialités et niveaux dans les listes affichées par cette même installation. Ne pas recopier les identifiants d’une autre base.",
+            "Le formulaire annonce l’acceptation du CSV du modèle ou d’un XLSX simple avec les colonnes sur la première feuille. Enregistrer une copie du fichier préparé et faire contrôler sa cohérence avant l’import.",
+            "Choisir le fichier puis cliquer sur « Importer » une seule fois. Lire le compte rendu et les messages de lignes rejetées avant de corriger le fichier.",
+            "Rechercher plusieurs étudiants importés et contrôler leurs inscriptions. Avant de relancer tout le fichier, vérifier le résultat obtenu pour éviter les doublons."
+          ],
+          "result": "Les données importées sont contrôlées dans les écrans habituels, au-delà du seul message de fin d’import."
+        },
+        {
+          "title": "Consulter les listes, l’historique et les documents de scolarité",
+          "steps": [
+            "Ouvrir « Historique étudiant », rechercher le dossier et consulter les inscriptions et paiements des années disponibles.",
+            "Pour les listes, ouvrir « Afficher les listes », choisir le type de liste puis la spécialité et le contexte demandés. Les listes d’inscrits, parents, boursiers et accès répondent à des usages différents.",
+            "Utiliser « Effectifs par cycle » pour contrôler les totaux par cycle et niveau. Comparer des états portant sur le même campus et la même année.",
+            "Pour les photos, cliquer sur « Ajouter les photos des Étudiant », sélectionner la spécialité et les paramètres complémentaires, puis choisir la photo du bon étudiant.",
+            "Pour les cartes, ouvrir « Cartes d’étudiant » et choisir une spécialité ou un étudiant ; contrôler l’identité, le matricule et la photo avant impression. Le scan de cartes dispose d’une interface distincte.",
+            "Pour un certificat, ouvrir « Certificat de scolarité », choisir cycle, filière, spécialité et niveau, puis lancer la génération uniquement après contrôle du périmètre.",
+            "Ouvrir « Fiches » pour accéder aux fiches de report de notes de contrôle continu, examen, examen blanc, rattrapage ou présence aux examens. Sélectionner le document correspondant à la session organisée."
+          ],
+          "result": "La liste ou le document correspond au groupe recherché ; les données d’identité sont contrôlées avant remise à l’étudiant."
+        }
+      ]
+    },
+    {
+      "title": "Recevoir des paiements et contrôler la caisse",
+      "paragraphs": [
+        "Le mode de paiement et le type d’opération ne désignent pas la même chose : le mode décrit le règlement (bancaire, Orange Money ou espèces) tandis que le type indique la source comptable, caisse ou banque. Les choix doivent être cohérents avec le justificatif reçu et les consignes de l’établissement."
+      ],
+      "tasks": [
+        {
+          "title": "Enregistrer un règlement de scolarité ou des frais",
+          "steps": [
+            "Ouvrir « Gestion des paiements », rechercher l’étudiant et vérifier le matricule, le nom et l’inscription concernée.",
+            "Consulter les paiements existants et le solde avant de choisir l’action de paiement de scolarité ou de frais. Des frais distincts de la pension disposent d’un formulaire spécifique.",
+            "Saisir le montant réellement reçu, le motif précis et, lorsque demandé, le montant en lettres. Exemple de motif : « Avance première tranche » ; les exemples ne doivent pas être enregistrés pendant un exercice sur la base de travail.",
+            "Contrôler le campus affiché, choisir le mode de paiement, puis le type d’opération « Espèce / Caisse » ou « Banque ».",
+            "Pour une opération de caisse, choisir la caisse d’entrée autorisée. Pour une opération bancaire, sélectionner la banque et compléter les références, le numéro de versement et les autres renseignements demandés.",
+            "Comparer le montant, le justificatif, la destination des fonds et le dossier étudiant, puis confirmer une seule fois.",
+            "Vérifier que le règlement apparaît dans l’historique et que le reste à payer évolue comme attendu. Ouvrir le reçu proposé, contrôler ses renseignements puis l’imprimer ou l’enregistrer."
+          ],
+          "result": "Le règlement est rattaché au bon étudiant et à la bonne source financière, avec un justificatif exploitable."
+        },
+        {
+          "title": "Accorder et contrôler une bourse",
+          "steps": [
+            "Ouvrir « Bourse d’études » puis « Créer ».",
+            "Sélectionner l’étudiant, l’année académique et le montant correspondant à la décision de bourse.",
+            "Contrôler la décision et l’absence d’une bourse déjà enregistrée avant de confirmer.",
+            "Revenir à la liste des bourses et vérifier la ligne. Contrôler ensuite la situation financière de l’étudiant ; une bourse ne doit pas être confondue avec un versement d’espèces."
+          ],
+          "result": "La bourse est documentée pour le bon étudiant et la bonne année."
+        },
+        {
+          "title": "Contrôler son état de caisse en fin de journée",
+          "steps": [
+            "Ouvrir « Mon état de caisse » dans les inscriptions ou « État caisse/banque » dans l’administration, selon ses droits.",
+            "Renseigner la date de début et la date de fin, la source, la caisse ou la banque, puis cliquer sur « Afficher ».",
+            "Lire les totaux d’entrées, de sorties et de solde de période. Comparer le « Solde période » au « Solde actuel » sans les confondre : le second n’est pas limité de la même façon à la période affichée.",
+            "Vérifier les mouvements détaillés, leurs dates, motifs, références et agents. Rapprocher les reçus et les justificatifs avec les mouvements de la journée.",
+            "Signaler tout écart au responsable en indiquant la période, la caisse ou banque, les références et les montants concernés. Consulter les écritures avant de tenter une nouvelle saisie."
+          ],
+          "result": "Les opérations de la journée sont rapprochées et les éventuels écarts sont identifiés."
+        }
+      ]
+    },
+    {
+      "title": "Suivre la discipline, les notes et les résultats",
+      "paragraphs": [
+        "Le module propose plusieurs circuits de notes et de documents : BTS par session, Soa, Ngaoundéré, Ebolowa et Bamenda. Ils correspondent à des formats ou procédures différents ; utiliser le circuit demandé par la responsabilité pédagogique. L’existence d’un bouton dans le menu ne signifie pas que tous les circuits s’appliquent à chaque spécialité.",
+        "L’écran de sélection des relevés Soa a provoqué des blocages du navigateur pendant la visite ; sa capture n’a pas pu être obtenue. Son historique est documenté. Les sélections et la génération Soa restent à vérifier en session fonctionnelle."
+      ],
+      "tasks": [
+        {
+          "title": "Effectuer l’appel et suivre la discipline",
+          "steps": [
+            "Ouvrir « Gestion des étudiants et des notes » puis « Effectuer l’appel en salle par spécialité ».",
+            "Choisir l’action d’appel et sélectionner la spécialité, le cycle et le niveau demandés. Vérifier que le groupe affiché correspond à la séance.",
+            "Renseigner la date et les paramètres de cours présents à l’écran ; relever les présences ou absences selon les choix proposés.",
+            "Contrôler la liste complète avant d’enregistrer. Une absence réelle doit être distinguée d’une erreur de sélection de groupe.",
+            "Utiliser les états de discipline par spécialité ou « Discipline » pour retrouver l’étudiant, consulter les éléments saisis et traiter les justifications avec les droits adaptés."
+          ],
+          "result": "La séance est rattachée au bon groupe et les états disciplinaires permettent de retrouver les éléments enregistrés."
+        },
+        {
+          "title": "Saisir ou consulter des notes",
+          "steps": [
+            "Ouvrir le circuit correspondant au programme. Pour le circuit principal, choisir « Notes et PV par session ».",
+            "Choisir « Modifier » pour accéder à la saisie ou « Afficher » pour consulter. Les fiches individualisées constituent une troisième entrée du circuit principal.",
+            "Sélectionner la spécialité et le contexte demandés, puis la matière, la session et les autres paramètres de l’évaluation.",
+            "Comparer la liste des étudiants à la feuille de notes de référence. Reporter les valeurs selon le barème et les règles pédagogiques applicables ; ne pas remplacer une absence par une note arbitraire.",
+            "Relire les notes avant validation. Si l’application indique un verrouillage, demander au responsable pédagogique de vérifier les verrous plutôt que de saisir dans une autre session.",
+            "Ouvrir l’affichage des notes du même groupe pour contrôler le résultat. Faire valider les documents destinés à l’impression par la personne habilitée."
+          ],
+          "result": "Les notes correspondent à la bonne matière, à la bonne session et au bon groupe."
+        },
+        {
+          "title": "Importer des notes",
+          "steps": [
+            "Ouvrir « Importer les notes », sélectionner le cycle et le niveau si nécessaire, puis cliquer sur « Importer notes » sur la ligne de la spécialité concernée.",
+            "Vérifier le campus actif et le contexte retenu. Les matières, programmes et sessions affichés sont limités à cette spécialité.",
+            "Télécharger le modèle depuis ce contexte. Compléter les identifiants et les valeurs conformément aux tableaux d’aide affichés, sans renommer les colonnes.",
+            "Contrôler les matricules, matières, sessions, doublons et valeurs de notes avec la feuille validée par l’enseignant.",
+            "Sélectionner le fichier et importer une seule fois. Lire les résultats, corriger les erreurs signalées et vérifier l’affichage des notes avant une éventuelle reprise."
+          ],
+          "result": "Les notes importées sont vérifiées dans la grille du groupe et de la session concernés."
+        },
+        {
+          "title": "Préparer des relevés, procès-verbaux et attestations",
+          "steps": [
+            "Ouvrir le format demandé : relevés BTS par session, relevés Soa, Ngaoundéré, Ebolowa, Bamenda ou attestations de réussite correspondantes.",
+            "Choisir le cycle, le niveau et la filière ; sélectionner ensuite la spécialité. Vérifier les périodes et sessions proposées.",
+            "Contrôler que la saisie des notes et les décisions pédagogiques sont terminées. Distinguer l’aperçu d’un document et une génération sauvegardée : certains écrans indiquent qu’elle fige les relevés pour l’année et le groupe choisis.",
+            "Après validation pédagogique, utiliser la commande adaptée au document demandé. Vérifier les identités, matières, notes, crédits, moyennes, décisions et signatures attendues.",
+            "Utiliser l’historique du format concerné pour retrouver une génération antérieure. Ne pas régénérer un document officiel simplement pour le consulter.",
+            "Dans l’aperçu d’impression, vérifier les pages, l’orientation et les marges ; enregistrer le PDF ou imprimer le document validé."
+          ],
+          "result": "Le document remis correspond au format institutionnel et à la génération autorisée."
+        }
+      ]
+    },
+    {
+      "title": "Gérer le personnel, les cours et les horaires",
+      "paragraphs": [
+        "Le menu latéral « Gestion du personnel » ouvre le tableau de gestion des ressources humaines. Il regroupe les dossiers du personnel, l’affectation aux entités, les cours, les emplois du temps, les volumes horaires, les progressions et les fonctions de paie. Les anciennes interfaces de dispenses restent accessibles depuis une entrée distincte.",
+        "Disponibilité constatée : les pages de plages horaires, emplois permanents, cours enseignants et emplois par spécialité ou enseignant renvoient une erreur d’initialisation en base. Certaines tuiles de paie renvoient à une recherche de personnel ; une variante d’adresse renvoie une page introuvable. Les procédures d’organisation et de paie ci-dessous présentent le parcours prévu et doivent être confirmées après remise en service des écrans correspondants."
+      ],
+      "tasks": [
+        {
+          "title": "Préparer les dossiers et l’organisation du travail",
+          "steps": [
+            "Ouvrir « 1. Personnel » et rechercher la personne avant toute création. Compléter ou vérifier ses coordonnées et les informations demandées dans sa fiche.",
+            "Dans « 2. Affectation entités », rattacher la personne à l’entité et à la fonction correspondant à son activité.",
+            "Faire préparer les salles et les plages horaires par le responsable habilité. Les emplois permanents, salaires permanents et taux horaires utilisent des réglages distincts.",
+            "Pour un cours, ouvrir « Cours enseignants » puis le formulaire de création ; choisir l’enseignant, la matière ou le programme, la spécialité, le cycle, le niveau et les paramètres de séance proposés.",
+            "Vérifier les dates, jours, horaires et salles, puis consulter les emplois par spécialité et par enseignant afin de repérer les incohérences."
+          ],
+          "result": "Les cours et emplois du temps reposent sur des personnels, groupes et horaires correctement paramétrés."
+        },
+        {
+          "title": "Suivre l’exécution des cours et les heures",
+          "steps": [
+            "Consulter « Emplois spécialités » pour le planning d’un groupe et « Emplois enseignants » pour celui d’un intervenant.",
+            "Ouvrir « Fiches de progression », choisir l’enseignant puis ses cours ou fiches ; consulter les documents disponibles et les éléments manquants.",
+            "Utiliser « Volumes horaires » pour comparer la répartition prévue par spécialité avec l’organisation des enseignements.",
+            "Dans « Décompte heures » ou « Biométrie permanents », choisir la période et les filtres disponibles ; vérifier les entrées, sorties et volumes obtenus.",
+            "Si une saisie manuelle est nécessaire et autorisée, ouvrir le formulaire prévu, renseigner les informations justifiées puis vérifier le décompte. Le décompte consulté ne vaut pas à lui seul validation de paie.",
+            "Conserver ou exporter les états prévus lorsque le contrôle est terminé."
+          ],
+          "result": "Les heures sont rapprochées des cours, des présences et des justificatifs disponibles."
+        },
+        {
+          "title": "Préparer la paie des permanents",
+          "steps": [
+            "Vérifier les dossiers actifs, les affectations, les salaires permanents et les présences de la période.",
+            "Dans les rubriques du circuit de paie, contrôler les éléments de salaire, leurs affectations, les barèmes IRPP et les acomptes selon le paramétrage approuvé par l’établissement.",
+            "Sélectionner la période de paie et vérifier les données avant toute génération. La génération produit des données métier : elle doit être réalisée par le gestionnaire habilité.",
+            "Contrôler les bulletins et états de paie proposés : personnel, période, éléments de calcul, retenues et net à payer.",
+            "Faire valider les états puis traiter les paiements dans le circuit prévu. Un bulletin généré et un paiement effectué ne constituent pas la même étape."
+          ],
+          "result": "La paie est préparée, contrôlée puis payée selon les responsabilités de chaque intervenant."
+        }
+      ]
+    },
+    {
+      "title": "Utiliser la comptabilité et les budgets",
+      "paragraphs": [
+        "Le tableau comptable affiche des totaux d’entrées, de sorties et de solde. Les états financiers filtrés et les mouvements détaillés servent au rapprochement ; comparer des indicateurs seulement après vérification de leur période, de leur campus et de leur source."
+      ],
+      "tasks": [
+        {
+          "title": "Enregistrer une dépense ou payer un personnel",
+          "steps": [
+            "Depuis « Comptabilité », ouvrir « Payer une facture » ou « Payer un personnel » suivant la nature de l’opération.",
+            "Identifier le bénéficiaire, la pièce justificative et la période concernée. Pour le personnel, rechercher la personne puis ouvrir le formulaire de paiement correspondant.",
+            "Compléter le motif, le montant, les références et les éléments de budget ou de source financière proposés par l’interface.",
+            "Contrôler les paiements ou dépenses existants pour éviter une double saisie ; rapprocher le montant avec la pièce validée.",
+            "Confirmer selon ses habilitations, puis vérifier le mouvement et le justificatif produit. Le bouton « Imprimer » permet de conserver un document quand il est proposé."
+          ],
+          "result": "La sortie est justifiée, affectée à la bonne destination et retrouvable dans les états."
+        },
+        {
+          "title": "Suivre les bilans et les lignes budgétaires",
+          "steps": [
+            "Ouvrir « Bilan des entrées » ou « Bilan des sorties » et renseigner les critères affichés.",
+            "Lire les totaux et consulter le détail pour identifier les opérations qui composent le résultat.",
+            "Dans « Catégorie de budget », organiser les catégories approuvées ; dans « Ligne budgétaire », préparer ou consulter les lignes rattachées aux catégories.",
+            "Utiliser le rapport de la ligne ou de la catégorie pour examiner les mouvements, puis l’impression du rapport si elle est disponible.",
+            "Comparer les dépenses réalisées et les montants prévus pour le même périmètre. Toute correction d’une écriture existante doit suivre la procédure du responsable comptable."
+          ],
+          "result": "Le responsable dispose d’états cohérents et peut rapprocher les opérations avec leur affectation budgétaire."
+        }
+      ]
+    },
+    {
+      "title": "Administrer le logiciel",
+      "paragraphs": [
+        "Le paramétrage conditionne les choix proposés dans les inscriptions, les notes, les horaires et les états financiers. Préparer les référentiels avant le début des opérations. Les droits d’administration doivent correspondre aux responsabilités confiées à chaque utilisateur.",
+        "Disponibilité constatée : les pages « Rôles et permissions » et « Journal des opérations » ne s’ouvrent pas dans cette installation, car leurs vues sont manquantes. Les étapes correspondantes décrivent les fonctions prévues dans le code ; elles restent à vérifier après correction."
+      ],
+      "tasks": [
+        {
+          "title": "Préparer une année et les référentiels pédagogiques",
+          "steps": [
+            "Vérifier les campus, leurs utilisateurs et les spécialités proposées. Contrôler les libellés proches afin que les agents puissent choisir sans ambiguïté.",
+            "Préparer les cycles et les niveaux académiques, puis les filières et les spécialités. Dans cette application, les filières et les niveaux académiques sont deux rubriques différentes.",
+            "Préparer les matières, les programmes de spécialité, les tutelles et les sessions d’examen lorsque l’interface les propose.",
+            "Définir les tarifs de scolarité, profils et frais compatibles avec les parcours. Vérifier les banques, les caisses et les utilisateurs autorisés.",
+            "Faire contrôler le paramétrage et le calendrier de rentrée avant de modifier l’année académique du bandeau.",
+            "Vérifier ensuite une inscription et les listes de choix du nouveau contexte, sans utiliser un dossier réel pour une création d’essai."
+          ],
+          "result": "Les agents trouvent les parcours, tarifs et destinations financières nécessaires au travail de l’année."
+        },
+        {
+          "title": "Gérer les utilisateurs, rôles et permissions",
+          "steps": [
+            "Ouvrir « Utilisateurs » et retrouver le compte concerné. Vérifier l’identité et les accès existants avant une activation, désactivation ou réinitialisation de mot de passe.",
+            "Ouvrir « Rôles et permissions » pour consulter ou préparer les rôles ; ouvrir les permissions du rôle concerné.",
+            "Accorder les actions nécessaires aux tâches confiées. Distinguer lecture, création, modification, suppression et opérations sensibles lorsqu’elles sont séparées.",
+            "Affecter les rôles à l’utilisateur et vérifier également ses autorisations de campus, caisses ou banques lorsque les interfaces le proposent.",
+            "Faire contrôler l’accès avec le profil concerné. Une permission de rôle ne garantit pas à elle seule que tous les campus et toutes les sources financières sont accessibles."
+          ],
+          "result": "Le compte accède aux fonctions et au périmètre nécessaires à son travail."
+        },
+        {
+          "title": "Verrouiller les notes et consulter le journal",
+          "steps": [
+            "Ouvrir « Verrouiller la modification des notes » et identifier l’évaluation ou la période concernée.",
+            "Après la décision pédagogique, utiliser la commande adaptée au verrou ou au portail étudiant. L’ouverture du portail et le verrou de saisie répondent à des usages distincts.",
+            "Vérifier l’état affiché après l’action. Toute réouverture de saisie doit être coordonnée avec la responsabilité pédagogique.",
+            "Ouvrir « Journal des opérations », renseigner les filtres disponibles et consulter les événements utiles pour retrouver l’origine d’un changement.",
+            "Pour un transfert financier, utiliser « Transfert caisse », contrôler la source, la destination, le montant et le motif avant confirmation, puis rapprocher les mouvements correspondants."
+          ],
+          "result": "Les périodes et accès sont maîtrisés ; les opérations importantes peuvent être recherchées dans le journal."
+        }
+      ]
+    },
+    {
+      "title": "Résoudre les difficultés courantes",
+      "paragraphs": [
+        "Pour signaler un incident, indiquer le module, l’action effectuée, le campus, l’année, le message exact et la référence du dossier. Joindre une capture utile en évitant d’exposer un mot de passe. Les erreurs réellement rencontrées pendant la visite sont recensées à la fin du guide."
+      ],
+      "table": [
+        [
+          "Situation",
+          "Contrôles et action"
+        ],
+        [
+          "La connexion échoue",
+          "Vérifier le nom d’utilisateur, la casse du mot de passe et l’état du compte auprès de l’administrateur. Ne pas créer un second compte pour contourner un accès refusé."
+        ],
+        [
+          "L’adresse ish.informatique-ht.cm ne répond pas",
+          "Vérifier la connexion Internet et l’orthographe de l’adresse https://ish.informatique-ht.cm, puis réessayer. Si le problème persiste, contacter le responsable informatique pour vérifier la disponibilité de l’application hébergée dans le cloud."
+        ],
+        [
+          "Un menu ou une action manque",
+          "Faire vérifier les rôles, permissions et campus autorisés du compte."
+        ],
+        [
+          "La liste d’un niveau ou d’une spécialité est vide",
+          "Contrôler le campus, l’année, le cycle et les dépendances entre filière, spécialité et niveau. Attendre le chargement des listes."
+        ],
+        [
+          "Un étudiant est introuvable",
+          "Rechercher par matricule puis par une partie du nom, vérifier le campus et consulter son historique avant d’enregistrer une nouvelle fiche."
+        ],
+        [
+          "Un tarif n’apparaît pas",
+          "Faire contrôler le profil de scolarité et le barème du cycle, du niveau et de la spécialité choisis."
+        ],
+        [
+          "Un import est rejeté",
+          "Télécharger le modèle de cette version, conserver les colonnes et vérifier les identifiants, formats de dates et valeurs attendues. Lire le compte rendu avant reprise."
+        ],
+        [
+          "La validation semble ne pas avoir répondu",
+          "Rechercher d’abord le dossier, le paiement ou l’import avant de cliquer à nouveau. Une seconde validation peut créer un doublon."
+        ],
+        [
+          "La note ne peut pas être modifiée",
+          "Vérifier la session, les droits et les verrous avec le responsable pédagogique."
+        ],
+        [
+          "Le document imprimé est tronqué",
+          "Ouvrir l’aperçu du navigateur, vérifier l’orientation, le format de papier, les marges et l’échelle ; préférer la commande d’impression du document si elle existe."
+        ],
+        [
+          "Une page affiche une erreur serveur",
+          "Conserver le message, l’adresse et le contexte, puis transmettre au responsable technique. Ne pas relancer une opération de paiement ou de génération sans vérification préalable."
+        ]
+      ]
+    },
+    {
+      "title": "Organiser la formation des utilisateurs",
+      "paragraphs": [
+        "Prévoir les exercices sur une base de formation ou avec des dossiers explicitement réservés aux essais. Les montants et identités d’exercice doivent être fictifs. L’animateur montre d’abord la procédure, le participant la reproduit, puis explique les contrôles effectués."
+      ],
+      "table": [
+        [
+          "Séance",
+          "Exercice",
+          "Critère de réussite"
+        ],
+        [
+          "1 — Prise en main, 30 min",
+          "Se connecter, choisir le campus, retrouver l’année et ouvrir les modules.",
+          "Le participant sait expliquer son contexte de travail et se déconnecter."
+        ],
+        [
+          "2 — Scolarité, 60 min",
+          "Rechercher un étudiant, remplir une fiche de formation, préparer une inscription et consulter une liste.",
+          "Aucun doublon ; identité, parcours et année correctement identifiés."
+        ],
+        [
+          "3 — Encaissement, 45 min",
+          "Préparer un règlement fictif, distinguer mode et source, consulter le reçu et l’état de caisse.",
+          "Montant, motif, étudiant et destination financière cohérents."
+        ],
+        [
+          "4 — Pédagogie, 60 min",
+          "Retrouver une grille, préparer un import de notes et choisir le bon format de relevé.",
+          "Groupe, matière, session et format maîtrisés avant validation."
+        ],
+        [
+          "5 — Ressources humaines, 45 min",
+          "Retrouver un enseignant, son cours, son emploi du temps et ses heures.",
+          "Le participant rapproche planning, progression et décompte."
+        ],
+        [
+          "6 — Responsables, 60 min",
+          "Consulter un bilan, une ligne budgétaire, les droits et le journal.",
+          "Le participant interprète le périmètre des états et sait faire remonter un incident."
+        ]
+      ],
+      "tasks": [
+        {
+          "title": "Vérifier l’autonomie à la fin de la formation",
+          "steps": [
+            "Demander au participant de retrouver un étudiant par son matricule et d’expliquer la différence entre fiche et inscription.",
+            "Lui faire identifier le campus, l’année, le cycle et le niveau d’un dossier avant toute préparation d’opération.",
+            "Lui faire expliquer les contrôles précédant un paiement ou une saisie de notes.",
+            "Lui demander de retrouver une opération existante et un document sans les recréer.",
+            "Présenter un cas de liste vide ou de permission manquante et vérifier qu’il sait qui contacter.",
+            "Clore la session et noter les points à reprendre dans le prochain accompagnement."
+          ],
+          "result": "Le participant peut effectuer les tâches de son poste et identifier les situations nécessitant un responsable."
+        }
+      ]
+    }
+  ]
+}

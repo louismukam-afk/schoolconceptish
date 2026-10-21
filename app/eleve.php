@@ -71,7 +71,7 @@ class eleve extends Model {
 
     protected $table = 'eleve';
 
-    public $fillable = ['nom', 'prenom', 'date_naiss','lieu_naiss','sexe','nationalite','quartier','lien_tuteur','matricule','email','tel','status_matrimonial','region_origine','departement_origine','diplome_preinscription','annee_obtention','pays_obtention','dernier_etablissement','annee_sortie','diplome_obtenu','premiere_langue','deuxieme_langue','autre_langue','profession'];
+    public $fillable = ['nom', 'prenom', 'date_naiss','lieu_naiss','ne_vers','sexe','nationalite','quartier','parent_ens','lien_tuteur','matricule','email','tel','telephone_wathsapp_eleve','status_matrimonial','region_origine','departement_origine','diplome_preinscription','serie','moyenne_generale','annee_obtention','pays_obtention','dernier_etablissement','localisation_ecole','annee_sortie','diplome_obtenu','premiere_langue','deuxieme_langue','autre_langue','profession','source_financement','canal_decouvert','site_internet','abonnement','abonnement_valide','chaine','numero_conseille','telephone_wathsapp_pere','telephone_wathsapp_mere','telephone_wathsapp_tuteur','telephone_wathsapp_autre'];
 
 
     public function parents(){

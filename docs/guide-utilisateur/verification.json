@@ -1,0 +1,20 @@
+{
+  "date": "21 octobre 2026",
+  "version": "2.0",
+  "entries": 111,
+  "illustratedScreens": 104,
+  "procedures": 97,
+  "figures": 175,
+  "errors": [
+    "/emploi-du-temps/plages-horaires",
+    "/emploi-du-temps/emplois-permanents",
+    "/emploi-du-temps/paie-permanents/",
+    "/emploi-du-temps/cours-enseignants",
+    "/emploi-du-temps/emplois-specialites",
+    "/emploi-du-temps/emplois-enseignants",
+    "/access-control",
+    "/audit",
+    "/eleves/releves_ndere/print?id=20&cycle=1&nniveau=6&trimestre=1&save=0"
+  ],
+  "images": 143
+}

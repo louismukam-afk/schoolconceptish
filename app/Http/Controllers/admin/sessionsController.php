@@ -5,13 +5,20 @@ use gesecole\classeMatiere;
 use gesecole\Http\Requests;
 use gesecole\Http\Controllers\Controller;
 
+use gesecole\cycle;
 use gesecole\inscription;
 use gesecole\matiere;
+use gesecole\niveau;
 use gesecole\NNiveau;
+use gesecole\parametres;
 use gesecole\Session_exam;
+use gesecole\TutelleAcademique;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class sessionsController extends Controller {
+    private $sessionExamIdNeedsManualValue = null;
 
 	/**
 	 * Display a listing of the resource.
@@ -77,14 +84,24 @@ class sessionsController extends Controller {
 
         // 5. On garde un tableau $programmes pour rester compatible avec la vue
         $programmes = [$programme];
+        $tutelles = $this->tutellesForClasse($id_classe);
+        $selectedTutelle = $request->get('id_tutelle');
+        if(!$selectedTutelle && count($tutelles) == 1) {
+            $selectedTutelle = $tutelles[0]->id;
+        }
 
         // 6. Sessions de ce programme + année
       /*  $sessions = Session_exam::where('id_classe_matiere', $id_classe_matiere)
             ->where('annee_academique', $annees)
             ->get();*/
-        $sessions = Session_exam::where('id_classe_matiere', $id_classe_matiere)
-            ->orderBy('annee_academique', 'desc')
-            ->get();
+        $sessionsQuery = Session_exam::where('id_classe_matiere', $id_classe_matiere);
+        if($this->sessionExamHasTutelle() && $selectedTutelle) {
+            $sessionsQuery->where('id_tutelle', '=', $selectedTutelle);
+        }
+        if($this->sessionExamHasTutelle()) {
+            $sessionsQuery->with('tutelle');
+        }
+        $sessions = $sessionsQuery->orderBy('annee_academique', 'desc')->get();
 
 
         $values = [
@@ -99,6 +116,9 @@ class sessionsController extends Controller {
             'annee'           => $annee,
             'id_matiere'      => $id_matiere,
             'libelle_matiere' => $libelle_matiere,
+            'tutelles'        => $tutelles,
+            'selected_tutelle'=> $selectedTutelle,
+            'has_session_tutelle' => $this->sessionExamHasTutelle(),
         ];
 
         if(session('success')){
@@ -108,6 +128,135 @@ class sessionsController extends Controller {
 
 
         return view('admin/sessions', $values);
+    }
+
+    public function globalIndex(Request $request)
+    {
+        $annee = $request->get('annee_academique', session('year'));
+        $selected = [
+            'annee_academique' => $annee,
+            'id_tutelle' => $request->get('id_tutelle'),
+            'id_classe' => $request->get('id_classe'),
+            'id_cycle' => $request->get('id_cycle'),
+            'id_filiere' => $request->get('id_filiere'),
+            'id_nniveau' => $request->get('id_nniveau'),
+            'semestre' => $request->get('semestre'),
+        ];
+
+        $programmes = $this->globalProgrammeQuery($selected)->get(['classe_matiere.*']);
+        $programmeIds = $programmes->lists('id');
+        $selectedTutelleSpecialites = $this->classesForTutelle($selected['id_tutelle']);
+        $existingSessions = 0;
+        if(count($programmeIds) > 0) {
+            $existingQuery = Session_exam::whereIn('id_classe_matiere', $programmeIds)->where('annee_academique', $annee);
+            if($this->sessionExamHasTutelle() && $selected['id_tutelle']) {
+                $existingQuery->where('id_tutelle', '=', $selected['id_tutelle']);
+            } elseif($this->sessionExamHasTutelle()) {
+                $existingQuery->whereNull('id_tutelle');
+            }
+            $existingSessions = $existingQuery->count();
+        }
+        $targetSpecialites = $this->countDistinctValues($programmes, 'id_classe');
+        $targetCycles = $this->countDistinctValues($programmes, 'id_cycle');
+
+        $values = [
+            'titre' => 'Sessions examens globales',
+            'annee' => $annee,
+            'annees' => inscription::select('annee_scolaire')->distinct()->orderBy('annee_scolaire', 'desc')->get(),
+            'tutelles' => TutelleAcademique::orderBy('nom')->get(),
+            'classes' => $this->availableSessionClasses($selected),
+            'selected_tutelle_specialites' => $selectedTutelleSpecialites,
+            'cycles' => cycle::orderBy('nom')->get(),
+            'filieres' => niveau::orderBy('nom')->get(),
+            'nniveaux' => NNiveau::orderBy('nom')->get(),
+            'selected' => $selected,
+            'target_programmes' => $programmes->count(),
+            'target_specialites' => $targetSpecialites,
+            'target_cycles' => $targetCycles,
+            'existing_sessions' => $existingSessions,
+        ];
+
+        if(session('success')){
+            \Session::forget('success');
+            $values['success']=true;
+        }
+        if(session('global_session_success')){
+            $values['global_session_success'] = session('global_session_success');
+            \Session::forget('global_session_success');
+        }
+
+        return view('admin.sessions_global', $values);
+    }
+
+    public function globalStore(Request $request)
+    {
+        $this->validate($request, [
+            'annee_academique'  => 'required',
+            'id_tutelle'        => 'required|numeric',
+            'cc1'           => 'numeric|min:0|max:100',
+            'tpe1'          => 'numeric|min:0|max:100',
+            'sn1'           => 'numeric|min:0|max:100',
+            'ratrappage1'   => 'numeric|min:0|max:100',
+            'cc2'           => 'numeric|min:0|max:100',
+            'tpe2'          => 'numeric|min:0|max:100',
+            'sn2'           => 'numeric|min:0|max:100',
+            'ratrappage2'   => 'numeric|min:0|max:100',
+        ]);
+
+        $selected = [
+            'annee_academique' => $request->input('annee_academique'),
+            'id_tutelle' => $request->input('id_tutelle'),
+            'id_classe' => $request->input('id_classe'),
+            'id_cycle' => $request->input('id_cycle'),
+            'id_filiere' => $request->input('id_filiere'),
+            'id_nniveau' => $request->input('id_nniveau'),
+            'semestre' => $request->input('semestre'),
+        ];
+
+        $programmes = $this->globalProgrammeQuery($selected)->get(['classe_matiere.*']);
+        if($programmes->count() == 0) {
+            return redirect()->to(url('/admin/sessions/global'))->withErrors(['sessions' => 'Aucune matiere trouvee pour ces criteres.']);
+        }
+
+        $data = $this->sessionPercentagesFromRequest($request);
+        $created = 0;
+        $updated = 0;
+
+        DB::transaction(function() use ($programmes, $selected, $data, &$created, &$updated) {
+            foreach($programmes as $programme) {
+                $sessionQuery = Session_exam::where('id_classe_matiere', '=', $programme->id)
+                    ->where('annee_academique', '=', $selected['annee_academique']);
+
+                if($this->sessionExamHasTutelle() && $selected['id_tutelle']) {
+                    $sessionQuery->where('id_tutelle', '=', $selected['id_tutelle']);
+                } elseif($this->sessionExamHasTutelle()) {
+                    $sessionQuery->whereNull('id_tutelle');
+                }
+
+                $session = $sessionQuery->first();
+
+                if(!$session) {
+                    $session = new Session_exam();
+                    $session->id_classe_matiere = $programme->id;
+                    $session->id_matiere = $programme->id_matiere;
+                    $session->annee_academique = $selected['annee_academique'];
+                    if($this->sessionExamHasTutelle()) {
+                        $session->id_tutelle = $selected['id_tutelle'] ? $selected['id_tutelle'] : null;
+                    }
+                    $created++;
+                } else {
+                    $updated++;
+                }
+
+                $this->fillSessionPercentages($session, $data);
+                $this->prepareSessionExamId($session);
+                $session->save();
+            }
+        });
+
+        session(['global_session_success' => $created.' session(s) creee(s), '.$updated.' session(s) mise(s) a jour.']);
+
+        return redirect()->to(url('/admin/sessions/global?'.$this->globalQueryString($selected)));
     }
     public function index3(Request $request, $id_classe_matiere)
     {
@@ -253,6 +402,7 @@ class sessionsController extends Controller {
         $this->validate($request, [
             'id_classe_matiere' => 'required|numeric',
             'id_matiere'        => 'required|numeric',
+            'id_tutelle'        => 'numeric',
             'annee_academique'  => 'required',   // 🔹 sélectionnée dans le formulaire
 
             // Tous les champs de pourcentage doivent être numériques (0–100)
@@ -267,11 +417,27 @@ class sessionsController extends Controller {
         ]);
 
         // 🔹 On ne prend plus la session('year'), mais la valeur choisie dans le select
+        if($this->sessionExamHasTutelle() && !$request->input('id_tutelle')) {
+            return redirect()->back()->withErrors(['id_tutelle' => 'Choisissez la tutelle de cette session.']);
+        }
+
         $annee = $request->input('annee_academique');
 
-        $s = new Session_exam();
-        $s->id_classe_matiere  = $request->input('id_classe_matiere');
-        $s->id_matiere         = $request->input('id_matiere');
+        $sessionQuery = Session_exam::where('id_classe_matiere', '=', $request->input('id_classe_matiere'))
+            ->where('annee_academique', '=', $annee);
+        if($this->sessionExamHasTutelle()) {
+            $sessionQuery->where('id_tutelle', '=', $request->input('id_tutelle'));
+        }
+
+        $s = $sessionQuery->first();
+        if(!$s) {
+            $s = new Session_exam();
+            $s->id_classe_matiere  = $request->input('id_classe_matiere');
+            $s->id_matiere         = $request->input('id_matiere');
+        }
+        if($this->sessionExamHasTutelle()) {
+            $s->id_tutelle = $request->input('id_tutelle') ? $request->input('id_tutelle') : null;
+        }
 
         $s->cc1         = $request->input('cc1', 0);
         $s->tpe1        = $request->input('tpe1', 0);
@@ -284,6 +450,7 @@ class sessionsController extends Controller {
         $s->ratrappage2 = $request->input('ratrappage2', 0);
 
         $s->annee_academique = $annee;   // 🔹 année venant du formulaire
+        $this->prepareSessionExamId($s);
         $s->save();
 
         session(['success' => true]);
@@ -293,6 +460,7 @@ class sessionsController extends Controller {
             '/admin/sessions/' . $request->input('id_classe_matiere')
             . '?id_classe=' . $request->input('id_classe')
             . '&id_matiere=' . $request->input('id_matiere')
+            . '&id_tutelle=' . $request->input('id_tutelle')
         );
     }
 
@@ -327,6 +495,7 @@ class sessionsController extends Controller {
         $s->sn2                = $request->input('sn2', 0);
         $s->ratrappage2        = $request->input('ratrappage2', 0);
         $s->annee_academique   = $annee;               // ✅ année choisie
+        $this->prepareSessionExamId($s);
         $s->save();
 
         session(['success' => true]);
@@ -343,6 +512,7 @@ class sessionsController extends Controller {
         $this->validate($request, [
             'id'              => 'required|numeric',
             'annee_academique'=> 'required',
+            'id_tutelle'      => 'numeric',
 
             'cc1'           => 'numeric|min:0|max:100',
             'tpe1'          => 'numeric|min:0|max:100',
@@ -354,7 +524,14 @@ class sessionsController extends Controller {
             'ratrappage2'   => 'numeric|min:0|max:100',
         ]);
 
+        if($this->sessionExamHasTutelle() && !$request->input('id_tutelle')) {
+            return redirect()->back()->withErrors(['id_tutelle' => 'Choisissez la tutelle de cette session.']);
+        }
+
         $s = Session_exam::findOrFail($request->input('id'));
+        if($this->sessionExamHasTutelle()) {
+            $s->id_tutelle = $request->input('id_tutelle');
+        }
 
         $s->cc1         = $request->input('cc1', 0);
         $s->tpe1        = $request->input('tpe1', 0);
@@ -375,6 +552,7 @@ class sessionsController extends Controller {
             '/admin/sessions/' . $request->input('id_classe_matiere')
             . '?id_classe=' . $request->input('id_classe')
             . '&id_matiere=' . $request->input('id_matiere')
+            . '&id_tutelle=' . $request->input('id_tutelle')
         );
     }
 
@@ -408,6 +586,7 @@ class sessionsController extends Controller {
         $s->sn2             = $request->input('sn2', 0);
         $s->ratrappage2     = $request->input('ratrappage2', 0);
         $s->annee_academique = $annee;
+        $this->prepareSessionExamId($s);
         $s->save();
 
         session(['success' => true]);
@@ -479,6 +658,214 @@ class sessionsController extends Controller {
             . '?id_classe=' . $id_classe
             . '&id_matiere=' . $id_matiere
         );
+    }
+
+    private function globalProgrammeQuery($filters)
+    {
+        $query = classeMatiere::join('classe', 'classe_matiere.id_classe', '=', 'classe.id')
+            ->join('matiere', 'classe_matiere.id_matiere', '=', 'matiere.id');
+
+        if(Schema::hasTable('campus_specialite')) {
+            $campusClasses = DB::table('campus_specialite')
+                ->where('id_campus', '=', $this->currentCampusId())
+                ->lists('id_classe');
+            if(count($campusClasses) > 0) {
+                $query->whereIn('classe_matiere.id_classe', $campusClasses);
+            }
+        }
+
+        if(isset($filters['id_tutelle']) && $filters['id_tutelle'] && Schema::hasTable('specialite_tutelle')) {
+            $tutelleClasses = DB::table('specialite_tutelle')
+                ->where('id_tutelle', '=', $filters['id_tutelle'])
+                ->lists('id_classe');
+            if(count($tutelleClasses) > 0) {
+                $query->whereIn('classe_matiere.id_classe', $tutelleClasses);
+            }
+        }
+
+        if(isset($filters['id_classe']) && $filters['id_classe']) {
+            $query->where('classe_matiere.id_classe', '=', $filters['id_classe']);
+        }
+
+        if(isset($filters['id_cycle']) && $filters['id_cycle']) {
+            $query->where('classe_matiere.id_cycle', '=', $filters['id_cycle']);
+        }
+
+        if(isset($filters['id_filiere']) && $filters['id_filiere']) {
+            $query->where('classe.id_niveau', '=', $filters['id_filiere']);
+        }
+
+        if(isset($filters['id_nniveau']) && $filters['id_nniveau']) {
+            $query->where('classe_matiere.id_nniveau', '=', $filters['id_nniveau']);
+        }
+
+        if(isset($filters['semestre']) && $filters['semestre'] !== '' && $filters['semestre'] !== null) {
+            $query->where('classe_matiere.semestre', '=', $filters['semestre']);
+        }
+
+        return $query->orderBy('classe.nom')->orderBy('matiere.nom');
+    }
+
+    private function sessionExamHasTutelle()
+    {
+        return Schema::hasColumn('session_exams', 'id_tutelle');
+    }
+
+    private function tutellesForClasse($idClasse)
+    {
+        if(!Schema::hasTable('specialite_tutelle')) {
+            return TutelleAcademique::orderBy('nom')->get();
+        }
+
+        $ids = DB::table('specialite_tutelle')
+            ->where('id_classe', '=', $idClasse)
+            ->lists('id_tutelle');
+
+        if(count($ids) <= 0) {
+            return TutelleAcademique::orderBy('nom')->get();
+        }
+
+        return TutelleAcademique::whereIn('id', $ids)->orderBy('nom')->get();
+    }
+
+    private function classesForTutelle($idTutelle)
+    {
+        if(!$idTutelle || !Schema::hasTable('specialite_tutelle')) {
+            return classe::whereRaw('1=0')->get();
+        }
+
+        $ids = DB::table('specialite_tutelle')
+            ->where('id_tutelle', '=', $idTutelle)
+            ->lists('id_classe');
+
+        if(count($ids) <= 0) {
+            return classe::whereRaw('1=0')->get();
+        }
+
+        return classe::whereIn('id', $ids)->orderBy('nom')->get();
+    }
+
+    private function availableSessionClasses($filters = [])
+    {
+        $query = classe::orderBy('nom');
+
+        if(Schema::hasTable('campus_specialite')) {
+            $classes = DB::table('campus_specialite')
+                ->where('id_campus', '=', $this->currentCampusId())
+                ->lists('id_classe');
+            if(count($classes) > 0) {
+                $query->whereIn('id', $classes);
+            }
+        }
+
+        if(isset($filters['id_tutelle']) && $filters['id_tutelle'] && Schema::hasTable('specialite_tutelle')) {
+            $tutelleClasses = DB::table('specialite_tutelle')
+                ->where('id_tutelle', '=', $filters['id_tutelle'])
+                ->lists('id_classe');
+            if(count($tutelleClasses) > 0) {
+                $query->whereIn('id', $tutelleClasses);
+            }
+        }
+
+        if(isset($filters['id_filiere']) && $filters['id_filiere']) {
+            $query->where('id_niveau', '=', $filters['id_filiere']);
+        }
+
+        if((isset($filters['id_cycle']) && $filters['id_cycle']) || (isset($filters['id_nniveau']) && $filters['id_nniveau'])) {
+            $programmeClasses = classeMatiere::select('id_classe')->distinct();
+
+            if(isset($filters['id_cycle']) && $filters['id_cycle']) {
+                $programmeClasses->where('id_cycle', '=', $filters['id_cycle']);
+            }
+
+            if(isset($filters['id_nniveau']) && $filters['id_nniveau']) {
+                $programmeClasses->where('id_nniveau', '=', $filters['id_nniveau']);
+            }
+
+            $query->whereIn('id', $programmeClasses->lists('id_classe'));
+        }
+
+        return $query->get();
+    }
+
+    private function sessionPercentagesFromRequest(Request $request)
+    {
+        return [
+            'cc1' => $request->input('cc1', 0),
+            'tpe1' => $request->input('tpe1', 0),
+            'sn1' => $request->input('sn1', 0),
+            'ratrappage1' => $request->input('ratrappage1', 0),
+            'cc2' => $request->input('cc2', 0),
+            'tpe2' => $request->input('tpe2', 0),
+            'sn2' => $request->input('sn2', 0),
+            'ratrappage2' => $request->input('ratrappage2', 0),
+        ];
+    }
+
+    private function fillSessionPercentages(Session_exam $session, $data)
+    {
+        $session->cc1 = $data['cc1'];
+        $session->tpe1 = $data['tpe1'];
+        $session->sn1 = $data['sn1'];
+        $session->ratrappage1 = $data['ratrappage1'];
+        $session->cc2 = $data['cc2'];
+        $session->tpe2 = $data['tpe2'];
+        $session->sn2 = $data['sn2'];
+        $session->ratrappage2 = $data['ratrappage2'];
+    }
+
+    private function prepareSessionExamId(Session_exam $session)
+    {
+        if($session->exists || !$this->sessionExamIdNeedsManualValue()) {
+            return;
+        }
+
+        $session->id = ((int) Session_exam::max('id')) + 1;
+    }
+
+    private function sessionExamIdNeedsManualValue()
+    {
+        if($this->sessionExamIdNeedsManualValue !== null) {
+            return $this->sessionExamIdNeedsManualValue;
+        }
+
+        if(DB::connection()->getDriverName() !== 'pgsql') {
+            $this->sessionExamIdNeedsManualValue = false;
+            return $this->sessionExamIdNeedsManualValue;
+        }
+
+        $column = DB::selectOne(
+            "select column_default from information_schema.columns where table_name = ? and column_name = ?",
+            ['session_exams', 'id']
+        );
+
+        $this->sessionExamIdNeedsManualValue = !$column || !$column->column_default;
+
+        return $this->sessionExamIdNeedsManualValue;
+    }
+
+    private function globalQueryString($filters)
+    {
+        $params = [];
+        foreach($filters as $key => $value) {
+            if($value !== '' && $value !== null) {
+                $params[$key] = $value;
+            }
+        }
+
+        return http_build_query($params);
+    }
+
+    private function countDistinctValues($items, $field)
+    {
+        $values = [];
+        foreach($items as $item) {
+            if(isset($item->$field)) {
+                $values[$item->$field] = true;
+            }
+        }
+
+        return count($values);
     }
 
 

@@ -15,11 +15,7 @@
             </div>
 
         @endif
-        <ul>
-            <li><a href="{{ url('/eleves/notes/print_note_ndere/'.$id.'?sequence=7&cycle='.$id_cycle.'&nniveau='.$id_nniveau) }}"><h4>{{trans('admin.PV').' '.trans('admin.semestre').' 1'}}</h4></a></li>
-            <li><a href="{{ url('/eleves/notes/print_note_ndere/'.$id.'?sequence=8&cycle='.$id_cycle.'&nniveau='.$id_nniveau) }}"><h4>{{trans('admin.PV').' '.trans('admin.semestre').' 2'}}</h4></a></li>
-            <li><a href="{{ url('/eleves/notes/print_note_ndere/'.$id.'?sequence=9&cycle='.$id_cycle.'&nniveau='.$id_nniveau) }}"><h4>@lang('admin.bilan_annuel')</h4></a></li>
-        </ul>
+        @include('eleves.partials.pv_tutelles_licence_links')
         <h4>{{trans('eleve.choix_mat')}}</h4>
         <hr>
         <div class="liste-classe col-md-9">

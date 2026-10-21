@@ -1,0 +1,18 @@
+const fs=require('node:fs'),path=require('node:path');
+const dir=path.resolve(__dirname,'..');
+const html=fs.readFileSync(path.join(dir,'GUIDE_UTILISATEUR.html'),'utf8');
+const pdf=fs.readFileSync(path.join(dir,'GUIDE_UTILISATEUR.pdf'));
+const images=[...html.matchAll(/<img src="([^"]+)"/g)].map(m=>m[1]);
+const missing=images.filter(f=>!fs.existsSync(path.join(dir,f)));
+const invalidPNG=images.filter(f=>fs.existsSync(path.join(dir,f))&&fs.readFileSync(path.join(dir,f)).subarray(0,8).toString('hex')!=='89504e470d0a1a0a');
+const ids=new Set([...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]));
+const brokenAnchors=[...html.matchAll(/href="#([^"]+)"/g)].map(m=>m[1]).filter(id=>!ids.has(id));
+const pages=[...pdf.toString('latin1').matchAll(/\/Type\s*\/Pages[\s\S]{0,200}?\/Count\s+(\d+)/g)].map(m=>+m[1]);
+const forms=(html.match(/<form\b/g)||[]).length;
+const manifest=fs.existsSync(path.join(dir,'EXPORT_PDF.json'))?JSON.parse(fs.readFileSync(path.join(dir,'EXPORT_PDF.json'),'utf8')):{};
+const pdfCurrent=manifest.htmlHash===require('node:crypto').createHash('sha256').update(html).digest('hex')&&manifest.pdfBytes===pdf.length;
+const report={date:'2026-10-21',figures:images.length,interfaceSheets:(html.match(/class="screen"/g)||[]).length,pdfPages:Math.max(...pages),pdfBytes:pdf.length,missingImages:missing,invalidPNG,brokenAnchors,embeddedForms:forms,pdfHeaderValid:pdf.subarray(0,5).toString()==='%PDF-',pdfEndValid:pdf.subarray(-50).toString().includes('%%EOF'),textEncodingOK:!html.includes('\ufffd')&&!html.includes('Disponibilit?')};
+report.procedures=(html.match(/id="procedure-/g)||[]).length;report.pdfCurrent=pdfCurrent;
+fs.writeFileSync(path.join(dir,'CONTROLE_DOCUMENT.json'),JSON.stringify(report,null,2));
+console.log(JSON.stringify(report));
+if(missing.length||invalidPNG.length||brokenAnchors.length||forms||!report.pdfHeaderValid||!report.pdfEndValid||!report.textEncodingOK||!pdfCurrent)process.exit(1);

@@ -14,8 +14,12 @@ class AddAutreFromMoyenneClasse extends Migration {
     {
         Schema::table('moyenne_classe', function (Blueprint $table) {
 
-            $table->integer('id_cycle');
-            $table->integer('id_nniveau');
+            if (!Schema::hasColumn('moyenne_classe', 'id_cycle')) {
+                $table->integer('id_cycle')->default(0);
+            }
+            if (!Schema::hasColumn('moyenne_classe', 'id_nniveau')) {
+                $table->integer('id_nniveau')->default(0);
+            }
         });
     }
 
@@ -26,7 +30,14 @@ class AddAutreFromMoyenneClasse extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('moyenne_classe');
+        Schema::table('moyenne_classe', function (Blueprint $table) {
+            if (Schema::hasColumn('moyenne_classe', 'id_cycle')) {
+                $table->dropColumn('id_cycle');
+            }
+            if (Schema::hasColumn('moyenne_classe', 'id_nniveau')) {
+                $table->dropColumn('id_nniveau');
+            }
+        });
     }
 
 

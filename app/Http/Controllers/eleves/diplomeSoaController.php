@@ -259,13 +259,13 @@ class diplomeSoaController extends Controller {
 
 
                 if((!$cpst) && (!$cps)){
-                    $matieres[$l]=new pv1_matiere($matiere->id,$note,$credit,$nom,$matiere->type,$matiere->semestre,$matiere->id_code);
+                    $matieres[$l]=new DiplomeSoaMatiere($matiere->id,$note,$credit,$nom,$matiere->type,$matiere->semestre,$matiere->id_code);
 
                 }
 
                 if($cpst){
                     //$composantes[$cst]= new composante($matiere->id,$note,$credit,$cpstList,$nom,$matiere->id_classe_matiere,$nom,$matiere->type,$matiere->semestre,$matiere->id_code);
-                    $composantes[$cst]= new composante($matiere->id,$note,$nom,$credit,$matiere->type,$matiere->semestre,$matiere->id_code,$matiere->coef, $matiere->id_classe_matiere);;
+                    $composantes[$cst]= new DiplomeSoaComposante($matiere->id,$note,$nom,$credit,$matiere->type,$matiere->semestre,$matiere->id_code,$matiere->coef, $matiere->id_classe_matiere);;
 
                     $cst++;
 
@@ -276,7 +276,7 @@ class diplomeSoaController extends Controller {
 
 
                 if($cps){
-                    $composes[$c]= new compose($matiere->id,$note,$credit,$cpstList,$nom,$credit,$matiere->type,$matiere->semestre,$matiere->id_code);
+                    $composes[$c]= new DiplomeSoaCompose($matiere->id,$note,$credit,$cpstList,$nom,$credit,$matiere->type,$matiere->semestre,$matiere->id_code);
                     $c++;
 
                 }
@@ -344,7 +344,7 @@ class diplomeSoaController extends Controller {
 
 // $sNote+=$co_note;
 
-                $matieres[$l]=new pv1_matiere($compt->id_matiere,$co_note/$co_n,$s_co_coef,$compt->nom,$compt->type,$compt->semestre,$compt->id_code);
+                $matieres[$l]=new DiplomeSoaMatiere($compt->id_matiere,$co_n > 0 ? $co_note/$co_n : 0,$s_co_coef,$compt->nom,$compt->type,$compt->semestre,$compt->id_code);
                 $l++;
 
             }
@@ -366,7 +366,7 @@ class diplomeSoaController extends Controller {
             /*  dump($hh);
             die();*/
 
-            $proces_v[$k]=new PV1($eleve->id,$matieres,$hh);
+            $proces_v[$k]=new DiplomeSoaPV($eleve->id,$matieres,$hh);
             $k++;
 
         }
@@ -516,7 +516,7 @@ class diplomeSoaController extends Controller {
 
     }
 }
-class PV1{
+class DiplomeSoaPV{
     public $eleve;
     public $matieres;
     public $mgp;
@@ -528,7 +528,7 @@ class PV1{
 
     }
 }
-class pv1_matiere{
+class DiplomeSoaMatiere{
     public $id_matiere;
     public $note;
     public $credit;
@@ -553,7 +553,7 @@ class pv1_matiere{
 
 }
 
-class composante{
+class DiplomeSoaComposante{
     public $id_matiere;
     public $note;
     public $nom;
@@ -579,7 +579,7 @@ class composante{
 
     }
 }
-class compose{
+class DiplomeSoaCompose{
     public $id_matiere;
     public $note;
     public $coef;
@@ -603,4 +603,3 @@ class compose{
         $this->id_code=$co;
     }
 }
-

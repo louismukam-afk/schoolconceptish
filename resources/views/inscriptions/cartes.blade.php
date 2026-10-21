@@ -92,7 +92,7 @@
 
                                         </div>
                                         <div class="text-uppercase fait-le">
-                                            <div class="field-title "><span class="fa fa-facebook-square"></span>Institut Supérieur hintel</div>
+                                            <div class="field-title "><span class="fa fa-facebook-square"></span>Centre de Formation Hintel</div>
                                         </div>
                                     </div>
                                 </div>
@@ -173,7 +173,7 @@
                                             </div>
                                         </div>
                                         <div class="text-uppercase fait-le">
-                                            <div class="field-title "><span class="fa fa-facebook-square"></span> Institut Supérieur hintel</div>
+                                            <div class="field-title "><span class="fa fa-facebook-square"></span> Centre de Formation Hintel</div>
                                         </div>
                                     </div>
                                 </div>

@@ -34,6 +34,9 @@
      <div class="identite">
          <p><strong>Nom : {{$personnel->nom}}</strong></p>
          <strong class="traduction">Name</strong>
+         @if(isset($user) && $user)
+             <p><strong>Agent / Caissier : {{$user->fullname ? $user->fullname : $user->name}}</strong></p>
+         @endif
 
 
      </div>

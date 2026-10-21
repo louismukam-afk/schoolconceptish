@@ -31,6 +31,9 @@
     <a href="#" class="btn btn-lg btn-warning" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> @lang('inscription.imprimer')</a>
     <link rel="stylesheet"  href="{{URL::asset('css/pv.css')}}">
 
+    <?php $pv_type = 'licence_soa'; $pv_title_mode = 'semestre'; ?>
+    @include('eleves.partials.pv_tutelle_header')
+
     <div class="titre">
         <p style="font-size: 19px"><strong>Résultats  des Examens du semestre</strong></p>
         <strong class="traduction">Semester exam results</strong>

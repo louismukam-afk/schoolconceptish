@@ -22,6 +22,58 @@
     size: A4 landscape;
     margin-left: 2mm!important;
     margin-right: 2mm!important;
+    margin-top: 2mm!important;
+    margin-bottom: 2mm!important;
+}
+
+@media print {
+    html,
+    body {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    body {
+        zoom: 88%;
+    }
+
+    .container,
+    .container-fluid,
+    .content,
+    .content-wrapper,
+    .row,
+    [class*="col-"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        float: none !important;
+    }
+
+    .list-cont {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+    }
+
+    .list-cont table.table {
+        width: 100% !important;
+        max-width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+    }
+
+    .list-cont table.table th,
+    .list-cont table.table td {
+        overflow-wrap: break-word !important;
+        word-wrap: break-word !important;
+        white-space: normal !important;
+    }
 }
 
 .wrapper,.navbar-default,.alert,.btn,.big-title,hr,.action,.back-button,.navbar,.navbar-header,.modal,.copy,.back-button,.copy,.dt-buttons,.dataTables_filter,.dataTables_info,.dataTables_paginate,.breadcrumb

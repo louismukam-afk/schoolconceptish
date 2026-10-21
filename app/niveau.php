@@ -21,7 +21,7 @@ class niveau extends Model {
 
 	protected $table='niveau';
 
-    public $fillable=['nom'];
+    public $fillable=['nom', 'domaines'];
 
 
 

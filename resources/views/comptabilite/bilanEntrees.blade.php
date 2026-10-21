@@ -38,9 +38,9 @@
             <table id="table-entrees" class="table table-bordered table-striped table-condensed table-inverse" >
                 <thead>
                 <th>#</th>
-                <th>{{trans('inscription.motif')}}</th>
                 <th>{{trans('inscription.nom')}}</th>
                 <th>{{trans('admin.classe')}}</th>
+                <th>{{trans('inscription.motif')}}</th>
                 <th>Date</th>
                 <th>@lang('inscription.montant')</th>
                 <th></th>
@@ -52,36 +52,32 @@
 
                     <tr>
                         <td>{{$i++}}</td>
-                        <td><strong >{{$p->motif}}</strong></td>
                         <td>@if($p->eleve) {{$p->eleve->nom . ' ' . $p->eleve->prenom }} @endif</strong></td>
                         <td>
                             @if($p->eleve)
                                 @foreach($p->eleve->inscriptions as $ins)
-                                    @if($ins->annee_scolaire == $annee_scolaire)
-                                        {{$ins->classe->getNom()}} - {{$ins->nniveau->nom}}
+                                    @if($ins->annee_scolaire == $p->annee_scolaire)
+                                        {{$ins->classe->code}} - {{$ins->nniveau->nom}}
                                         <?php break; ?>
                                     @endif
                                 @endforeach
                             @endif
                         </td>
+                        <td><strong >{{$p->motif}}</strong></td>
                         <td>{{(new DateTime($p->date_payement))->format('d-m-Y')}}</td>
                         <td>{{$p->montant}}</td>
                         <!-- TO CHANGE -->
-                        <td>                        <a  class="btn btn-warning"  href="@if($p->type == \gesecole\Vars::INSCRIPTION_TYPE){{URL::to('/inscriptions/print/'.$p->id)}} @else{{URL::to('/inscriptions/payement/print/'.$p->id)}}@endif" ><span class="glyphicon glyphicon-eye-open"  ></span> {{  trans('admin.verifier')  }}</a></td>
+                        <td>     <a  class="btn btn-warning"  href="@if($p->type == \gesecole\Vars::INSCRIPTION_TYPE){{URL::to('/inscriptions/print/'.$p->id)}} @else{{URL::to('/inscriptions/payement/print/'.$p->id)}}@endif" ><span class="glyphicon glyphicon-eye-open"  ></span> {{  trans('admin.verifier')  }}</a></td>
                     </tr>
                 @endforeach
-                <tr class="hidden-row">
-                    <td >@lang('admin.total')</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>{{$sumPayments}}</td>
-                    <td></td>
-                </tr>
+
                 </tbody>
                 <tfoot>
-                    <th colspan="5">@lang('admin.total')</th>
+                    <th >@lang('admin.total')</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                     <th>{{$sumPayments}}</th>
                 </tfoot>
             </table>
@@ -138,6 +134,7 @@
 
         $('#table-entrees').dataTable( {
             dom: 'Bfrtip',
+
             pageLength:50,
             buttons: [
                 //'copy', 'csv', 'excel', 'pdf', 'print'
@@ -156,6 +153,7 @@
                     text: '<i class="fa fa-file-pdf-o"></i> PDF',
                     titleAttr: 'PDF',
                     title: '{!! trans('admin.bilan_entrees') !!} - {!! sanitize($table_titre) !!}',
+                    footer: true,
                     exportOptions: {
                         columns: ':not(:last-child)'
                     }
@@ -164,18 +162,24 @@
                 {
                     extend: 'print',
                     text: '<i class="fa fa-print"></i> @lang("inscription.imprimer")',
-                    titleAttr: 'Imprimer',
+                    titleAttr: '@lang("inscription.imprimer")',
                     title: '{!! trans('admin.bilan_entrees') !!} - {!! sanitize($table_titre) !!}',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    customize: (window, buttonO, dtAPI) => {dataTableButtonFunction(window, buttonO, dtAPI)},
+                    footer: true,
                     exportOptions: {
                         columns: ':not(:last-child)'
                     }
                 }
             ]
         } );
-        $(function () {
-            //$('#date_debut').datepicker({ dateFormat: 'dd-mm-yy' });
-            //$('#date_fin').datepicker({ dateFormat: 'dd-mm-yy' });
-        });
+
+        var dataTableButtonFunction = function (window, buttonO, dtAPI) {
+            window.document.body.innerHTML = '<style> @media print { @page  { size: A4 landscape } } </style>' + '@include('perso.header-trim')' + window.document.body.innerHTML
+
+        }
+
 
 
 

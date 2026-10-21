@@ -1,0 +1,1280 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+      <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes</title>
+    <link rel="shortcut icon" href="http://127.0.0.1:8080/ISH/app/public/img/log.png" type="image/x-icon">
+	<!-- BOOTSTRAP STYLES-->
+    <link href="http://127.0.0.1:8080/ISH/app/public/dist/css/bootstrap.min.css" rel="stylesheet" />
+     <!-- FONTAWESOME STYLES-->
+    <link href="http://127.0.0.1:8080/ISH/app/public/css/font-awesome.css" rel="stylesheet" />
+        <!-- CUSTOM STYLES-->
+    <link href="http://127.0.0.1:8080/ISH/app/public/css/custom.css?202212051300" rel="stylesheet" media="screen"/>
+    <link href="http://127.0.0.1:8080/ISH/app/public/js/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet" media="screen"/>
+    <link href="http://127.0.0.1:8080/ISH/app/public/js/datatables/datatables.min.css" rel="stylesheet"/>
+    <link href="http://127.0.0.1:8080/ISH/app/public/js/chosen_v1.8.7/chosen.min.css" rel="stylesheet"/>
+
+
+    <!-- GOOGLE FONTS-->
+
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/jquery.min.js"></script>
+
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/jquery-ui-1.12.1/jquery-ui.js"></script>
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/chosen_v1.8.7/chosen.jquery.min.js"></script>
+    <!-- BOOTSTRAP SCRIPTS -->
+    <script src="http://127.0.0.1:8080/ISH/app/public/dist/js/bootstrap.min.js"></script>
+    <!-- CUSTOM SCRIPTS -->
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/custom.js"></script>
+
+    <script src="http://127.0.0.1:8080/ISH/app/public/js/datatables/datatables.min.js"></script>
+
+
+<script>
+    function startLoading() {
+       // $('.loading-back').css('display','inline');
+        $('.loading_icon').css('display','inline');
+    }
+    function stopLoading() {
+        //$('.loading-back').css('display','none');
+        $('.loading_icon').css('display','none');
+    }
+
+    function showLoader() {
+        $('.loader').removeClass('hidden');
+    }
+    function hideLoader() {
+        $('.loader').addClass('hidden');
+
+    }
+</script>
+
+    <style>
+        #loader {
+            display: none;
+        }
+
+        .loader{
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 100000;
+            background-color: rgba(0, 0, 0, 0.6);
+            top: 0;
+            left: 0;
+        }
+        .loader img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150px;
+            transform: translate(-50%, -50%);
+        }
+        #qrcode-input {
+            height: 0;
+        }
+    </style>
+</head>
+
+
+
+<body>
+<div  class="loader hidden">
+    <img src="http://127.0.0.1:8080/ISH/app/public/img/loading3.gif" alt="">
+</div>
+<div class="loading-back">  </div>
+<div class="col-md-12" >
+    <a href="#"><img class="back-button" src="http://127.0.0.1:8080/ISH/app/public/img/back_button.png" onclick="history.back()" width="50px" height="50px"></a>
+
+</div>
+
+    <div class="loading_icon" style="
+    position: fixed;
+    Left: calc(50% - 75px);
+    top: calc(50% - 37.5px);
+    z-index: 10000;
+     width: 150px;
+     height: 75px;
+         box-shadow: 0 10px 20px rgba(0, 0, 0, .5);
+     display: none;
+">
+        <img src="http://127.0.0.1:8080/ISH/app/public/img/loading.gif" alt="" style="width: inherit;height: inherit">
+    </div>
+
+    <div id="wrapper">
+         <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="adjust-nav">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand logo" href="#">
+                        <img src="http://127.0.0.1:8080/ISH/app/public/img/school-concept.png" />
+
+                    </a>
+                </div>
+                <div class="nom-etab"><strong>INSTITUT SUPERIEUR HINTEL - IS-HINTEL</strong></div>
+
+
+                <span class="logout-spn" >
+
+                    <a href="http://127.0.0.1:8080/ISH/app/public/auth/logout">Se d&eacute;connecter</a>
+                </span>
+                <div ><span class="annee">Ann&eacute;e acad&eacute;mique <span>2025-2026</span> <a data-toggle="modal"  href="#change-year" class="btn btn-success btn-xs">Modifier</a></span></div>
+                <div class="langage ">
+                    <div class="lang dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle"><strong style="color: white">Langue :</strong> Francais  <span class="caret"></span></a>
+                    <ul class="dropdown-menu navbar-inverse">
+                        <li><a href="http://127.0.0.1:8080/ISH/app/public/language/french"><strong>Français</strong></a></li>
+                        <li><a href="http://127.0.0.1:8080/ISH/app/public/language/english"><strong>English</strong></a></li>
+                    </ul>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="modal fade" id="change-year">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">x</button>
+                            <h4 class="modal-title">Remplir les champs</h4>
+                        </div>
+                        <div
+                                class="modal-body">
+
+
+
+                            <form accept-charset="UTF-8" role="form" method="POST" id="edit_classe_form" action="http://127.0.0.1:8080/ISH/app/public/update-school-year">
+                                <input type="hidden" name="_token" value="11cGq2AtsszA3OG9aS0pFZPISYi2D6imrt5FH8VL"/>
+
+                                <div class="form-group">
+                                    <div class="row" style="text-align: center">
+                                        <div class="col-md-2"><input type="text" name="first_year" placeholder="2017" class="form-control"></div> <span class="col-md-1 " style="font-size: 20px;font-weight: 600;"> - </span><div class="col-md-2"><input class="form-control" type="text" name="second_year" placeholder="2018" ></div>
+                                    </div>
+
+                                </div>
+                                <input class="btn  btn-success " type="submit" value="Confirmer">
+
+
+                            </form>
+
+
+                        </div>
+
+
+
+
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <!-- /. NAV TOP  -->
+        <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+                 
+
+
+                    <li class="active-link">
+                        <a href="#" ><i class="fa fa-desktop "></i>Tableau de bord</a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public"><i class="fa fa-home "></i>Accueil</a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/inscriptions"><i class="fa fa-table "></i>Gestion des inscriptions</a>
+                    </li>
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/eleves"><i class="fa fa-edit "></i>Gestion des &eacute;tudiants et des notes</a>
+                    </li>
+
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/personnel"><i class="fa fa-steam   "></i>Gestion du personnel</a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/comptabilite"><i class="fa fa-money"></i>Comptabilit&eacute;</a>
+                    </li>
+
+                    <li style="display: none;">
+                        <a href="#"><i class="fa fa-bar-chart-o"></i>Bilan</a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/admin"><span class="glyphicon glyphicon-lock"></span> Administration</a>
+                    </li>
+                                        <li>
+                        <a href="http://127.0.0.1:8080/ISH/app/public/admin/blk"><span class="fa fa-ban"></span>BLK</a>
+                    </li>
+
+                        <li>
+                            <a href="http://127.0.0.1:8080/ISH/app/public/admin/unblk"><span class="fa fa-ban"></span>UBLK</a>
+                        </li>
+                    
+                    
+                </ul>
+                            </div>
+
+        </nav>
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper" >
+            <div id="page-inner">
+                <div class="row hidden">
+                    <div class="col-md-12">
+
+                     <h2 class="big-title">Gestion des &eacute;tudiants et des notes</h2>
+                    </div>
+                </div>
+                 <!-- /. ROW  -->
+                  <hr style="margin-top: 0;margin-bottom: 0" />
+                <div class="row-fluid">
+                    <ul class="breadcrumb" style="margin-bottom: 0;padding: 2px 15px;font-size: 16px">
+
+                            <li><strong><a href="http://127.0.0.1:8080/ISH/app/public/eleves">Gestion des étudiants et des notes</a></strong></li>
+    <li><strong><a href="http://127.0.0.1:8080/ISH/app/public/eleves/notes">Notes</a></strong></li>
+    <li>
+        <a href="http://127.0.0.1:8080/ISH/app/public/eleves/notes/edit">
+            <strong>Choisissez la Spécialité</strong>
+        </a>
+    </li>
+    <li>
+        <a href="http://127.0.0.1:8080/ISH/app/public/eleves/notes/matieres?id=20&amp;cycle=1&amp;nniveau=6">
+            <strong>Matières</strong>
+        </a>
+    </li>
+    <li class="active"><strong>Notes</strong></li>
+                    </ul>
+                <div style="height: 10px; background: #214761" class="action"></div>
+                    <div class="col-lg-12 ">
+                                            
+                    </div>
+
+                    </div>
+
+
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="alert alert-danger print-error-msg" style="display: none">
+                            <ul> </ul>
+                        </div>
+                        <div class="alert alert-success print-success-msg" style="display: none">
+                            <ul> </ul>
+                        </div>
+                                                                    </div>
+
+                </div>
+                  <!-- /. ROW  -->
+
+                    
+    <h3 class="big-title">Notes</h3>
+        <div class="add-container col-md-12" style="margin-top: 25px">
+
+        
+        
+        <div class="row">
+            <h3 class="col-md-10">
+                MATHEMATIQUES
+                :
+                CC 1
+                                - 2025-2026
+            </h3>
+
+            <div class="col-md-2" style="display: none">
+                <a href="#" class="btn-xs btn btn-danger">
+                    <span class="glyphicon glyphicon-trash"></span> Supprimer                </a>
+            </div>
+        </div>
+
+        <hr>
+
+        <form accept-charset="UTF-8"
+              role="form"
+              method="POST"
+              id="add_level_form"
+              action="http://127.0.0.1:8080/ISH/app/public/eleves/notes/store">
+            <input type="hidden" name="_token" value="11cGq2AtsszA3OG9aS0pFZPISYi2D6imrt5FH8VL">
+
+                        <input type="hidden" name="id_matiere"      value="2643">
+            <input type="hidden" name="sequence"        value="1">
+            <input type="hidden" name="id_classe"       value="20">
+            <input type="hidden" name="cycle"           value="1">
+            <input type="hidden" name="nniveau"         value="6">
+            <input type="hidden" name="annee_scolaire"  value="2025-2026">
+
+            <fieldset>
+                
+                                    
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2111"
+                                   onchange="onCheckedChange(this,'note0')"
+                                    checked                                    tabindex="-1">
+                            <label>AFFOUDA ESSIMI ARNAUD BRICE  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note0"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2314"
+                                   onchange="onCheckedChange(this,'note1')"
+                                    checked                                    tabindex="-1">
+                            <label>BELOMO ERIC FIDELE  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note1"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2277"
+                                   onchange="onCheckedChange(this,'note2')"
+                                    checked                                    tabindex="-1">
+                            <label>EDOA EFILA WENDELIN LIONEL  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note2"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2307"
+                                   onchange="onCheckedChange(this,'note3')"
+                                    checked                                    tabindex="-1">
+                            <label>EMBOLO EMBOLO YVES GIOVANI  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note3"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="213"
+                                   onchange="onCheckedChange(this,'note4')"
+                                    checked                                    tabindex="-1">
+                            <label>ESSAM MELIGUI MICHEL LEONEL   :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note4"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2244"
+                                   onchange="onCheckedChange(this,'note5')"
+                                    checked                                    tabindex="-1">
+                            <label>FOSSO JUDE  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note5"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2153"
+                                   onchange="onCheckedChange(this,'note6')"
+                                    checked                                    tabindex="-1">
+                            <label>FOUNDIKOU MOHAMED MOCTAR  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note6"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2054"
+                                   onchange="onCheckedChange(this,'note7')"
+                                    checked                                    tabindex="-1">
+                            <label>KAMADJEU YETGANG HERMAN DESIRE  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note7"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2011"
+                                   onchange="onCheckedChange(this,'note8')"
+                                    checked                                    tabindex="-1">
+                            <label>KEMCHE KAMNYIA ADONIS GAETAN  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note8"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2150"
+                                   onchange="onCheckedChange(this,'note9')"
+                                    checked                                    tabindex="-1">
+                            <label>KUEBOU YVES STEPHANE  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note9"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2146"
+                                   onchange="onCheckedChange(this,'note10')"
+                                    checked                                    tabindex="-1">
+                            <label>MBOUKENG STEPHANE BERTIN   :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note10"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2364"
+                                   onchange="onCheckedChange(this,'note11')"
+                                    checked                                    tabindex="-1">
+                            <label>MEZUI TCHAPIE NGAKO MICHEL LEIRIS  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note11"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2165"
+                                   onchange="onCheckedChange(this,'note12')"
+                                    checked                                    tabindex="-1">
+                            <label>NDJOUGA ALBERT CHRISTIAN   :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note12"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2003"
+                                   onchange="onCheckedChange(this,'note13')"
+                                    checked                                    tabindex="-1">
+                            <label>NGNOHOUA JUNIOR  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note13"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2164"
+                                   onchange="onCheckedChange(this,'note14')"
+                                    checked                                    tabindex="-1">
+                            <label>NGOUEMETA TOUOTSAP FALONE  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note14"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2246"
+                                   onchange="onCheckedChange(this,'note15')"
+                                    checked                                    tabindex="-1">
+                            <label>NGOUO NOBOSSE JORES YVAN  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note15"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2033"
+                                   onchange="onCheckedChange(this,'note16')"
+                                    checked                                    tabindex="-1">
+                            <label>NGUENE DIEUDONNE YVES  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note16"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2078"
+                                   onchange="onCheckedChange(this,'note17')"
+                                    checked                                    tabindex="-1">
+                            <label>NOUBISSI JOYCE NAOMIE  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note17"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                                        
+                    <div class="row" col-md-10>
+                        <div class="form-group col-md-6">
+                            <input type="checkbox"
+                                   name="eleve[]"
+                                   value="2339"
+                                   onchange="onCheckedChange(this,'note18')"
+                                    checked                                    tabindex="-1">
+                            <label>TOM JEAN STEEVE LOIC  :</label>
+                        </div>
+
+                        <div class="form-group col-md-4 row">
+                            <div class="input-group">
+                                <input type="number"
+                                       id="note18"
+                                       name="note[]"
+                                       step="0.0001"
+                                       class="form-control"
+                                                                              value=""
+                                       required>
+
+                                <span class="input-group-addon">/ 20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                                    
+            </fieldset>
+
+                            <div class="col-md-7">
+                    <input type="submit"
+                           value="Confirmer"
+                           class="btn btn-success center-block btn-lg">
+                </div>
+            
+        </form>
+    </div>
+
+    <script>
+        function onCheckedChange(checkElt, inputId) {
+            var input = document.getElementById(inputId);
+            if (!input) return;
+            input.disabled = !checkElt.checked;
+        }
+    </script>
+                 <!-- /. ROW  -->
+
+                  <!-- /. ROW  --> 
+    </div>
+             <!-- /. PAGE INNER  -->
+        </div>
+         <!-- /. PAGE WRAPPER  -->
+        </div>
+
+
+<div class="modal fade" id="edit_pass">
+    <div class="modal-dialog">
+        <div class="modal-content col-md-6">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <h4 class="modal-title">Remplir les champs</h4>
+            </div>
+            <div
+                    class="modal-body">
+
+
+
+                <form accept-charset="UTF-8" role="form" method="POST" action="#">
+                    <input type="hidden" name="_token" value="11cGq2AtsszA3OG9aS0pFZPISYi2D6imrt5FH8VL">
+                    <fieldset>
+
+                        <div class="form-group">
+                            <label for="ancien_mot_de_passe">Ancien mot de passe : <span class="required">*</span></label>
+                            <input class="form-control" id="ancien_mot_de_passe" name="ancien_mot_de_passe" type="password"  value="" required autofocus>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="nouveau_mot_de_passe">Nouveau mot de passe : <span class="required">*</span></label>
+                            <input class="form-control" id="nouveau_mot_de_passe" name="nouveau_mot_de_passe" type="password"  value="" required >
+
+                        </div>
+                        <div class="form-group">
+                            <label for="password_again">Confirmer le mot de passe : <span class="required">*</span></label>
+                            <input class="form-control" id="password_again" name="password_again" type="password"  value="" required >
+
+                        </div>
+                        <a id="submit_new_pass" class="btn  btn-success" data-dismiss="modal">Confirmer</a>
+
+
+                    </fieldset>
+                </form>
+
+
+            </div>
+
+
+
+
+
+        </div>
+
+
+    </div>
+</div>
+    <div class="footer">
+      
+    
+            <div class="row">
+                <div class="col-md-12 copy" >
+                    &copy;  2017 SchoolConcept | by: <a href="http://youth-concept.com" style="color:#fff;" target="_blank">youth-concept</a>
+                </div>
+            </div>
+        </div>
+          
+
+     <!-- /. WRAPPER  -->
+    <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
+    <!-- JQUERY SCRIPTS -->
+
+
+<div class="modal fade" id="choose_level">
+    <div class="modal-dialog" style="width: 20%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <h4 class="modal-title">Remplir les champs</h4>
+            </div>
+            <div class="modal-body">
+
+
+
+                <form accept-charset="UTF-8" role="form" method="GET" id="choix_level_form" action="">
+                    <input type="hidden" name="id" id="id_select_classe" value=""/>
+                    <input type="hidden" name="option" id="option_select_classe" value=""/>
+
+                    <fieldset>
+                        <div class="form-group">
+                            <label for="cycle">Cycle : </label>
+                            <select  name="cycle" id="cycle_select_classe" form="choix_level_form" class="form-control" required>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="nniveau">Niveau : </label>
+                            <select  name="nniveau" id="nniveau_select_classe" form="choix_level_form" class="form-control" required>
+                                <option value="" disabled>Sélectionner un élément</option>
+                            </select>
+                        </div>
+
+                        <input type="hidden" name="_token" value="11cGq2AtsszA3OG9aS0pFZPISYi2D6imrt5FH8VL"/>
+                        <input class="btn  btn-success " type="submit" value="Confirmer" autofocus>
+
+
+                    </fieldset>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="confirm_delete_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #d9534f">
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <h4 class="modal-title" style="color: white">Remplir les champs</h4>
+            </div>
+            <div class="modal-body">
+
+                <form accept-charset="UTF-8" role="form" method="GET" id="confirm_delete_form" action="">
+                    <input type="hidden" name="id" id="confirm_delete_item_id" value=""/>
+
+                    <fieldset>
+                        <h4 id="confirm_delete_text">Êtes vous sure de vouloir supprimer cet élément?</h4>
+                        <div class="btn  btn-primary pull-right" style="margin-left: 10px"  class="close" data-dismiss="modal">Non</div>
+                        <input class="btn  btn-danger pull-right" type="submit" value="Oui">
+
+
+                    </fieldset>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="change-status-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" onclick="toggleScanStatus()">x</button>
+                <h4 class="modal-title">Remplir les champs</h4>
+            </div>
+            <div class="modal-body">
+
+                <form id="change-status-form" accept-charset="UTF-8" role="form" method="POST" action="http://127.0.0.1:8080/ISH/app/public/inscriptions/eleve/set-status?status=1&amp;id=">
+                    <input type="hidden" name="_token" value="11cGq2AtsszA3OG9aS0pFZPISYi2D6imrt5FH8VL">
+
+
+
+                    <div class="form-group">
+                        <label for="date_debut">Date de d&eacute;but : <span class="required">*</span></label>
+                        <input class="form-control" id="change_status-date_debut" name="date_debut" type="date"  value="" required autofocus />
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date_fin">Date de fin : <span class="required">*</span></label>
+                        <input class="form-control" id="change_status-date_fin" name="date_fin" type="date"   value="" required />
+
+                    </div>
+                    <div class="form-group">
+                        <label for="montant">Montant : </label>
+                        <input class="form-control" id="change_status-montant" name="montant" type="number"  value="" disable>
+
+                    </div>
+
+                    <input class="btn  btn-success " type="submit" value="Confirmer">
+
+                </form>
+
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+</body>
+<script>
+    var scanActivated = false;
+    function enableScan() {
+        scanActivated = true;
+
+        console.log('Scan active')
+
+        if ($('#qrcode-input')[0]) {
+            $('#qrcode-input')[0].addEventListener('focusout', giveFocus)
+        }
+    }
+
+    function disableScan() {
+        scanActivated = false;
+        console.log('Scan desactive')
+        if ($('#qrcode-input')[0]) {
+            $('#qrcode-input')[0].removeEventListener('focusout', giveFocus)
+        }
+    }
+
+    function giveFocus(e) {
+        e.target.focus();
+    }
+
+    $(function () {
+        $('#submit_new_pass').click(function () {
+            //$('#edit_pass').modal('hide');
+            $.post('http://127.0.0.1:8080/ISH/app/public/user-profile/edit-password',{ _token:'11cGq2AtsszA3OG9aS0pFZPISYi2D6imrt5FH8VL',ancien_mot_de_passe:$("#ancien_mot_de_passe").val(),nouveau_mot_de_passe:$("#nouveau_mot_de_passe").val(),password_again:$("#password_again").val() },function (data) {
+                $(".print-success-msg").find("ul").html('');
+                $(".print-error-msg").find("ul").html('');
+                $(".print-success-msg").css('display', 'none');
+                $(".print-error-msg").css('display', 'none');
+                if(data.success)
+                    printSuccessMsg(data);
+                else
+                {
+                	console.log(data);
+                    printErrorMsg(data);
+                }
+                	
+
+            });
+        });
+        function printErrorMsg (msg) {
+
+            
+            if(msg)
+            $(".print-error-msg").css('display', 'block');
+
+            $.each(msg, function (key, value) {
+                $(".print-error-msg").find("ul").append('<li>' + value + '</li>');
+            });
+
+        }
+        function printSuccessMsg (msg) {
+
+            if(msg)
+                $(".print-success-msg").css('display', 'block');
+
+            $.each(msg, function (key, value) {
+                $(".print-success-msg").find("ul").append('<li>' + value + '</li>');
+            });
+
+        }
+
+            jQuery.noConflict();
+            $( "#date_naiss, #date, #date_rec, .datepicker" ).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'yy/mm/dd',
+                yearRange: '1900:c+10'
+            });
+
+            $('#cycle_select_classe').on('change', function (e) {
+                if(e.target.value) {
+                    getNniveau(e.target.value);
+                }
+            })
+    });
+
+
+    function export_to_excel(idTable)
+    {
+
+        var tab_text="<table ><tr >";
+        var textRange; var j=0;
+        tab = document.getElementById(idTable); // id of table
+
+        for(j = 0 ; j < (tab.rows.length) ; j++)
+        {
+            tab_text=tab_text+tab.rows[j].innerHTML+"</tr>";
+            //tab_text=tab_text+"</tr>";
+        }
+
+        tab_text=tab_text+"</table>";
+        tab_text= tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+        tab_text= tab_text.replace(/<img[^>]*>/gi,""); // remove if u want images in your table
+        tab_text= tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input paras
+        tab_text= tab_text.replace(/<a[^>]*>|<\/a>/gi, "");
+        tab_text= tab_text.replace(/<div[^>]*>|<\/div>/gi, "");
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf("MSIE ");
+
+        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+        {
+            txtArea1.document.open("txt/html","replace");
+            txtArea1.document.write(tab_text);
+            txtArea1.document.close();
+            txtArea1.focus();
+            sa=txtArea1.document.execCommand("SaveAs",true,"dataExport.xls");
+        }
+        else                 //other browser not tested on IE 11
+            sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+
+
+        return (sa);
+    }
+
+    function getAllCycles() {
+        var jElement = $('#cycle_select_classe');
+        jElement.empty();
+        $('.loading_icon').css('display','inline');
+        $.ajax({
+            type: 'GET',
+            url: 'http://127.0.0.1:8080/ISH/app/public/admin/cycles/get-all',
+            timeout: 20000,
+            success: function (data) {
+                jElement.append('<option value="" disabled>'+ 'Sélectionner un élément' +'</option>');
+                var i = 0;
+                var selectedValue = -1;
+                $.each(data,function (key,val) {
+                    jElement.append('<option value="'+val.id+'">'+val.nom+'</option>');
+                    i++;
+                    if(i == 1) {
+                        selectedValue = val.id;
+                    }
+                })
+
+                //$('.loading_icon').css('display','none');
+                if(selectedValue != -1) {
+                    getNniveau(selectedValue);
+                }
+            },
+            error: function (data) {
+                $('.loading_icon').css('display','none');
+            }
+
+
+        });
+    }
+
+      function getNniveau(cycle) {
+            var jElement = $('#nniveau_select_classe');
+            jElement.empty();
+            $('.loading_icon').css('display','inline');
+            $.ajax({
+                type: 'GET',
+                url: 'http://127.0.0.1:8080/ISH/app/public/admin/nniveaux/get/'+cycle,
+                timeout: 20000,
+                success: function (data) {
+                    jElement.append('<option value="" disabled>'+ 'Sélectionner un élément' +'</option>');
+                    $.each(data,function (key,val) {
+                        jElement.append('<option value="'+val.id+'">'+val.nom+'</option>');
+                    })
+                    $('.loading_icon').css('display','none');
+                },
+                error: function (data) {
+                    $('.loading_icon').css('display','none');
+                }
+
+
+            });
+        }
+
+    function choose_level(id, actionUrl, option)
+    {
+        document.getElementById("id_select_classe").value = id;
+        document.getElementById("option_select_classe").value = option;
+        $('#choix_level_form').attr('action', actionUrl);
+        getAllCycles();
+    }
+
+    function fill_delete_modal(id, actionUrl, method, text)
+    {
+        var jForm = $('#confirm_delete_form');
+        if(id) {
+            document.getElementById("confirm_delete_item_id").value = id;
+        }
+        jForm.attr('action', actionUrl);
+        if(method) {
+            jForm.attr('method', method);
+        } else {
+            jForm.attr('method', 'GET');
+        }
+        if(text) {
+            $('#confirm_delete_text').html(text);
+        } else {
+            $('#confirm_delete_text').html('Êtes vous sure de vouloir supprimer cet élément?');
+
+        }
+
+        $('#confirm_delete_modal').modal('show');
+    }
+
+    $(function (){
+        $('#qrcode-input').on('change', function (e){
+            console.log('scanned', e.target.value);
+            var scanned = e.target.value;
+            e.target.value = "";
+            $('#scan-error-message').addClass('hidden');
+
+            $.ajax({
+                url : 'http://127.0.0.1:8080/ISH/app/public/inscriptions/eleve/process-scan',
+                type:'GET',
+                dataType:'html',
+                data:'scanned='+scanned,
+                beforeSend: function () {
+                    showLoader();
+                },
+                success: function (res) {
+
+                    console.log(res);
+
+
+                    if(res == 0) {
+                        hideLoader();
+                        $('#scan-error-message').removeClass('hidden');
+                        $('#status-container').addClass('hidden');
+
+
+                    } else {
+
+                        location.href = 'http://127.0.0.1:8080/ISH/app/public/inscriptions/eleve/status' + '?id=' + res + "&show_access=1"
+                    }
+                },
+
+                error: function (xhr) {
+                    console.error(xhr);
+                    hideLoader();
+                }
+
+            })
+        })
+
+
+        enableScan();
+        $('.autocomplete').chosen({width : '100%'});
+    })
+
+    function openChangeStatusModal(action) {
+        $('#change-status-form')[0].action = action
+        $('#change-status-modal').modal('show');
+    }
+
+    function allowStudentAccess(id) {
+        const action =  `http://127.0.0.1:8080/ISH/app/public/inscriptions/eleve/set-status?status=1&id=${id}`
+        openChangeStatusModal(action)
+    }
+
+</script>
+</html>

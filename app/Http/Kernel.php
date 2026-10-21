@@ -18,6 +18,7 @@ class Kernel extends HttpKernel {
         'Illuminate\View\Middleware\ShareErrorsFromSession',
         'gesecole\Http\Middleware\VerifyCsrfToken',
         'gesecole\Http\Middleware\locale',
+        'gesecole\Http\Middleware\LogUserActivity',
 
 
     ];

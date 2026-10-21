@@ -25,12 +25,32 @@ class payement extends Model {
 
     protected $table='payement';
 
-    public $fillable=['id_eleve','annee_scolaire','date_payement','montant','motif','numero'];
+    public $fillable=['id_eleve','annee_scolaire','date_payement','montant','motif','numero','lettre','mode_paye','ref_versement','type','id_inscription','desinscrire','id_campus','operation_source','id_caisse','id_banque','numero_versement','reference_operation','demande_operation','id_creator','id_last_editor','edition_details'];
 
 
 
     public function eleve() {
         return $this->belongsTo(eleve::class, 'id_eleve');
+    }
+
+    public function campus() {
+        return $this->belongsTo(Campus::class, 'id_campus');
+    }
+
+    public function caisse() {
+        return $this->belongsTo(Caisse::class, 'id_caisse');
+    }
+
+    public function banque() {
+        return $this->belongsTo(Banque::class, 'id_banque');
+    }
+
+    public function creator() {
+        return $this->belongsTo(User::class, 'id_creator');
+    }
+
+    public function lastEditor() {
+        return $this->belongsTo(User::class, 'id_last_editor');
     }
 
 }

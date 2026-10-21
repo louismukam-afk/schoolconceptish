@@ -24,7 +24,7 @@ class comptabiliteController extends Controller {
 
 	public function index()
 	{
-        $pe=payement::whereAnneeScolaire(\session('year'))->get();
+        $pe=payement::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))->get();
 
         $total_e=0;
         foreach ($pe as $pay){
@@ -32,9 +32,9 @@ class comptabiliteController extends Controller {
         }
 
 
-        $ps=payement_salaire::whereAnneeScolaire(\session('year'))->get();
+        $ps=payement_salaire::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))->get();
 
-        $d=decaissement::whereAnneeScolaire(\session('year'))->get();
+        $d=decaissement::whereAnneeScolaire(\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))->get();
 
 
 
@@ -49,7 +49,7 @@ class comptabiliteController extends Controller {
         }
 
         $values= array('entrees'=>$total_e,'sorties'=>$total_ps+$total_d);
-        return view('comptabilite/index',$values);
+        return view('comptabilite.index',$values);
 	}
 
 	/**

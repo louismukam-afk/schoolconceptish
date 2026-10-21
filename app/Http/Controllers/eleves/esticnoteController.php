@@ -480,7 +480,7 @@ class esticnoteController extends Controller {
                 //dump($matieres);
                 if($sCoef<=0)
                     $sCoef=1;
-                $proces_v[$k]=new PV($eleve->id,$matieres,$sNote/$sCoef);
+                $proces_v[$k]=new EsticNotePV($eleve->id,$matieres,$sNote/$sCoef);
 
 
                 $k++;
@@ -800,10 +800,10 @@ class esticnoteController extends Controller {
 
                 if ($sNote!=null)
                 {
-                    $proces_v[$k]=new PV($eleve->id,$matieres,$sNote/$sCoef);
+                    $proces_v[$k]=new EsticNotePV($eleve->id,$matieres,$sNote/$sCoef);
                 }
                 else{
-                    $proces_v[$k]=new PV($eleve->id,$matieres,0);
+                    $proces_v[$k]=new EsticNotePV($eleve->id,$matieres,0);
 
                 }
 
@@ -1112,10 +1112,10 @@ class esticnoteController extends Controller {
 
                 if ($sNote!=null)
                 {
-                    $proces_v[$k]=new PV($eleve->id,$matieres,$sNote/$sCoef);
+                    $proces_v[$k]=new EsticNotePV($eleve->id,$matieres,$sNote/$sCoef);
                 }
                 else{
-                    $proces_v[$k]=new PV($eleve->id,$matieres,'-');
+                    $proces_v[$k]=new EsticNotePV($eleve->id,$matieres,'-');
 
                 }
 
@@ -1321,7 +1321,7 @@ class esticnoteController extends Controller {
     }
 
 }
-class PV{
+class EsticNotePV{
     public $id_eleve;
     public $matieres;
     public $mgp;

@@ -55,7 +55,7 @@ class payementController extends Controller {
             $values['user']=$u;
             Session::forget('success');
         }*/
-        return view('comptabilite/search_personnel',$values);
+        return view('comptabilite.search_personnel',$values);
 	}
 
 
@@ -64,7 +64,8 @@ class payementController extends Controller {
     {
         $titre=trans('admin.search_personnel');
         $values= array('titre'=>$titre);
-            $ps=payement_salaire::find($id);
+            $ps=payement_salaire::where('id', '=', $id)->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))->first();
+            if(!$ps) { abort(404); }
             $p=personnel::find($ps->id_personnel);
             $s=salaire::whereIdPersonnel($ps->id_personnel)->first();
             $pa=parametres::where('nom','=','nom_etablissement')->first();
@@ -88,7 +89,7 @@ class payementController extends Controller {
             $values['user']=$u;
             Session::forget('success');
 
-        return view('comptabilite/search_personnel',$values);
+        return view('comptabilite.search_personnel',$values);
     }
 
 	/**
@@ -104,6 +105,7 @@ class payementController extends Controller {
         $values= array('titre'=>$titre);
 
         $ps=payement_salaire::whereAnneeScolaire(\session('year'))
+            ->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
             ->where('id_personnel','=',$id)
             ->orderBy('date_p','desc')
             ->first();
@@ -158,7 +160,7 @@ class payementController extends Controller {
 
         $values['personnel']=$p;
 
-        return view('comptabilite/create-payment',$values);
+        return view('comptabilite.create-payment',$values);
 
 
     }
@@ -240,6 +242,7 @@ class payementController extends Controller {
         $ps->total_retenu=floatval($total_retenu);
         $ps->net_a_payer=floatval($total-$total_retenu)   ;
         $ps->annee_scolaire=\session('year');
+        $ps->id_campus=$this->currentCampusId();
 
         $current_user = \Auth::user();
         $ps->id_creator = $current_user->id;
@@ -274,7 +277,7 @@ class payementController extends Controller {
             ->get();
         $values['payements']=$py;
         $values['personnel']=$p;
-        return view('comptabilite/liste_paiement',$values);
+        return view('comptabilite.liste_paiement',$values);
 	}
 
 	/**

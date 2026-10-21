@@ -286,7 +286,7 @@ min-height: 80px;
     width: 100px;
     height: 100px;
     position: absolute;
-    background: url('../img/logo.png');
+    background: url('../img/logo.jpg');
     background-size: contain ;
     background-repeat: no-repeat;
     background-position: center;
@@ -405,7 +405,7 @@ p
     height: 100%;
     -webkit-print-color-adjust:exact;
     color-adjust: exact;
-    background-image: url("../img/logo.png");
+    background-image: url("../img/logo.jpg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: 110mm;

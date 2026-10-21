@@ -214,6 +214,7 @@ class soanoteController extends Controller {
 
             $e = DB::select('SELECT e.* FROM eleve e,inscription i WHERE i.annee_scolaire=? AND i.id_classe=? AND i.id_eleve=e.id AND i.id_cycle=? AND i.id_nniveau=? ORDER BY e.nom,e.prenom', [session('year'), $id, $id_cycle,$nniveau]);
             $j=0;
+            $id_eleves=array();
             foreach ($e as $el){
                 $id_eleves[$j]=$el->id;
                 $j++;
@@ -246,6 +247,7 @@ class soanoteController extends Controller {
             //$cm = classeMatiere::whereIdClasse($id)->where('id_matiere', '=', $id_m)->where('id_cycle', '=', $id_cycle)->first();
             $e = DB::select('SELECT e.* FROM eleve e,inscription i WHERE i.annee_scolaire=? AND i.id_classe=? AND i.id_eleve=e.id AND i.id_cycle=? AND i.id_nniveau=? ORDER BY e.nom,e.prenom', [session('year'), $id, $id_cycle,$nniveau]);
             $j=0;
+            $id_eleves=array();
             foreach ($e as $el){
                 $id_eleves[$j]=$el->id;
                 $j++;
@@ -294,6 +296,7 @@ class soanoteController extends Controller {
             $mat = matiere::find($id_m);
             $e = DB::select('SELECT e.* FROM eleve e,inscription i WHERE i.annee_scolaire=? AND i.id_classe=? AND i.id_eleve=e.id AND i.id_cycle=? AND i.id_nniveau=? ORDER BY e.nom,e.prenom', [session('year'), $id, $id_cycle,$nniveau]);
             $j=0;
+            $id_eleves=array();
             foreach ($e as $el){
                 $id_eleves[$j]=$el->id;
                 $j++;
@@ -343,6 +346,8 @@ class soanoteController extends Controller {
 
         //semestre 1
         if($sequence==7) {
+            $proces_v=array();
+            $id_eleves=array();
             $semestre=array(1);
             $semestre_matiere = array(1,3,5);
             $sn=array(3);
@@ -606,7 +611,7 @@ class soanoteController extends Controller {
                     //ajouts ISSBA
                     if( !$cps){
                         //if((!$cpst) && (!$cps)){
-                        $matieres[$l]=new pv_matiere($matiere->id,$note,$credit,$controle,$normal,$matiere->nom);
+                        $matieres[$l]=new pv_matiere($matiere->id,$note,$credit,$controle,$normal,$matiere->nom,$matiere->id_code);
 
                         if(!$minus_credit_cpst) {
                             $liste_mat[$l]=new matiere_groupe($matiere->id,$nom);
@@ -623,7 +628,7 @@ class soanoteController extends Controller {
                         }
 
                         if($cps){
-                            $composes[$c]= new compose_pv($matiere->id,$note,$credit,$cpstList,$nom,$credit,$matiere->type,$matiere->semestre,sizeof($cpstList));
+                            $composes[$c]= new compose_pv($matiere->id,$note,$credit,$cpstList,$nom,$credit,$matiere->type,$matiere->semestre,sizeof($cpstList),$matiere->id_code);
                             $c++;
 
 
@@ -635,7 +640,7 @@ class soanoteController extends Controller {
 
 
 
-                            $composes[$c]= new compose_pv($matiere->id,$note,$credit,[$matiere->id_classe_matiere],$nom,$credit,$matiere->type,$matiere->semestre,1);
+                            $composes[$c]= new compose_pv($matiere->id,$note,$credit,array($matiere->id_classe_matiere),$nom,$credit,$matiere->type,$matiere->semestre,1,$matiere->id_code);
                             $c++;
 
 
@@ -728,6 +733,28 @@ class soanoteController extends Controller {
             $values['semestre'] = $semestre;
             $values['nniveau']=NNiveau::find($nniveau);
 
+
+            $values['id_cycle'] = $id_cycle;
+            $values['id_classe'] = $id;
+            $values['id_nniveau'] = $nniveau;
+            $values['sequence'] = $sequence;
+
+            if ($request->ajax() || $request->input('ajax') == 1) {
+                $html = view('eleves/print_pv_soa', $values)->render();
+
+                return response()->json(array(
+                    'success' => true,
+                    'message' => 'PV chargé avec succès.',
+                    'html' => $html,
+                    'id_classe' => $id,
+                    'id_cycle' => $id_cycle,
+                    'id_nniveau' => $nniveau,
+                    'sequence' => $sequence,
+                    'nombre_eleves' => count($e),
+                    'nombre_matieres' => sizeof($composantes_ord)
+                ));
+            }
+
             return view('eleves/print_pv_soa', $values);
         }
 
@@ -738,6 +765,8 @@ class soanoteController extends Controller {
 
 
         if($sequence==8) {
+            $proces_v=array();
+            $id_eleves=array();
             $semestre=array(2);
             $semestre_matiere = array(2,4,6);
             $sn=array(4);
@@ -1018,7 +1047,7 @@ class soanoteController extends Controller {
                         }
 
                         if($cps){
-                            $composes[$c]= new compose_pv($matiere->id,$note,$credit,$cpstList,$nom,$credit,$matiere->type,$matiere->id_code,$matiere->semestre,sizeof($cpstList));
+                            $composes[$c]= new compose_pv($matiere->id,$note,$credit,$cpstList,$nom,$credit,$matiere->type,$matiere->semestre,sizeof($cpstList),$matiere->id_code);
                             $c++;
 
 
@@ -1030,7 +1059,7 @@ class soanoteController extends Controller {
 
 
 
-                            $composes[$c]= new compose_pv($matiere->id,$note,$credit,[$matiere->id_classe_matiere],$nom,$credit,$matiere->type,$matiere->id_code,$matiere->semestre,1);
+                            $composes[$c]= new compose_pv($matiere->id,$note,$credit,array($matiere->id_classe_matiere),$nom,$credit,$matiere->type,$matiere->semestre,1,$matiere->id_code);
                             $c++;
 
 
@@ -1127,6 +1156,28 @@ class soanoteController extends Controller {
             $values['semestre'] = $semestre;
             $values['nniveau']=NNiveau::find($nniveau);
 
+
+            $values['id_cycle'] = $id_cycle;
+            $values['id_classe'] = $id;
+            $values['id_nniveau'] = $nniveau;
+            $values['sequence'] = $sequence;
+
+            if ($request->ajax() || $request->input('ajax') == 1) {
+                $html = view('eleves/print_pv_soa', $values)->render();
+
+                return response()->json(array(
+                    'success' => true,
+                    'message' => 'PV chargé avec succès.',
+                    'html' => $html,
+                    'id_classe' => $id,
+                    'id_cycle' => $id_cycle,
+                    'id_nniveau' => $nniveau,
+                    'sequence' => $sequence,
+                    'nombre_eleves' => count($e),
+                    'nombre_matieres' => sizeof($composantes_ord)
+                ));
+            }
+
             return view('eleves/print_pv_soa', $values);
         }
 
@@ -1151,6 +1202,8 @@ class soanoteController extends Controller {
 
 
         if($sequence==9) {
+            $proces_v=array();
+            $id_eleves=array();
             $semestre=array(1,2);
             $sn=array(3,4);
             $cc=array(1,2);
@@ -1426,7 +1479,7 @@ class soanoteController extends Controller {
                             $cst++;
                         }
                         if($cps){
-                            $composes[$c]= new compose_pv($matiere->id,$note,$credit,$cpstList,$nom,$credit,$matiere->type,$matiere->semestre,$matiere->id_code,sizeof($cpstList));
+                            $composes[$c]= new compose_pv($matiere->id,$note,$credit,$cpstList,$nom,$credit,$matiere->type,$matiere->semestre,sizeof($cpstList),$matiere->id_code);
                             $c++;
 
                         }
@@ -1436,7 +1489,7 @@ class soanoteController extends Controller {
                                 $cst++;
 
 
-                                $composes[$c]= new compose_pv($matiere->id,$note,$credit,[$matiere->id_classe_matiere],$nom,$credit,$matiere->type,$matiere->id_code,$matiere->semestre,1);
+                                $composes[$c]= new compose_pv($matiere->id,$note,$credit,array($matiere->id_classe_matiere),$nom,$credit,$matiere->type,$matiere->semestre,1,$matiere->id_code);
                                 $c++;
 
 
@@ -1523,6 +1576,28 @@ class soanoteController extends Controller {
             $values['classe'] = classe::find($id);
             $values['semestre'] = $semestre;
             $values['nniveau']=NNiveau::find($nniveau);
+
+
+            $values['id_cycle'] = $id_cycle;
+            $values['id_classe'] = $id;
+            $values['id_nniveau'] = $nniveau;
+            $values['sequence'] = $sequence;
+
+            if ($request->ajax() || $request->input('ajax') == 1) {
+                $html = view('eleves/print_bilan_soa', $values)->render();
+
+                return response()->json(array(
+                    'success' => true,
+                    'message' => 'Bilan annuel chargé avec succès.',
+                    'html' => $html,
+                    'id_classe' => $id,
+                    'id_cycle' => $id_cycle,
+                    'id_nniveau' => $nniveau,
+                    'sequence' => $sequence,
+                    'nombre_eleves' => count($e),
+                    'nombre_matieres' => sizeof($composantes_ord)
+                ));
+            }
 
             return view('eleves/print_bilan_soa', $values);
         }
@@ -1750,7 +1825,7 @@ class soanoteController extends Controller {
                     //ajouts ISSBA
                     if( !$cps){
                         //if((!$cpst) && (!$cps)){
-                        $matieres[$l]=new pv_matiere($matiere->id,$note,$credit,$normal,$controle,$matiere->nom);
+                        $matieres[$l]=new pv_matiere($matiere->id,$note,$credit,$controle,$normal,$matiere->nom,$matiere->id_code);
                         if(!$minus_credit_cpst) {
                             $liste_mat[$l]=new matiere_groupe($matiere->id,$nom);
                         }
@@ -2068,7 +2143,7 @@ class pv_matiere{
     public $id_code;
 
 
-    public  function __construct($id_m,$not,$cr,$con,$nor,$n_m,$id_code)
+    public  function __construct($id_m,$not,$cr,$con,$nor,$n_m,$id_code=null)
     {
         $this->id_matiere=$id_m;
         $this->note=$not;
@@ -2133,7 +2208,7 @@ class compose_pv{
     public $id_code;
 
 
-    public function __construct($id,$n,$c,$cl,$no,$cr,$ty,$se,$nbC,$id_code)
+    public function __construct($id,$n,$c,$cl,$no,$cr,$ty,$se,$nbC,$id_code=null)
     {
         $this->id=$id;
         $this->note=$n;

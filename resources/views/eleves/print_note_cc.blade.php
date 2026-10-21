@@ -15,6 +15,8 @@
     // Exemple : cc1 = 15, cc2 = 10, etc.
     // Si rien n’est passé, on met 0 pour éviter les divisions par 0
     $pourcentageCc = isset($pourcentage) ? (float) $pourcentage : 0.0;
+    $pourcentageTpe = isset($pourcentage_tpe) ? (float) $pourcentage_tpe : 0.0;
+    $afficherTpe = isset($hasTPE) ? (bool) $hasTPE : ($pourcentageTpe > 0);
     ?>
 
     <div class="titre">
@@ -61,6 +63,9 @@
             <th class="mat-column">Matricule/Matricle</th>
             <th>Nom/Name</th>
             <th class="note-column">Note /20</th>
+            @if($afficherTpe)
+                <th class="note-column">TPE /20</th>
+            @endif
             </thead>
             <tbody>
             <?php $i = 1; ?>
@@ -96,6 +101,30 @@
                         }
                         ?>
                     </td>
+                    @if($afficherTpe)
+                        <td class="note-column">
+                            <?php
+                            $noteTpeStockee = null;
+
+                            if (isset($notes_tpe)) {
+                                foreach ($notes_tpe as $nTpe) {
+                                    if ($nTpe->id_eleve == $e->id) {
+                                        $noteTpeStockee = $nTpe->note;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (!is_null($noteTpeStockee) && $pourcentageTpe > 0) {
+                                echo round(($noteTpeStockee * 20) / $pourcentageTpe, 2);
+                            } elseif (!is_null($noteTpeStockee)) {
+                                echo round($noteTpeStockee, 2);
+                            } else {
+                                echo '-';
+                            }
+                            ?>
+                        </td>
+                    @endif
                 </tr>
             @endforeach
             </tbody>
@@ -121,6 +150,6 @@
         </a>
     </li>
     <li class="active">
-        <strong>{{ $titre }}</strong>
+        <strong>{{ isset($titre) ? $titre : 'Controle continu' }}</strong>
     </li>
 @endsection

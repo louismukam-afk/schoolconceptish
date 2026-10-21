@@ -13,9 +13,11 @@ use gesecole\Vars;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Schema;
 use gesecole\parents;
 use gesecole\Services\EnregistrementService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;
 use Intervention\Image\Facades\Image;
 
@@ -51,7 +53,7 @@ class enregistrementController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function create()
+    public function create()
 	{
 
         $values= array('titre'=>'Enregistrement');
@@ -70,6 +72,115 @@ class enregistrementController extends Controller {
         }
         return view('inscriptions.add_eleve',$values);
 	}
+
+    public function importPage()
+    {
+        $values = array(
+            'titre' => 'Importation Excel des etudiants',
+            'fields' => $this->studentImportFields()
+        );
+
+        if(session('import_success')) {
+            $values['import_success'] = session('import_success');
+            Session::forget('import_success');
+        }
+
+        return view('inscriptions.import_etudiants', $values);
+    }
+
+    public function downloadStudentImportTemplate()
+    {
+        $fields = $this->studentImportFields();
+        $headers = array_keys($fields);
+        $example = array();
+
+        foreach($fields as $field => $meta) {
+            $example[] = isset($meta['exemple']) ? $meta['exemple'] : '';
+        }
+
+        $stream = fopen('php://temp', 'r+');
+        fputcsv($stream, $headers, ';');
+        fputcsv($stream, $example, ';');
+        rewind($stream);
+        $content = "\xEF\xBB\xBF".stream_get_contents($stream);
+        fclose($stream);
+
+        return Response::make($content, 200, array(
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="template_import_etudiants_parents.csv"',
+        ));
+    }
+
+    public function importStudentsFromExcel(Request $req)
+    {
+        $this->validate($req, array(
+            'fichier_etudiants' => 'required'
+        ));
+
+        $file = $req->file('fichier_etudiants');
+        if(!$file || !$file->isValid()) {
+            return redirect()->to(URL::previous())->withErrors(array('fichier_etudiants' => 'Le fichier est invalide.'));
+        }
+
+        $extension = strtolower($file->getClientOriginalExtension());
+        if(!in_array($extension, array('csv', 'txt', 'xlsx'))) {
+            return redirect()->to(URL::previous())->withErrors(array('fichier_etudiants' => 'Utilisez le template telecharge depuis cette page, au format CSV ou XLSX simple.'));
+        }
+
+        $rows = $this->readStudentImportRows($file->getRealPath(), $extension);
+        if(!$rows || count($rows) <= 1) {
+            return redirect()->to(URL::previous())->withErrors(array('fichier_etudiants' => 'Impossible de lire le fichier ou fichier vide.'));
+        }
+
+        $created = 0;
+        $skipped = 0;
+        $lineNumber = 0;
+        $headers = array();
+        foreach($rows as $row) {
+            $lineNumber++;
+            if($lineNumber == 1) {
+                $headers = $this->normalizeStudentImportHeaders($row);
+                continue;
+            }
+
+            if(count(array_filter($row, 'strlen')) == 0) {
+                continue;
+            }
+
+            $data = $this->combineStudentImportRow($headers, $row);
+            $error = $this->validateStudentImportRow($data, $lineNumber);
+            if($error) {
+                return redirect()->to(URL::previous())->withErrors(array('fichier_etudiants' => $error));
+            }
+
+            $prenom = isset($data['prenom']) ? $data['prenom'] : '';
+            $duplicate = eleve::whereNom($data['nom'])
+                ->whereRaw('COALESCE(prenom, ?) = ?', array('', $prenom))
+                ->where('date_naiss', '=', $this->normalizeStudentImportDate($data['date_naiss']))
+                ->where('sexe', '=', strtoupper($data['sexe']))
+                ->first();
+
+            if($duplicate) {
+                $skipped++;
+                continue;
+            }
+
+            $e = new eleve();
+            $this->fillStudentFromImportRow($e, $data);
+            $current_user = \Auth::user();
+            if($current_user) {
+                $e->id_creator = $current_user->id;
+                $e->id_last_editor = $current_user->id;
+            }
+            $e->save();
+            $this->createParentsFromImportRow($e, $data);
+            $created++;
+        }
+
+        session(array('import_success' => $created.' etudiant(s) importe(s) avec succes. '.$skipped.' doublon(s) ignore(s).'));
+
+        return redirect()->action('inscriptions\enregistrementController@importPage');
+    }
 
 	/**
 	 * Store a newly created resource in storage.
@@ -355,6 +466,7 @@ class enregistrementController extends Controller {
 	public function status_eleve(Request $request) {
 	    $id = $request->input('id');
 	    $show_access = $request->input('show_access');
+        $idCampus = $this->currentCampusId();
         $values= array('titre'=>trans('admin.status_eleve'));
 
         $id=intval($id);
@@ -365,16 +477,20 @@ class enregistrementController extends Controller {
                 $values['show_access'] = $show_access;
             }
             $acces = acces_eleve::where('annee_scolaire', '=', \session('year'))
-                ->where('id_eleve', '=', $id)
-                ->first();
+                ->where('id_eleve', '=', $id);
+            if(Schema::hasColumn('acces_eleves', 'id_campus')) {
+                $acces->whereRaw($this->campusVisibilitySql('id_campus'), array($idCampus));
+            }
+            $acces = $acces->first();
             $values['eleve'] = $eleve;
             $values['acces'] = $acces;
-            $values['access_decision'] = EnregistrementService::getStudentAccessStatus($id);
+            $values['access_decision'] = EnregistrementService::getStudentAccessStatus($id, $idCampus);
 
 
             $inscription = inscription::with('classe.niveau', 'nniveau.cycle')
                 ->where('id_eleve', '=', $id)
                 ->where('annee_scolaire', '=', \session('year'))
+                ->whereRaw($this->campusVisibilitySql('id_campus'), array($idCampus))
                 ->first();
 
 	        if ($inscription) {
@@ -383,18 +499,19 @@ class enregistrementController extends Controller {
                     ->where('type', '=', 0)
                     ->where('id_inscription', '=', 0)
                     ->where('annee_scolaire', '=', \session('year'))
+                    ->whereRaw($this->campusVisibilitySql('id_campus'), array($idCampus))
                     ->sum('montant');
 
                 $values['solde'] = $solde;
 
 
-                $scolarite = scolarite::where('id_cycle', '=', $inscription->nniveau->cycle->id)
-                    ->where('id_niveau', '=', $inscription->classe->niveau->id)
-                    ->where('type_scolarite','=',$inscription->type_scolarite)
-                    ->first();
-                $bourse = bourse::where('id_eleve', '=', $id)
-                    ->where('annee_scolaire', '=', session('year'))
-                    ->first();
+                $scolarite = scolarite::forInscription($inscription);
+                $bourseQuery = bourse::where('id_eleve', '=', $id)
+                    ->where('annee_scolaire', '=', session('year'));
+                if (Schema::hasColumn('bourses', 'id_campus')) {
+                    $bourseQuery->whereRaw($this->campusVisibilitySql('id_campus'), array($idCampus));
+                }
+                $bourse = $bourseQuery->first();
                 if ($bourse) {
                     $values['montant_bourse'] = $bourse->montant;
                 }
@@ -410,6 +527,7 @@ class enregistrementController extends Controller {
     public function set_status(Request $request) {
 	    $status = $request->input('status');
 	    $id = $request->input('id');
+        $idCampus = $this->currentCampusId();
 	    $date_debut = $request->input('date_debut');
 
 	    $date_fin = $request->input('date_fin');
@@ -417,17 +535,31 @@ class enregistrementController extends Controller {
 	    $eleve = eleve::find($id);
 
 	    if($eleve) {
+            $inscription = inscription::where('id_eleve', '=', $id)
+                ->where('annee_scolaire', '=', \session('year'))
+                ->where('id_campus', '=', $idCampus)
+                ->first();
+
+            if(!$inscription) {
+                return redirect()->to(URL::previous());
+            }
 
             $current_user = \Auth::user();
 
             $acces = acces_eleve::where('annee_scolaire', '=', \session('year'))
-                ->where('id_eleve', '=', $id)
-                ->first();
+                ->where('id_eleve', '=', $id);
+            if(Schema::hasColumn('acces_eleves', 'id_campus')) {
+                $acces->where('id_campus', '=', $idCampus);
+            }
+            $acces = $acces->first();
 
             if($acces == null) {
                 $acces = new acces_eleve();
                 $acces->annee_scolaire = \session('year');
                 $acces->id_eleve = $id;
+                if(Schema::hasColumn('acces_eleves', 'id_campus')) {
+                    $acces->id_campus = $idCampus;
+                }
                 $acces->id_creator = $current_user->id;
 
                 if($status == 1) {
@@ -466,6 +598,7 @@ class enregistrementController extends Controller {
         $status = $request->input('status');
         $ids = $request->input('ids');
         $current_user = \Auth::user();
+        $idCampus = $this->currentCampusId();
         $date_debut = $request->input('date_debut');
 	    $date_fin = $request->input('date_fin');
 	    $montant = $request->input('montant');
@@ -473,15 +606,29 @@ class enregistrementController extends Controller {
         foreach ($ids as $id) {
             $eleve = eleve::find($id);
             if($eleve) {
+                $inscription = inscription::where('id_eleve', '=', $id)
+                    ->where('annee_scolaire', '=', \session('year'))
+                    ->where('id_campus', '=', $idCampus)
+                    ->first();
+
+                if(!$inscription) {
+                    continue;
+                }
 
                 $acces = acces_eleve::where('annee_scolaire', '=', \session('year'))
-                    ->where('id_eleve', '=', $id)
-                    ->first();
+                    ->where('id_eleve', '=', $id);
+                if(Schema::hasColumn('acces_eleves', 'id_campus')) {
+                    $acces->where('id_campus', '=', $idCampus);
+                }
+                $acces = $acces->first();
 
                 if($acces == null) {
                     $acces = new acces_eleve();
                     $acces->annee_scolaire = \session('year');
                     $acces->id_eleve = $id;
+                    if(Schema::hasColumn('acces_eleves', 'id_campus')) {
+                        $acces->id_campus = $idCampus;
+                    }
                     $acces->id_creator = $current_user->id;
                     if($status == 1) {
                         $acces->edition_details = 'decision = '. Vars::DECISION_ALLOW;
@@ -521,12 +668,361 @@ class enregistrementController extends Controller {
 
     public function get_status(Request $request) {
         $id = $request->input('id');
+        $idCampus = $this->currentCampusId();
 
             $acces = acces_eleve::where('annee_scolaire', '=', \session('year'))
-                ->where('id_eleve', '=', $id)
-                ->first();
+                ->where('id_eleve', '=', $id);
+            if(Schema::hasColumn('acces_eleves', 'id_campus')) {
+                $acces->whereRaw($this->campusVisibilitySql('id_campus'), array($idCampus));
+            }
+            $acces = $acces->first();
 
 
+    }
+
+    private function studentImportFields()
+    {
+        return array(
+            'nom' => array('table' => 'eleve', 'obligatoire' => 'Oui', 'defaut' => '-', 'description' => 'Nom de famille de l etudiant.', 'exemple' => 'KAMGA', 'valeurs' => 'Texte'),
+            'prenom' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Prenom(s) de l etudiant.', 'exemple' => 'Loic Bernard', 'valeurs' => 'Texte'),
+            'date_naiss' => array('table' => 'eleve', 'obligatoire' => 'Oui', 'defaut' => '-', 'description' => 'Date de naissance.', 'exemple' => '2003-03-03', 'valeurs' => 'AAAA-MM-JJ, JJ/MM/AAAA ou date Excel'),
+            'lieu_naiss' => array('table' => 'eleve', 'obligatoire' => 'Oui', 'defaut' => '-', 'description' => 'Lieu de naissance.', 'exemple' => 'YAOUNDE', 'valeurs' => 'Texte'),
+            'ne_vers' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Indication si la date de naissance est approximative.', 'exemple' => '', 'valeurs' => 'Texte'),
+            'sexe' => array('table' => 'eleve', 'obligatoire' => 'Oui', 'defaut' => '-', 'description' => 'Sexe de l etudiant.', 'exemple' => 'M', 'valeurs' => 'M ou F'),
+            'nationalite' => array('table' => 'eleve', 'obligatoire' => 'Oui', 'defaut' => '-', 'description' => 'Nationalite.', 'exemple' => 'Camerounaise', 'valeurs' => 'Texte'),
+            'quartier' => array('table' => 'eleve', 'obligatoire' => 'Oui', 'defaut' => '-', 'description' => 'Residence ou quartier.', 'exemple' => 'Ngousso', 'valeurs' => 'Texte'),
+            'parent_ens' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Indiquer si un parent est enseignant.', 'exemple' => '0', 'valeurs' => '0/1 ou texte selon usage interne'),
+            'email' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Email de l etudiant.', 'exemple' => 'etudiant@example.com', 'valeurs' => 'Email'),
+            'tel' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Telephone principal.', 'exemple' => '699000000', 'valeurs' => 'Texte'),
+            'telephone_wathsapp_eleve' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Numero WhatsApp etudiant.', 'exemple' => '699000000', 'valeurs' => 'Texte'),
+            'status_matrimonial' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Situation matrimoniale.', 'exemple' => 'Celibataire', 'valeurs' => 'Texte'),
+            'region_origine' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Region d origine.', 'exemple' => 'Centre', 'valeurs' => 'Texte'),
+            'departement_origine' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Departement d origine.', 'exemple' => 'Mfoundi', 'valeurs' => 'Texte'),
+            'diplome_preinscription' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Diplome presente a la preinscription.', 'exemple' => 'BACC', 'valeurs' => 'Texte'),
+            'serie' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Serie du diplome.', 'exemple' => 'D', 'valeurs' => 'Texte'),
+            'moyenne_generale' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => '0', 'description' => 'Moyenne generale du diplome.', 'exemple' => '12.50', 'valeurs' => 'Nombre'),
+            'annee_obtention' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Annee d obtention du diplome.', 'exemple' => '2024', 'valeurs' => 'Texte'),
+            'pays_obtention' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Pays d obtention.', 'exemple' => 'Cameroun', 'valeurs' => 'Texte'),
+            'dernier_etablissement' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Dernier etablissement frequente.', 'exemple' => 'Lycee Exemple', 'valeurs' => 'Texte'),
+            'localisation_ecole' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Localisation du dernier etablissement.', 'exemple' => 'Yaounde', 'valeurs' => 'Texte'),
+            'annee_sortie' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Annee de sortie.', 'exemple' => '2024', 'valeurs' => 'Texte'),
+            'diplome_obtenu' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Diplome obtenu.', 'exemple' => 'BACC D', 'valeurs' => 'Texte'),
+            'premiere_langue' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Premiere langue.', 'exemple' => 'Francais', 'valeurs' => 'Texte'),
+            'deuxieme_langue' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Deuxieme langue.', 'exemple' => 'Anglais', 'valeurs' => 'Texte'),
+            'autre_langue' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Autre langue.', 'exemple' => '', 'valeurs' => 'Texte'),
+            'profession' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Profession actuelle si applicable.', 'exemple' => 'Etudiant', 'valeurs' => 'Texte'),
+            'source_financement' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Source potentielle de financement.', 'exemple' => 'soutient_familial', 'valeurs' => 'bourse, pret, soutient_familial, autre'),
+            'canal_decouvert' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Canal par lequel l etudiant a connu l institut.', 'exemple' => 'facebook', 'valeurs' => 'depliant, concour, college, google, connaissance, facebook, plaque, tele, radio, pannaux, conseille'),
+            'site_internet' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'A deja visite le site internet.', 'exemple' => 'oui', 'valeurs' => 'oui ou non'),
+            'abonnement' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Abonne a une page ou canal de communication.', 'exemple' => 'non', 'valeurs' => 'oui ou non'),
+            'abonnement_valide' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Precision sur le canal d abonnement.', 'exemple' => '', 'valeurs' => 'Texte'),
+            'chaine' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Chaine TV si canal TV.', 'exemple' => '', 'valeurs' => 'Texte'),
+            'numero_conseille' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Telephone du conseille d orientation.', 'exemple' => '', 'valeurs' => 'Texte'),
+            'lien_tuteur' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Lien avec le tuteur.', 'exemple' => 'Oncle', 'valeurs' => 'Texte'),
+            'telephone_wathsapp_autre' => array('table' => 'eleve', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Autre numero WhatsApp utile au suivi.', 'exemple' => '', 'valeurs' => 'Texte'),
+            'nom_pere' => array('table' => 'parent', 'obligatoire' => 'Au moins un parent', 'defaut' => 'Vide', 'description' => 'Nom du pere.', 'exemple' => 'KAMGA Pierre', 'valeurs' => 'Texte'),
+            'profession_pere' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Profession du pere.', 'exemple' => 'Commercant', 'valeurs' => 'Texte'),
+            'ville_pere' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Ville du pere.', 'exemple' => 'Yaounde', 'valeurs' => 'Texte'),
+            'quartier_pere' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Quartier du pere.', 'exemple' => 'Mvan', 'valeurs' => 'Texte'),
+            'tel1_pere' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'WhatsApp du pere.', 'exemple' => '677000000', 'valeurs' => 'Texte'),
+            'tel2_pere' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Autre numero du pere.', 'exemple' => '', 'valeurs' => 'Texte'),
+            'nom_mere' => array('table' => 'parent', 'obligatoire' => 'Au moins un parent', 'defaut' => 'Vide', 'description' => 'Nom de la mere.', 'exemple' => 'NGONO Marie', 'valeurs' => 'Texte'),
+            'profession_mere' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Profession de la mere.', 'exemple' => 'Enseignante', 'valeurs' => 'Texte'),
+            'ville_mere' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Ville de la mere.', 'exemple' => 'Yaounde', 'valeurs' => 'Texte'),
+            'quartier_mere' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Quartier de la mere.', 'exemple' => 'Emana', 'valeurs' => 'Texte'),
+            'tel1_mere' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'WhatsApp de la mere.', 'exemple' => '676000000', 'valeurs' => 'Texte'),
+            'tel2_mere' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Autre numero de la mere.', 'exemple' => '', 'valeurs' => 'Texte'),
+            'nom_tuteur' => array('table' => 'parent', 'obligatoire' => 'Au moins un parent', 'defaut' => 'Vide', 'description' => 'Nom du tuteur.', 'exemple' => '', 'valeurs' => 'Texte'),
+            'profession_tuteur' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Profession du tuteur.', 'exemple' => '', 'valeurs' => 'Texte'),
+            'ville_tuteur' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Ville du tuteur.', 'exemple' => '', 'valeurs' => 'Texte'),
+            'quartier_tuteur' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Quartier du tuteur.', 'exemple' => '', 'valeurs' => 'Texte'),
+            'tel1_tuteur' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'WhatsApp du tuteur.', 'exemple' => '', 'valeurs' => 'Texte'),
+            'tel2_tuteur' => array('table' => 'parent', 'obligatoire' => 'Non', 'defaut' => 'Vide', 'description' => 'Autre numero du tuteur.', 'exemple' => '', 'valeurs' => 'Texte'),
+        );
+    }
+
+    private function normalizeStudentImportHeaders($headers)
+    {
+        $normalized = array();
+        foreach($headers as $header) {
+            $normalized[] = strtolower(trim($header, " \t\n\r\0\x0B\xEF\xBB\xBF"));
+        }
+
+        return $normalized;
+    }
+
+    private function readStudentImportRows($path, $extension)
+    {
+        if(in_array($extension, array('csv', 'txt'))) {
+            return $this->readStudentCsvRows($path);
+        }
+
+        return $this->readStudentXlsxRows($path);
+    }
+
+    private function readStudentCsvRows($path)
+    {
+        $separator = ';';
+        $handle = fopen($path, 'r');
+        if(!$handle) {
+            return null;
+        }
+
+        $rows = array();
+        $first = fgetcsv($handle, 0, $separator);
+        if($first !== false && count($first) <= 1) {
+            rewind($handle);
+            $commaFirst = fgetcsv($handle, 0, ',');
+            if($commaFirst !== false && count($commaFirst) > count($first)) {
+                $separator = ',';
+                $first = $commaFirst;
+            }
+        }
+
+        if($first !== false) {
+            $rows[] = $first;
+        }
+
+        while(($row = fgetcsv($handle, 0, $separator)) !== false) {
+            $rows[] = $row;
+        }
+        fclose($handle);
+
+        return $rows;
+    }
+
+    private function readStudentXlsxRows($path)
+    {
+        if(!class_exists('\ZipArchive')) {
+            return null;
+        }
+
+        $zip = new \ZipArchive();
+        if($zip->open($path) !== true) {
+            return null;
+        }
+
+        $sharedStrings = $this->readStudentXlsxSharedStrings($zip);
+        $sheetContent = $zip->getFromName('xl/worksheets/sheet1.xml');
+        $zip->close();
+
+        if(!$sheetContent) {
+            return null;
+        }
+
+        $sheet = simplexml_load_string($sheetContent);
+        if(!$sheet || !isset($sheet->sheetData)) {
+            return null;
+        }
+
+        $rows = array();
+        foreach($sheet->sheetData->row as $sheetRow) {
+            $row = array();
+            foreach($sheetRow->c as $cell) {
+                $attributes = $cell->attributes();
+                $cellRef = isset($attributes['r']) ? (string) $attributes['r'] : '';
+                $index = $this->studentXlsxColumnIndex($cellRef);
+                $type = isset($attributes['t']) ? (string) $attributes['t'] : '';
+                $value = '';
+
+                if($type == 's') {
+                    $sharedIndex = (int) $cell->v;
+                    $value = isset($sharedStrings[$sharedIndex]) ? $sharedStrings[$sharedIndex] : '';
+                } elseif($type == 'inlineStr' && isset($cell->is->t)) {
+                    $value = (string) $cell->is->t;
+                } elseif(isset($cell->v)) {
+                    $value = (string) $cell->v;
+                }
+
+                $row[$index] = trim($value);
+            }
+
+            if(count($row) > 0) {
+                ksort($row);
+                $rows[] = $this->normalizeStudentXlsxRowIndexes($row);
+            }
+        }
+
+        return $rows;
+    }
+
+    private function readStudentXlsxSharedStrings(\ZipArchive $zip)
+    {
+        $content = $zip->getFromName('xl/sharedStrings.xml');
+        if(!$content) {
+            return array();
+        }
+
+        $xml = simplexml_load_string($content);
+        if(!$xml) {
+            return array();
+        }
+
+        $strings = array();
+        foreach($xml->si as $si) {
+            if(isset($si->t)) {
+                $strings[] = (string) $si->t;
+                continue;
+            }
+
+            $text = '';
+            if(isset($si->r)) {
+                foreach($si->r as $run) {
+                    if(isset($run->t)) {
+                        $text .= (string) $run->t;
+                    }
+                }
+            }
+            $strings[] = $text;
+        }
+
+        return $strings;
+    }
+
+    private function studentXlsxColumnIndex($cellRef)
+    {
+        $letters = preg_replace('/[^A-Z]/', '', strtoupper($cellRef));
+        $index = 0;
+        for($i = 0; $i < strlen($letters); $i++) {
+            $index = ($index * 26) + (ord($letters[$i]) - 64);
+        }
+
+        return $index - 1;
+    }
+
+    private function normalizeStudentXlsxRowIndexes($row)
+    {
+        $normalized = array();
+        $max = max(array_keys($row));
+        for($i = 0; $i <= $max; $i++) {
+            $normalized[] = isset($row[$i]) ? $row[$i] : '';
+        }
+
+        return $normalized;
+    }
+
+    private function combineStudentImportRow($headers, $row)
+    {
+        $data = array();
+        foreach($headers as $index => $header) {
+            if($header !== '') {
+                $data[$header] = isset($row[$index]) ? trim($row[$index]) : '';
+            }
+        }
+
+        return $data;
+    }
+
+    private function validateStudentImportRow($data, $lineNumber)
+    {
+        $required = array('nom', 'date_naiss', 'lieu_naiss', 'sexe', 'nationalite', 'quartier');
+        foreach($required as $field) {
+            if(!isset($data[$field]) || trim($data[$field]) === '') {
+                return 'Ligne '.$lineNumber.' : le champ '.$field.' est obligatoire.';
+            }
+        }
+
+        if(!$this->normalizeStudentImportDate($data['date_naiss'])) {
+            return 'Ligne '.$lineNumber.' : date_naiss doit etre au format AAAA-MM-JJ ou JJ/MM/AAAA.';
+        }
+
+        $sexe = strtoupper($data['sexe']);
+        if(!in_array($sexe, array('M', 'F'))) {
+            return 'Ligne '.$lineNumber.' : sexe doit etre M ou F.';
+        }
+
+        if(isset($data['moyenne_generale']) && trim($data['moyenne_generale']) !== '' && !is_numeric(str_replace(',', '.', $data['moyenne_generale']))) {
+            return 'Ligne '.$lineNumber.' : moyenne_generale doit etre numerique.';
+        }
+
+        if(!$this->hasAtLeastOneImportedParent($data)) {
+            return 'Ligne '.$lineNumber.' : renseignez au moins nom_pere, nom_mere ou nom_tuteur.';
+        }
+
+        return null;
+    }
+
+    private function normalizeStudentImportDate($date)
+    {
+        $date = trim($date);
+        $formats = array('Y-m-d', 'd/m/Y', 'd-m-Y');
+        foreach($formats as $format) {
+            $parsed = \DateTime::createFromFormat($format, $date);
+            if($parsed && $parsed->format($format) === $date) {
+                return $parsed->format('Y-m-d');
+            }
+        }
+
+        if(is_numeric($date)) {
+            $timestamp = ((int) $date - 25569) * 86400;
+            if($timestamp > 0) {
+                return gmdate('Y-m-d', $timestamp);
+            }
+        }
+
+        return null;
+    }
+
+    private function fillStudentFromImportRow(eleve $e, $data)
+    {
+        $fields = array(
+            'nom', 'prenom', 'lieu_naiss', 'nationalite', 'quartier', 'lien_tuteur',
+            'email', 'tel', 'status_matrimonial', 'region_origine',
+            'departement_origine', 'diplome_preinscription', 'annee_obtention',
+            'pays_obtention', 'dernier_etablissement', 'annee_sortie', 'diplome_obtenu',
+            'premiere_langue', 'deuxieme_langue', 'autre_langue', 'profession',
+            'telephone_wathsapp_eleve', 'serie', 'localisation_ecole', 'source_financement',
+            'canal_decouvert', 'site_internet', 'abonnement', 'abonnement_valide',
+            'chaine', 'numero_conseille', 'ne_vers', 'parent_ens', 'telephone_wathsapp_autre'
+        );
+
+        foreach($fields as $field) {
+            if(isset($data[$field])) {
+                $e->$field = $data[$field];
+            }
+        }
+
+        $e->date_naiss = $this->normalizeStudentImportDate($data['date_naiss']);
+        $e->sexe = strtoupper($data['sexe']);
+        $e->moyenne_generale = isset($data['moyenne_generale']) && trim($data['moyenne_generale']) !== ''
+            ? str_replace(',', '.', $data['moyenne_generale'])
+            : 0;
+        $e->telephone_wathsapp_pere = isset($data['tel1_pere']) ? $data['tel1_pere'] : '';
+        $e->telephone_wathsapp_mere = isset($data['tel1_mere']) ? $data['tel1_mere'] : '';
+        $e->telephone_wathsapp_tuteur = isset($data['tel1_tuteur']) ? $data['tel1_tuteur'] : '';
+    }
+
+    private function hasAtLeastOneImportedParent($data)
+    {
+        return (isset($data['nom_pere']) && trim($data['nom_pere']) !== '')
+            || (isset($data['nom_mere']) && trim($data['nom_mere']) !== '')
+            || (isset($data['nom_tuteur']) && trim($data['nom_tuteur']) !== '');
+    }
+
+    private function createParentsFromImportRow(eleve $e, $data)
+    {
+        $this->createImportedParent($e, $data, 'pere', 1);
+        $this->createImportedParent($e, $data, 'mere', 0);
+        $this->createImportedParent($e, $data, 'tuteur', 2);
+    }
+
+    private function createImportedParent(eleve $e, $data, $suffix, $type)
+    {
+        $nameField = 'nom_'.$suffix;
+        if(!isset($data[$nameField]) || trim($data[$nameField]) === '') {
+            return;
+        }
+
+        $p = new parents();
+        $p->id_eleve = $e->id;
+        $p->type = $type;
+        $p->nom = $data[$nameField];
+        $p->profession = isset($data['profession_'.$suffix]) ? $data['profession_'.$suffix] : '';
+        $p->ville = isset($data['ville_'.$suffix]) ? $data['ville_'.$suffix] : '';
+        $p->quartier = isset($data['quartier_'.$suffix]) ? $data['quartier_'.$suffix] : '';
+        $p->tel1 = isset($data['tel1_'.$suffix]) ? $data['tel1_'.$suffix] : '';
+        $p->tel2 = isset($data['tel2_'.$suffix]) ? $data['tel2_'.$suffix] : '';
+        $p->save();
     }
 
 	/**

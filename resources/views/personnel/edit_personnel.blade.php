@@ -27,14 +27,14 @@
                 <div class="row">
                     <div class="col-md-6">
                         <label for="date">{{  trans('inscription.date_naiss')  }} : <span class="required">*</span></label>
-                        <input readonly class="form-control" id="date_naiss" name="date_naiss" type="text"  value="{{ $personnel->date_naiss }}" placeholder="yyyy/mm/dd" required disabled>
+                        <input class="form-control" id="date_naiss" name="date_naiss" type="date"  value="{{ $personnel->date_naiss }}" placeholder="jj/mm/aaaa" required disabled>
                     </div>
                     <div class="col-md-6">
                         <label for="lieu_naiss">{{  trans('inscription.lieu_naiss')  }} : <span class="required">*</span></label>
                         <input class="form-control" id="lieu_naiss" name="lieu_naiss" type="text"  value="{{ $personnel->lieu_naiss }}" required disabled>
                     </div>
                 </div>
-              <div class="row">
+                <div class="row">
                     <div class="col-md-6">
                         <label for="sexe">{{  trans('inscription.sexe')  }} : <span class="required">*</span></label>
                         <select name="sexe" form="select_sexe" class="form-control" id="sexe" disabled>
@@ -89,6 +89,43 @@
                     <option value="0" @if($personnel->type==0) selected @endif>@lang('admin.enseignant')</option>
                     <option value="1" @if($personnel->type==1) selected @endif>@lang('admin.autre')</option>
                 </select>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="type_personnel">Type personnel :</label>
+                        <select name="type_personnel" form="select_sexe" class="form-control champ-rh" id="type_personnel" disabled>
+                            <option value="enseignant" @if($personnel->type_personnel=='enseignant') selected @endif>Enseignant</option>
+                            <option value="permanent" @if($personnel->type_personnel=='permanent') selected @endif>Permanent</option>
+                            <option value="vacataire" @if($personnel->type_personnel=='vacataire') selected @endif>Vacataire</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="mode_horaire">Mode horaire :</label>
+                        <select name="mode_horaire" form="select_sexe" class="form-control champ-rh" id="mode_horaire" disabled>
+                            <option value="strict" @if($personnel->mode_horaire=='strict') selected @endif>Strict</option>
+                            <option value="souple" @if($personnel->mode_horaire=='souple') selected @endif>Souple</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="categorie_horaire">Categorie horaire :</label>
+                        <select name="categorie_horaire" form="select_sexe" class="form-control champ-rh" id="categorie_horaire" disabled>
+                            <option value="standard" @if($personnel->categorie_horaire=='standard') selected @endif>Standard</option>
+                            <option value="conseil_administration" @if($personnel->categorie_horaire=='conseil_administration') selected @endif>Conseil administration</option>
+                            <option value="chef_service" @if($personnel->categorie_horaire=='chef_service') selected @endif>Chef service</option>
+                            <option value="coordination" @if($personnel->categorie_horaire=='coordination') selected @endif>Coordination</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="horaire_travail">Horaire travail :</label>
+                        <select name="horaire_travail" form="select_sexe" class="form-control champ-rh" id="horaire_travail" disabled>
+                            <option value="">--</option>
+                            <option value="permanent_jour" @if($personnel->horaire_travail=='permanent_jour') selected @endif>Permanent jour</option>
+                            <option value="permanent_soir" @if($personnel->horaire_travail=='permanent_soir') selected @endif>Permanent soir</option>
+                            <option value="enseignant_jour" @if($personnel->horaire_travail=='enseignant_jour') selected @endif>Enseignant jour</option>
+                            <option value="vacataire_soir" @if($personnel->horaire_travail=='vacataire_soir') selected @endif>Vacataire soir</option>
+                        </select>
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col-md-6">
@@ -189,7 +226,7 @@
                 $('#categorie').removeAttr('disabled');
                 $('#echelon').removeAttr('disabled');
                 $('#date_rec').removeAttr('disabled');
-
+                $('.champ-rh').removeAttr('disabled');
                 $('#submit').css('display','block');
 
 

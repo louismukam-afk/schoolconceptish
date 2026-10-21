@@ -48,6 +48,15 @@
 
         </div>
 
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+            <div class="div-square">
+                <a href="{{  URL::to('/admin/campus/')  }}" >
+                    <i class="fa fa-university fa-5x"></i>
+                    <h4>Campus</h4>
+                </a>
+            </div>
+        </div>
+
             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
                 <div class="div-square">
                     <a href="{{  URL::to('admin/nniveaux')  }}" >
@@ -69,6 +78,24 @@
             </div>
 
 
+        </div>
+
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+            <div class="div-square">
+                <a href="{{URL::to('/admin/banques/')}}" >
+                    <i class="fa fa-bank fa-5x"></i>
+                    <h4>Banques</h4>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+            <div class="div-square">
+                <a href="{{URL::to('/admin/caisses/')}}" >
+                    <i class="fa fa-briefcase fa-5x"></i>
+                    <h4>Caisses</h4>
+                </a>
+            </div>
         </div>
 
         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
@@ -111,6 +138,15 @@
             </div>
 
 
+        </div>
+
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+            <div class="div-square">
+                <a href="{{URL::to('admin/tutelles/')}}" >
+                    <i class="fa fa-institution fa-5x"></i>
+                    <h4>Tutelles academiques</h4>
+                </a>
+            </div>
         </div>
 
         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
@@ -201,6 +237,38 @@
                 </a>
             </div>
 
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+            <div class="div-square">
+                <a href="{{url('/access-control')}}" >
+                    <i class="fa fa-lock fa-5x"></i>
+                    <h4>Roles et permissions</h4>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+            <div class="div-square">
+                <a href="{{url('/admin/finances/etat')}}" >
+                    <i class="fa fa-bar-chart fa-5x"></i>
+                    <h4>Etat caisse/banque</h4>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+            <div class="div-square">
+                <a href="{{url('/admin/finances/transfert')}}" >
+                    <i class="fa fa-exchange fa-5x"></i>
+                    <h4>Transfert caisse</h4>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+            <div class="div-square">
+                <a href="{{url('/audit')}}" >
+                    <i class="fa fa-history fa-5x"></i>
+                    <h4>Journal des operations</h4>
+                </a>
+            </div>
         </div>
     </div>
 

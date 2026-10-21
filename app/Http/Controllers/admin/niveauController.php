@@ -60,9 +60,11 @@ class niveauController extends Controller {
 
         $nom=$req->input('nom');
         $nom_anglais=$req->input('nom_anglais');
+        $domaines=$req->input('domaines');
         $n=new niveau();
         $n->nom=$nom;
         $n->nom_anglais=$nom_anglais;
+        $n->domaines=$domaines;
         $n->save();
         session(['success'=>true]);
         return redirect()->action('admin\niveauController@index');
@@ -106,9 +108,11 @@ class niveauController extends Controller {
         $id=$req->input('id');
         $nom=$req->input('nom');
         $nom_anglais=$req->input('nom_anglais');
+        $domaines=$req->input('domaines');
         $n=niveau::find($id);
         $n->nom=$nom;
         $n->nom_anglais=$nom_anglais;
+        $n->domaines=$domaines;
         $n->save();
         session(['success'=>true]);
         return redirect()->action('admin\niveauController@index');

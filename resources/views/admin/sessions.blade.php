@@ -11,10 +11,40 @@
             </div>
         @endif
 
+        @if($errors->any())
+            <div class="alert alert-danger">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
+        <a class="btn btn-warning" href="{{ url('/admin/sessions/global') }}">
+            <span class="glyphicon glyphicon-th-list"></span> Sessions examens globales
+        </a>
+
         <?php
         // On suppose que $programmes contient UN seul élément (la matière concernée)
         $prog = (isset($programmes) && count($programmes) > 0) ? $programmes[0] : null;
         ?>
+
+        @if(isset($has_session_tutelle) && $has_session_tutelle && $prog)
+            <form method="GET" action="{{ url('/admin/sessions/'.$prog->id) }}" class="form-inline" style="margin-top: 10px;">
+                <input type="hidden" name="id_classe" value="{{ $classe->id }}">
+                <input type="hidden" name="id_matiere" value="{{ $id_matiere }}">
+                <input type="hidden" name="id_classe_matiere" value="{{ $prog->id }}">
+                <div class="form-group">
+                    <label>Tutelle : </label>
+                    <select name="id_tutelle" class="form-control">
+                        <option value="">Toutes les tutelles</option>
+                        @foreach($tutelles as $tutelle)
+                            <option value="{{ $tutelle->id }}" @if($selected_tutelle == $tutelle->id) selected @endif>{{ $tutelle->nom }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-filter"></span> Filtrer
+                </button>
+            </form>
+        @endif
 
         <table class="table table-bordered table-striped table-condensed table-inverse" style="margin-top: 15px;">
             <thead>
@@ -34,6 +64,9 @@
             <th>TPE2</th>
             <th>SN2</th>
             <th>Rattrapage2</th>
+            @if(isset($has_session_tutelle) && $has_session_tutelle)
+                <th>Tutelle</th>
+            @endif
             <th>Année académique</th>
             <th>Actions</th>
             </thead>
@@ -54,6 +87,9 @@
                     <td>{{ $sess->tpe2 }}</td>
                     <td>{{ $sess->sn2 }}</td>
                     <td>{{ $sess->ratrappage2 }}</td>
+                    @if(isset($has_session_tutelle) && $has_session_tutelle)
+                        <td>{{ $sess->tutelle ? $sess->tutelle->nom : 'Generique' }}</td>
+                    @endif
                     <td>{{ $sess->annee_academique }}</td>
 
                     <td>
@@ -82,7 +118,8 @@
                                                '{{ $sess->cc2 }}',
                                                '{{ $sess->tpe2 }}',
                                                '{{ $sess->sn2 }}',
-                                               '{{ $sess->ratrappage2 }}'
+                                               '{{ $sess->ratrappage2 }}',
+                                               '{{ isset($sess->id_tutelle) ? $sess->id_tutelle : '' }}'
                                                )">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                         {{ trans('admin.edit_session') }}
@@ -98,7 +135,8 @@
                                        href="{{ URL::to('/admin/sessions/destroy/'.$sess->id
         .'?id_classe='.$classe->id
         .'&id_matiere='.$sess->id_matiere
-        .'&id_classe_matiere='.$sess->id) }}"
+        .'&id_classe_matiere='.$sess->id_classe_matiere
+        .'&id_tutelle='.(isset($sess->id_tutelle) ? $sess->id_tutelle : '')) }}"
                                        class="btn-danger">
                                         <span class="glyphicon glyphicon-trash"></span>
                                         {{ trans('admin.del') }}
@@ -116,7 +154,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="11" class="text-center">
+                    <td colspan="{{ (isset($has_session_tutelle) && $has_session_tutelle) ? 12 : 11 }}" class="text-center">
                         {{ trans('admin.aucune_session') }}
                     </td>
                 </tr>
@@ -173,6 +211,18 @@
                                         @endforeach
                                     </select>
                                 </div>
+
+                                @if(isset($has_session_tutelle) && $has_session_tutelle)
+                                    <div class="form-group">
+                                        <label for="id_tutelle">Tutelle : <span class="required">*</span></label>
+                                        <select name="id_tutelle" id="id_tutelle" class="form-control" required>
+                                            <option value="">Selectionner une tutelle</option>
+                                            @foreach($tutelles as $tutelle)
+                                                <option value="{{ $tutelle->id }}" @if($selected_tutelle == $tutelle->id) selected @endif>{{ $tutelle->nom }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
 
                                 <div class="form-group">
                                     <label>CC1 (%) :</label>
@@ -254,6 +304,18 @@
                                     </select>
                                 </div>
 
+                                @if(isset($has_session_tutelle) && $has_session_tutelle)
+                                    <div class="form-group">
+                                        <label for="edit_id_tutelle">Tutelle : <span class="required">*</span></label>
+                                        <select name="id_tutelle" id="edit_id_tutelle" class="form-control" required>
+                                            <option value="">Selectionner une tutelle</option>
+                                            @foreach($tutelles as $tutelle)
+                                                <option value="{{ $tutelle->id }}">{{ $tutelle->nom }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+
                                 <div class="form-group">
                                     <label>CC1 (%) :</label>
                                     <input class="form-control" id="cc1" name="cc1" type="number" min="0" max="100">
@@ -302,7 +364,7 @@
     <script>
         function editer_session(id, id_classe_matiere, id_matiere, annee_academique,
                                 cc1, tpe1, sn1, ratrappage1,
-                                cc2, tpe2, sn2, ratrappage2) {
+                                cc2, tpe2, sn2, ratrappage2, id_tutelle) {
 
             document.getElementById('session_id').value             = id;
             document.getElementById('session_classe_matiere').value = id_classe_matiere;
@@ -312,6 +374,10 @@
             var sel = document.getElementById('edit_annee_academique');
             if (sel) {
                 sel.value = annee_academique;
+            }
+            var tutelleSelect = document.getElementById('edit_id_tutelle');
+            if (tutelleSelect) {
+                tutelleSelect.value = id_tutelle ? id_tutelle : '';
             }
 
             document.getElementById('cc1').value         = cc1;

@@ -1,5 +1,11 @@
 @extends('skeleton')
 @section('sub-content')
+    <div class="col-md-12" style="margin-bottom: 15px;">
+        <a class="btn btn-warning" href="{{ url('/admin/sessions/global') }}">
+            <span class="glyphicon glyphicon-th-list"></span> Sessions examens globales
+        </a>
+    </div>
+
     <ul class="col-md-12">
 
 

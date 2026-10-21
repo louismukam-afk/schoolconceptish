@@ -19,7 +19,7 @@
 
         <div class="body">
             @if(App::getLocale()!="en")
-                <p>La Direction de l'{{$nom_etablissement}} (ISH) atteste que l'étudiant(e) <strong>{{$eleve->nom.' '.$eleve->prenom}}</strong>
+                <p>La Direction du {{$nom_etablissement}} (CEF HINTEL) atteste que l'étudiant(e) <strong>{{$eleve->nom.' '.$eleve->prenom}}</strong>
                     Né(e) le {{$eleve->date_naiss}} à {{$eleve->lieu_naiss}} de matricule <strong>{{$eleve->matricule}}
                     </strong>
                     est régulièrement inscrit(e) pour l'année académique <strong>{{session('year')}}</strong> en filière  <strong>{{$niveau->nom}}</strong> spécialité <strong>{{$classe->nom}}</strong>

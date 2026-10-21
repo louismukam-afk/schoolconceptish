@@ -14,7 +14,10 @@ use Illuminate\Support\Facades\DB;
 use gesecole\note;
 use gesecole\classeMatiere;
 use gesecole\matiere;
+use gesecole\TutelleAcademique;
+use gesecole\ReleveNoteGeneration;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PhpParser\Node\Expr\Array_;
 
 class esticreleveController extends Controller {
@@ -59,7 +62,34 @@ class esticreleveController extends Controller {
         $values['nniveaux']=$nn;
         $values['cycles']=$cy;
 
-        return view('eleves/classe_releves_estic',$values);
+        return view($this->classeRelevesView(),$values);
+    }
+
+    public function history(Request $request, $idClasse = null)
+    {
+        $query = ReleveNoteGeneration::where('type', $this->releveType())
+            ->orderBy('created_at', 'desc');
+        if ($idClasse) {
+            $query->where('id_classe', (int) $idClasse);
+        }
+        if ($request->input('cycle')) {
+            $query->where('id_cycle', (int) $request->input('cycle'));
+        }
+        if ($request->input('nniveau')) {
+            $query->where('id_nniveau', (int) $request->input('nniveau'));
+        }
+        if ($request->input('annee_academique')) {
+            $query->where('annee_academique', $request->input('annee_academique'));
+        }
+
+        $classe = $idClasse ? classe::find($idClasse) : null;
+        return view($this->historiqueView(), array(
+            'titre' => $this->historiqueTitle(),
+            'generations' => $query->orderBy('created_at', 'desc')->get(),
+            'classe' => $classe,
+            'cycle' => $request->input('cycle') ? cycle::find($request->input('cycle')) : null,
+            'nniveau' => $request->input('nniveau') ? NNiveau::find($request->input('nniveau')) : null,
+        ));
     }
 
     /**
@@ -86,7 +116,7 @@ class esticreleveController extends Controller {
         $sequences_pv=array(1,2,3,4,5,6);
 
 
-        $e = DB::select('SELECT e.* FROM eleve e,inscription i WHERE i.annee_scolaire=? AND i.id_classe=? AND i.id_eleve=e.id AND i.id_cycle=? AND i.id_nniveau=? ORDER BY e.nom,e.prenom', [session('year'), $id, $id_cycle,$nniveau]);
+        $e = DB::select('SELECT e.* FROM eleve e,inscription i WHERE i.annee_scolaire=? AND i.id_classe=? AND i.id_eleve=e.id AND i.id_cycle=? AND i.id_nniveau=? AND (i.id_campus = ? OR i.id_campus IS NULL) ORDER BY e.nom,e.prenom', [session('year'), $id, $id_cycle,$nniveau, $this->currentCampusId()]);
         $j=0;
         $matieres=array();
         foreach ($e as $el){
@@ -123,11 +153,11 @@ class esticreleveController extends Controller {
 //$m=matiere::whereIn('id',$matiere_list)->whereIn('id',$matieres_pv)->get();
         $m=matiere::whereIn('matiere.id',$matiere_list)
             ->Join('classe_matiere','matiere.id','=','classe_matiere.id_matiere')
-//->join('codages','codages.id','=','classe_matiere.id_code'   )
+            ->leftJoin('codages', DB::raw('codages.id::text'), '=', 'classe_matiere.id_code')
             ->where('id_classe','=',$id)
             ->where('id_cycle','=',$id_cycle)
             ->where('classe_matiere.id_nniveau','=',$nniveau)
-            ->select(['matiere.*','id_code','semestre','type','coef','classe_matiere.id AS id_classe_matiere'])
+            ->select(['matiere.*','classe_matiere.id_code AS classe_matiere_id_code','codages.nom AS codage_nom','semestre','type','coef','classe_matiere.id AS id_classe_matiere'])
 
             ->get();
 
@@ -159,7 +189,14 @@ class esticreleveController extends Controller {
 
 
                 }
-                $nom=\App::getLocale()=='en'?$matiere->nom_anglais:$matiere->nom;
+                if ($this->englishPriority()) {
+                    $nom = $matiere->nom;
+                    if ($matiere->nom_anglais) {
+                        $nom .= ' / '.$matiere->nom_anglais;
+                    }
+                } else {
+                    $nom = \App::getLocale() == 'en' ? ($matiere->nom_anglais ? $matiere->nom_anglais : $matiere->nom) : $matiere->nom;
+                }
                 if($this->isIn($matiere->id,$m_cpst))
                     $cpst=true;
 
@@ -258,13 +295,13 @@ class esticreleveController extends Controller {
 
 
                 if((!$cpst) && (!$cps)){
-                    $matieres[$l]=new pv1_matiere($matiere->id,$note,$credit,$nom,$matiere->type,$matiere->semestre,$matiere->id_code);
+                    $matieres[$l]=new EsticSoaMatiere($matiere->id,$note,$credit,$nom,$matiere->type,$matiere->semestre,$this->resolveMatiereCode($matiere));
 
                 }
 
                 if($cpst){
-                    //$composantes[$cst]= new composante($matiere->id,$note,$credit,$cpstList,$nom,$matiere->id_classe_matiere,$nom,$matiere->type,$matiere->semestre,$matiere->id_code);
-                    $composantes[$cst]= new composante($matiere->id,$note,$nom,$credit,$matiere->type,$matiere->semestre,$matiere->id_code,$matiere->coef, $matiere->id_classe_matiere);;
+                    //                    $composantes[$cst]= new EsticSoaComposante($matiere->id,$note,$credit,$cpstList,$nom,$matiere->id_classe_matiere,$nom,$matiere->type,$matiere->semestre,$matiere->id_code);
+                    $composantes[$cst]= new EsticSoaComposante($matiere->id,$note,$nom,$credit,$matiere->type,$matiere->semestre,$this->resolveMatiereCode($matiere),$matiere->coef, $matiere->id_classe_matiere);;
 
                     $cst++;
 
@@ -275,7 +312,7 @@ class esticreleveController extends Controller {
 
 
                 if($cps){
-                    $composes[$c]= new compose($matiere->id,$note,$credit,$cpstList,$nom,$credit,$matiere->type,$matiere->semestre,$matiere->id_code);
+                    $composes[$c]= new EsticSoaCompose($matiere->id,$note,$credit,$cpstList,$nom,$credit,$matiere->type,$matiere->semestre,$this->resolveMatiereCode($matiere));
                     $c++;
 
                 }
@@ -343,7 +380,7 @@ class esticreleveController extends Controller {
 
 // $sNote+=$co_note;
 
-                $matieres[$l]=new pv1_matiere($compt->id_matiere,$co_note/$co_n,$s_co_coef,$compt->nom,$compt->type,$compt->semestre,$compt->id_code);
+                $matieres[$l]=new EsticSoaMatiere($compt->id_matiere,$co_n > 0 ? $co_note/$co_n : 0,$s_co_coef,$compt->nom,$compt->type,$compt->semestre,$compt->id_code);
                 $l++;
 
             }
@@ -360,13 +397,13 @@ class esticreleveController extends Controller {
 
 
             if($sCoef==0) $sCoef=1;
-            $hh=$sNote/$cst;
+            $hh=$cst > 0 ? $sNote/$cst : 0;
 
 
             /*  dump($hh);
             die();*/
 
-            $proces_v[$k]=new PV1($eleve->id,$matieres,$hh);
+            $proces_v[$k]=new EsticSoaPV($eleve->id,$matieres,$hh);
             $k++;
 
         }
@@ -374,6 +411,7 @@ class esticreleveController extends Controller {
         $values['eleves'] = $e;
         $values['PV'] = $proces_v;
         $values['matieres'] = $m;
+        $values['module_groups'] = $this->buildModuleGroups($m, $gm);
         $values['nb_matieres'] = $m->count();
         $values['moyenne']=$hh;
         /* dump($values['moyenne']=$hh);
@@ -383,10 +421,220 @@ class esticreleveController extends Controller {
         $values['nniveau']=NNiveau::find($nniveau);
         $values['niveau']= niveau::find($classe->id_niveau);
         $values['semestre'] = $semestre;
+        $values['pv_type'] = $this->releveType();
+        $pageSize = strtolower((string) $request->input('page_size', 'a4'));
+        $values['page_size'] = in_array($pageSize, array('a3', 'a4')) ? strtoupper($pageSize) : 'A4';
+        $values['page_orientation'] = 'portrait';
+        $values['campus'] = $this->currentCampus();
+        $values['tutelle'] = $this->resolveCurrentTutelle($id);
 
-        return view('eleves/print_releves_estic', $values);
+        if ($request->input('save') == 1) {
+            $generation = $this->saveGeneration($request, $values);
+            return \Response::json(array(
+                'success' => true,
+                'id' => $generation->id,
+                'nb_releves' => $generation->nb_releves,
+                'url' => \URL::to($this->releveBasePath().'/generation/'.$generation->id.'/print')
+            ));
+        }
+
+        return view('eleves/print_releves_soa', $values);
 
 
+    }
+
+    public function generate(Request $request)
+    {
+        $request->merge(array('save' => 1));
+        return $this->create($request);
+    }
+
+    private function saveGeneration(Request $request, $values)
+    {
+        $payload = array(
+            'PV' => $values['PV'], 'eleves' => $values['eleves'],
+            'matieres' => $values['matieres'], 'nb_matieres' => $values['nb_matieres'],
+            'module_groups' => $values['module_groups'],
+            'classe' => $values['classe'], 'cycle' => $values['cycle'],
+            'nniveau' => $values['nniveau'], 'niveau' => $values['niveau'],
+            'campus' => isset($values['campus']) ? $values['campus'] : $this->currentCampus(),
+            'tutelle' => isset($values['tutelle']) ? $values['tutelle'] : null
+        );
+        $json = json_encode($payload);
+        $generation = new ReleveNoteGeneration();
+        $generation->type = $this->releveType();
+        $generation->annee_academique = session('year');
+        $generation->id_niveau = $values['classe'] ? $values['classe']->id_niveau : null;
+        $generation->id_classe = (int) $request->input('id');
+        $generation->id_cycle = (int) $request->input('cycle');
+        $generation->id_nniveau = (int) $request->input('nniveau');
+        $generation->periode_debut = $request->input('periode_debut') ?: null;
+        $generation->periode_fin = $request->input('periode_fin') ?: null;
+        $generation->nb_releves = count($values['PV']);
+        $generation->hash_generation = hash('sha256', $json);
+        $generation->contenu = $json;
+        $generation->id_creator = Auth::check() ? Auth::user()->id : null;
+        $generation->save();
+        return $generation;
+    }
+
+    private function buildModuleGroups($matieres, $groups)
+    {
+        $byClasseMatiere = array();
+        foreach ($matieres as $matiereItem) {
+            $matiereItem->id_code = $this->resolveMatiereCode($matiereItem);
+            $byClasseMatiere[$matiereItem->id_classe_matiere] = $matiereItem;
+        }
+        $result = array();
+        foreach ($groups as $group) {
+            $mother = null;
+            foreach ($matieres as $candidate) {
+                if ((int) $candidate->id === (int) $group->id_matiere_mere) {
+                    $mother = $candidate;
+                    break;
+                }
+            }
+            if (!$mother) {
+                continue;
+            }
+            $key = (int) $group->id_matiere_mere;
+            if (!isset($result[$key])) {
+                $result[$key] = array('module' => $mother, 'matieres' => array());
+            }
+            if (isset($byClasseMatiere[$group->id_classe_matiere])) {
+                $result[$key]['matieres'][] = $byClasseMatiere[$group->id_classe_matiere];
+            }
+        }
+        return array_values($result);
+    }
+
+    private function resolveMatiereCode($matiere)
+    {
+        if (isset($matiere->codage_nom) && trim((string) $matiere->codage_nom) !== '') {
+            return $matiere->codage_nom;
+        }
+        if (isset($matiere->classe_matiere_id_code) && trim((string) $matiere->classe_matiere_id_code) !== '') {
+            return $matiere->classe_matiere_id_code;
+        }
+        if (isset($matiere->id_code) && trim((string) $matiere->id_code) !== '') {
+            return $matiere->id_code;
+        }
+        if (isset($matiere->code_matiere) && trim((string) $matiere->code_matiere) !== '') {
+            return $matiere->code_matiere;
+        }
+        if (isset($matiere->code) && trim((string) $matiere->code) !== '') {
+            return $matiere->code;
+        }
+        return isset($matiere->id) ? $matiere->id : '';
+    }
+
+    public function printSaved($id)
+    {
+        $generation = ReleveNoteGeneration::findOrFail($id);
+        $payload = json_decode($generation->contenu);
+        $savedClasse = isset($payload->classe) ? $payload->classe : classe::find($generation->id_classe);
+        $savedTutelle = isset($payload->tutelle) ? $payload->tutelle : null;
+        if ($savedClasse) {
+            $resolvedTutelle = $this->resolveCurrentTutelle($savedClasse->id);
+            if ($resolvedTutelle) {
+                $savedTutelle = $resolvedTutelle;
+            }
+        }
+
+        return view('eleves/print_releves_soa', array(
+            'titre' => trans('admin.releve_notes'),
+            'PV' => isset($payload->PV) ? $payload->PV : array(),
+            'eleves' => isset($payload->eleves) ? $payload->eleves : array(),
+            'matieres' => isset($payload->matieres) ? $payload->matieres : array(),
+            'module_groups' => isset($payload->module_groups) ? $payload->module_groups : array(),
+            'nb_matieres' => isset($payload->nb_matieres) ? $payload->nb_matieres : 0,
+            'classe' => $savedClasse,
+            'cycle' => isset($payload->cycle) ? $payload->cycle : cycle::find($generation->id_cycle),
+            'nniveau' => isset($payload->nniveau) ? $payload->nniveau : NNiveau::find($generation->id_nniveau),
+            'niveau' => isset($payload->niveau) ? $payload->niveau : niveau::find($generation->id_niveau),
+            'campus' => isset($payload->campus) ? $payload->campus : $this->currentCampus(),
+            'tutelle' => $savedTutelle,
+            'semestre' => array(1, 2),
+            'pv_type' => $this->releveType(),
+            'page_size' => in_array(strtolower(\Input::get('page_size', 'a4')), array('a3', 'a4')) ? strtoupper(\Input::get('page_size', 'a4')) : 'A4',
+            'page_orientation' => 'portrait',
+            'generation' => $generation
+        ));
+    }
+
+    protected function releveType()
+    {
+        return 'licence_ebolowa';
+    }
+
+    protected function englishPriority()
+    {
+        return false;
+    }
+
+    protected function releveBasePath()
+    {
+        return '/eleves/releve_estic';
+    }
+
+    protected function classeRelevesView()
+    {
+        return 'eleves/classe_releves_estic';
+    }
+
+    protected function historiqueView()
+    {
+        return 'eleves/releves_estic_historique';
+    }
+
+    protected function historiqueTitle()
+    {
+        return 'Historique des releves Ebolowa';
+    }
+
+    protected function tutelleKeywords()
+    {
+        return array('EBOLOWA', 'ISABEE');
+    }
+
+    protected function resolveCurrentTutelle($idClasse)
+    {
+        $tutelles = TutelleAcademique::whereHas('specialites', function ($query) use ($idClasse) {
+            $query->where('classe.id', '=', $idClasse);
+        })->get();
+
+        foreach ($tutelles as $tutelle) {
+            if ($this->matchesCurrentTutelle($tutelle)) {
+                return $tutelle;
+            }
+        }
+
+        $keywords = $this->tutelleKeywords();
+        return TutelleAcademique::where(function ($query) use ($keywords) {
+            foreach ($keywords as $index => $keyword) {
+                $method = $index == 0 ? 'where' : 'orWhere';
+                $query->$method('nom', 'LIKE', '%'.$keyword.'%')
+                    ->orWhere('tutelle_anglophone', 'LIKE', '%'.$keyword.'%')
+                    ->orWhere('ville', 'LIKE', '%'.$keyword.'%')
+                    ->orWhere('localisation', 'LIKE', '%'.$keyword.'%');
+            }
+        })->first();
+    }
+
+    protected function matchesCurrentTutelle($tutelle)
+    {
+        $identity = strtoupper(
+            (isset($tutelle->nom) ? $tutelle->nom : '').' '.
+            (isset($tutelle->tutelle_anglophone) ? $tutelle->tutelle_anglophone : '').' '.
+            (isset($tutelle->ville) ? $tutelle->ville : '').' '.
+            (isset($tutelle->localisation) ? $tutelle->localisation : '')
+        );
+        foreach ($this->tutelleKeywords() as $keyword) {
+            if (strpos($identity, strtoupper($keyword)) !== false) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -440,7 +688,10 @@ class esticreleveController extends Controller {
      */
     public function destroy($id)
     {
-        //
+        $generation = ReleveNoteGeneration::where('type', $this->releveType())->findOrFail($id);
+        $generation->delete();
+        return redirect()->to($this->releveBasePath().'/historique')
+            ->with('success', $this->historiqueTitle().' supprime.');
     }
 
     function isIn($val,$array)
@@ -516,7 +767,7 @@ class esticreleveController extends Controller {
 
     }
 }
-class PV1{
+class EsticSoaPV{
     public $eleve;
     public $matieres;
     public $mgp;
@@ -528,7 +779,7 @@ class PV1{
 
     }
 }
-class pv1_matiere{
+class EsticSoaMatiere{
     public $id_matiere;
     public $note;
     public $credit;
@@ -553,7 +804,7 @@ class pv1_matiere{
 
 }
 
-class composante{
+class EsticSoaComposante{
     public $id_matiere;
     public $note;
     public $nom;
@@ -579,7 +830,7 @@ class composante{
 
     }
 }
-class compose{
+class EsticSoaCompose{
     public $id_matiere;
     public $note;
     public $coef;

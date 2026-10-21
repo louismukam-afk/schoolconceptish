@@ -32,6 +32,7 @@ class searchController extends Controller {
         $view=$req->input('view');
         $titre=$req->input('titre');
         $p=DB::table('personnel')->whereRaw('lower(nom) LIKE ?',['%'.strtolower($pattern).'%'])
+            ->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
             ->orderBy('nom')
             ->paginate(60);
         $values= array('titre'=>$titre);
@@ -47,13 +48,14 @@ class searchController extends Controller {
         $view=$req->input('view');
         $titre=$req->input('titre');
         $p=personnel::whereRaw('lower(nom) LIKE ?',['%'.strtolower($pattern).'%'])
+            ->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
             ->orderBy('nom')
             ->get();
         $arr=[];
         foreach ($p as $personnel){
             array_push($arr,$personnel->id);
         }
-        $d=decaissement::whereIn('id_personnel',$arr)->where('annee_scolaire','=',\session('year'))->orderBy('date','desc')->paginate(30);
+        $d=decaissement::whereIn('id_personnel',$arr)->where('annee_scolaire','=',\session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))->orderBy('date','desc')->paginate(30);
         $values= array('titre'=>$titre);
         $values['personnel']=$p;
         session(['search_result'=>true]);
@@ -70,11 +72,23 @@ class searchController extends Controller {
 	{
         $pattern=$req->input('search');
         $view=$req->input('view');
-        $e=DB::table('eleve')->whereRaw('lower(nom) LIKE ?',['%'.strtolower($pattern).'%'])
-            ->orWhereRaw('lower(prenom) LIKE ?',['%'.strtolower($pattern).'%'])
-            ->orWhereRaw('lower(matricule) LIKE ?',['%'.strtolower($pattern).'%'])
-            ->orderBy('nom')->orderBy('prenom')
-            ->paginate(60);
+        if($view == 'inscriptions/search_carte_eleve') {
+            $e=DB::table('eleve')
+                ->join('inscription', 'eleve.id', '=', 'inscription.id_eleve')
+                ->where('inscription.annee_scolaire', '=', session('year'))
+                ->whereRaw($this->campusVisibilitySql('inscription.id_campus'), array($this->currentCampusId()))
+                ->where('inscription.desinscrire', '=', 0)
+                ->whereRaw('(lower(eleve.nom) LIKE ? OR lower(eleve.prenom) LIKE ? OR lower(eleve.matricule) LIKE ?)', ['%'.strtolower($pattern).'%', '%'.strtolower($pattern).'%', '%'.strtolower($pattern).'%'])
+                ->select('eleve.*')
+                ->orderBy('nom')->orderBy('prenom')
+                ->paginate(60);
+        } else {
+            $e=DB::table('eleve')->whereRaw('lower(nom) LIKE ?',['%'.strtolower($pattern).'%'])
+                ->orWhereRaw('lower(prenom) LIKE ?',['%'.strtolower($pattern).'%'])
+                ->orWhereRaw('lower(matricule) LIKE ?',['%'.strtolower($pattern).'%'])
+                ->orderBy('nom')->orderBy('prenom')
+                ->paginate(60);
+        }
         //$e=DB::table('eleve')->whereRaw("nom LIKE '%?%' or prenom LIKE '%?%' or matricule LIKE '%?%'",[$pattern,$pattern,$pattern])->get();
         //$e=eleve::whereRaw("nom LIKE '%?%' or prenom LIKE '%?%' or matricule LIKE '%?%'",[$pattern,$pattern,$pattern]);
         $values= array('titre'=>trans('inscription.title_search'));

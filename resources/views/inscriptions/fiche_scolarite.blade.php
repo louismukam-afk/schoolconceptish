@@ -1,6 +1,15 @@
 @extends('skeleton')
 @section('sub-content')
     @include('perso.functions')
+    <?php
+        $fichePageSize = strtolower(\Input::get('page_size', 'a4')) == 'a3' ? 'A3' : 'A4';
+        $fichePrintZoom = $fichePageSize == 'A3' ? '100%' : '82%';
+        $ficheQuery = \Input::all();
+        $ficheQuery['page_size'] = 'a4';
+        $ficheA4Url = \URL::current().'?'.http_build_query($ficheQuery);
+        $ficheQuery['page_size'] = 'a3';
+        $ficheA3Url = \URL::current().'?'.http_build_query($ficheQuery);
+    ?>
     <style >
 
         .table  tr,.table  tr td, .table  th,.table  th td{
@@ -38,13 +47,90 @@
         table tr td.border-left-bold, table tr th.border-left-bold {
             border-left-width: 10px!important;
         }
+        .dt-buttons {
+            display: none;
+        }
+        .fiche-toolbar {
+            margin-bottom: 15px;
+        }
+        #idTableListe {
+            width: 100% !important;
+        }
     </style>
-    <div class="row">
+    <div class="row fiche-toolbar">
         <div class="col-md-12">
+            <a href="{{ $ficheA4Url }}" class="btn {{ $fichePageSize == 'A4' ? 'btn-primary' : 'btn-default' }}">
+                <span class="glyphicon glyphicon-file"></span> A4 paysage
+            </a>
+            <a href="{{ $ficheA3Url }}" class="btn {{ $fichePageSize == 'A3' ? 'btn-primary' : 'btn-default' }}">
+                <span class="glyphicon glyphicon-file"></span> A3 paysage
+            </a>
+            <button type="button" class="btn btn-success" id="fiche-export-excel">
+                <span class="glyphicon glyphicon-download-alt"></span> Export Excel
+            </button>
             <a href="#" class="btn btn-warning btn-lg" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> {{trans('inscription.imprimer')}}</a>
         </div>
     </div>
     <link rel="stylesheet" media="print" href="{{URL::asset('css/print_scolarite_state.css')}}">
+    <style media="print">
+        @page {
+            size: {{ $fichePageSize }} landscape;
+            margin: 2mm 2mm 2mm 2mm;
+        }
+        html,
+        body {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+        }
+        body {
+            zoom: {{ $fichePrintZoom }};
+        }
+        .fiche-toolbar,
+        .dt-buttons,
+        .dataTables_filter,
+        .dataTables_info,
+        .dataTables_paginate,
+        .dataTables_length {
+            display: none !important;
+        }
+        .list-cont {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+        }
+        .list-cont h2 {
+            font-size: {{ $fichePageSize == 'A3' ? '20px' : '16px' }} !important;
+            margin: 2mm 0 !important;
+        }
+        #idTableListe {
+            width: 100% !important;
+            max-width: 100% !important;
+            table-layout: fixed !important;
+            border-collapse: collapse !important;
+            margin-top: 2mm !important;
+        }
+        #idTableListe th,
+        #idTableListe td {
+            font-size: {{ $fichePageSize == 'A3' ? '9.5px' : '7.5px' }} !important;
+            line-height: 1.05 !important;
+            padding: 1px !important;
+            white-space: normal !important;
+            overflow-wrap: break-word !important;
+            word-wrap: break-word !important;
+        }
+        #idTableListe th:nth-child(1),
+        #idTableListe td:nth-child(1) {
+            width: 3% !important;
+        }
+        #idTableListe th:nth-child(2),
+        #idTableListe td:nth-child(2) {
+            width: 15% !important;
+        }
+    </style>
 
     @include('perso.header')
 
@@ -53,7 +139,8 @@
     <div class="list-cont">
         <h2 style="font-size: 22px;text-align: center">{{  $titre_liste  }}</h2>
 
-        <table  class="table table-bordered   table-striped table-condensed table-inverse" style="margin-top: 5px;">
+        <table id="idTableListe" class="table table-bordered   table-striped table-condensed table-inverse" style="margin-top: 5px;">
+            <thead>
             <tr>
                 <th class="center-cell back-green" rowspan="3">#</th>
                 <th class="center-cell back-green" rowspan="3">{{  trans('admin.nom_prenom')  }}</th>
@@ -81,6 +168,7 @@
                     <th class="center-cell"> @if($f->isKind()) ----  @else {{$f->montant}} @endif </th>
                 @endforeach
             </tr>
+            </thead>
 
 
         <tbody>
@@ -127,8 +215,8 @@
                             @endif
                     </td>
                 @endfor
-                <td rowspan="2">{{ $e->payements->sum('montant') + ($e->montant_bourse ? $e->montant_bourse : 0) }} <div style="color: green; font-weight: 600"> {{ $e->montant_bourse ? '(+' . $e->montant_bourse . ')' : '' }} </div></td>
-                <td rowspan="2">{{ $e->scolarite->total - $e->payements->sum('montant') - ($e->montant_bourse ? $e->montant_bourse : 0) }}</td>
+                <td rowspan="2">{{ $e->total_paye }} <div style="color: green; font-weight: 600"> {{ $e->montant_bourse ? '(+' . $e->montant_bourse . ')' : '' }} </div></td>
+                <td rowspan="2">{{ $e->scolarite->total - $e->total_paye }}</td>
 
             </tr>
             <tr>
@@ -169,33 +257,46 @@
 </div>
 
     <script>
-        $('#idTableListe').dataTable( {
-            dom: 'Bfrtip',
-            pageLength:5000,
-            buttons: [
-                //'copy', 'csv', 'excel', 'pdf', 'print'
-                {
-                    extend: 'excelHtml5',
-                    text: '<i class="fa fa-file-excel-o"></i> Excel',
-                    titleAttr: 'Export to Excel',
-                    title: '{!! sanitize($titre_liste) !!}',
-                    exportOptions: {
-                        columns: ':not(:last-child)'
-                    }
-                }
-                ,
-                {
-                    extend: 'pdfHtml5',
-                    text: '<i class="fa fa-file-pdf-o"></i> PDF',
-                    titleAttr: 'PDF',
-                    title: '{!! sanitize($titre_liste) !!}',
-                    exportOptions: {
-                        columns: ':not(:last-child)'
-                    }
-                }
+        $(function () {
+            var ficheScolariteTable = null;
+            if ($.fn.DataTable) {
+                ficheScolariteTable = $('#idTableListe').DataTable( {
+                    dom: 'Bfrtip',
+                    pageLength: 5000,
+                    paging: false,
+                    ordering: false,
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            text: '<i class="fa fa-file-excel-o"></i> Excel',
+                            className: 'fiche-excel-button',
+                            titleAttr: 'Export to Excel',
+                            title: '{!! sanitize($titre_liste) !!}',
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        }
+                    ]
+                } );
+            } else {
+                $('#idTableListe').dataTable({
+                    pageLength: 5000,
+                    paging: false,
+                    ordering: false
+                });
+            }
 
-            ]
-        } );
+            $('#fiche-export-excel').on('click', function () {
+                if (ficheScolariteTable && ficheScolariteTable.button) {
+                    ficheScolariteTable.button('.buttons-excel').trigger();
+                } else {
+                    var excelButton = $('.buttons-excel, .fiche-excel-button').first();
+                    if (excelButton.length) {
+                        excelButton.trigger('click');
+                    }
+                }
+            });
+        });
     </script>
 @endsection
 @section('breadcrumb')

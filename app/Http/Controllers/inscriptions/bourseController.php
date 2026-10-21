@@ -7,8 +7,8 @@ use gesecole\eleve;
 use gesecole\inscription;
 use Illuminate\Http\Request;
 use gesecole\Http\Controllers\Controller;
-use gesecole\Services\BourseService;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Schema;
 
 class bourseController extends Controller
 
@@ -20,9 +20,18 @@ class bourseController extends Controller
      */
     public function index()
     {
-        $bourses = bourse::with('eleve')->orderBy('annee_scolaire', 'desc')->paginate(50);
+        $idCampus = $this->currentCampusId();
+
+        $boursesQuery = bourse::with('eleve')->orderBy('annee_scolaire', 'desc');
+        if (Schema::hasColumn('bourses', 'id_campus')) {
+            $boursesQuery->whereRaw($this->campusVisibilitySql('id_campus'), array($idCampus));
+        }
+        $bourses = $boursesQuery->paginate(50);
+
         $eleves = eleve::join('inscription', 'inscription.id_eleve', '=', 'eleve.id')
-            ->where('annee_scolaire', '=', session('year'))
+            ->where('inscription.annee_scolaire', '=', session('year'))
+            ->whereRaw($this->campusVisibilitySql('inscription.id_campus'), array($idCampus))
+            ->where('inscription.desinscrire', '=', 0)
             ->select(['eleve.id', 'matricule', 'nom', 'prenom','inscription.type_scolarite', 'inscription.id as id_inscription'])
             ->orderBy('nom')
             ->orderBy('prenom')
@@ -58,10 +67,34 @@ class bourseController extends Controller
             "montant" => "required|numeric",
             "annee_scolaire" => "required"
         ]);
-        $nn= new bourse();
+
+        $idCampus = $this->currentCampusId();
+        $inscription = inscription::where('id_eleve', '=', $request->input('id_eleve'))
+            ->where('annee_scolaire', '=', $request->input('annee_scolaire'))
+            ->where('id_campus', '=', $idCampus)
+            ->where('desinscrire', '=', 0)
+            ->first();
+
+        if (!$inscription) {
+            return redirect(URL::previous())->withErrors(array('id_eleve' => "Aucune inscription active n'existe pour cet eleve dans ce campus et cette annee scolaire."));
+        }
+
+        $bourseQuery = bourse::where('id_eleve', '=', $request->input('id_eleve'))
+            ->where('annee_scolaire', '=', $request->input('annee_scolaire'));
+        if (Schema::hasColumn('bourses', 'id_campus')) {
+            $bourseQuery->where('id_campus', '=', $idCampus);
+        }
+
+        $nn = $bourseQuery->first();
+        if (!$nn) {
+            $nn = new bourse();
+        }
         $nn->id_eleve=$request->input('id_eleve');
         $nn->montant=$request->input('montant');
         $nn->annee_scolaire=$request->input('annee_scolaire');
+        if (Schema::hasColumn('bourses', 'id_campus')) {
+            $nn->id_campus=$idCampus;
+        }
         $nn->save();
 
         //BourseService::create(new bourse($request->toArray()));
@@ -104,10 +137,21 @@ class bourseController extends Controller
             "montant" => "required|numeric",
             "annee_scolaire" => "required"
         ]);
-        $nn = bourse::find($request->input('id'));
+        $idCampus = $this->currentCampusId();
+        $bourseQuery = bourse::where('id', '=', $request->input('id'));
+        if (Schema::hasColumn('bourses', 'id_campus')) {
+            $bourseQuery->where('id_campus', '=', $idCampus);
+        }
+        $nn = $bourseQuery->first();
+        if (!$nn) {
+            return redirect(URL::previous())->withErrors(array('id' => trans('admin.scholarship_not_exists')));
+        }
        // $nn->id_eleve=$request->input('id_eleve');
         $nn->montant=$request->input('montant');
         $nn->annee_scolaire=$request->input('annee_scolaire');
+        if (Schema::hasColumn('bourses', 'id_campus')) {
+            $nn->id_campus=$idCampus;
+        }
         $nn->save();
        // BourseService::update(new bourse($request->toArray()));
         return redirect(URL::previous())->with('success', trans('admin.succes'));
@@ -121,7 +165,15 @@ class bourseController extends Controller
      */
     public function destroy($id)
     {
-        BourseService::delete($id);
+        $query = bourse::where('id', '=', $id);
+        if (Schema::hasColumn('bourses', 'id_campus')) {
+            $query->where('id_campus', '=', $this->currentCampusId());
+        }
+        $bourse = $query->first();
+        if (!$bourse) {
+            return redirect(URL::previous())->withErrors(array('id' => trans('admin.scholarship_not_exists')));
+        }
+        $bourse->delete();
         return redirect(URL::previous())->with('success', trans('admin.succes'));
     }
 }

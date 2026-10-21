@@ -433,7 +433,23 @@ return [
     "fiches" => "Fiches",
     "print_fiches" => "Impression de fiches",
     "no_refund_note" => "NB: Les frais de scolarité et d'inscription ne sont pas remboursables",
-
+     "categorie_budget" => "Catégorie de budget",
+    "libelle" => "Nom",
+    "numero_compte" => "Numero de compte",
+    "description" => "Description",
+    "liste_categorie_budgetaire" => "Liste des catégories budgétaires",
+    "categorie_new" => "Nouvelle catégorie",
+    "ligne_budget" => "Ligne budgétaire",
+    "ligne_new" => "Nouvelle ligne",
+    "ligneB" => "Liste des lignes budgétaires",
+    "budget_line_data" => "Données ligne budgétaire",
+    "no_budget_cat" => "Aucune categorie budgétaire",
+    "allocated" => "Alloué",
+    "not_allocated" => "Non alloué",
+    "montant_realise" => "Montant réalisé",
+    "report" => "Rapport",
+    "depenses" => "Liste des dépenses en",
+    "date" => "Date"
 
 
 

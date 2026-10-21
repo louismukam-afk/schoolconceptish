@@ -16,6 +16,28 @@
 
         </div>
 
+        @if(Auth::user()->canDoAction(\gesecole\Action::ACTION_REGISTRATION_SUBSCRIPTION_STUDENT_CU))
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                <div class="div-square">
+                    <a href="{{route('students_import')}}" >
+                        <i class="fa fa-file-excel-o fa-5x"></i>
+                        <h4 style="overflow-wrap: anywhere">Importer les etudiants</h4>
+                    </a>
+                </div>
+            </div>
+        @endif
+
+        @if(Auth::user()->canDoAction(\gesecole\Action::ACTION_REGISTRATION_SUBSCRIPTION_CREATE))
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                <div class="div-square">
+                    <a href="{{route('inscriptions_import')}}" >
+                        <i class="fa fa-file-excel-o fa-5x"></i>
+                        <h4 style="overflow-wrap: anywhere">Importer les inscriptions</h4>
+                    </a>
+                </div>
+            </div>
+        @endif
+
         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
             <div class="div-square">
                 <a href="{{URL::to('/inscriptions/find-inscription')}}" >
@@ -47,6 +69,15 @@
             </div>
 
 
+        </div>
+
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+            <div class="div-square">
+                <a href="{{route('inscriptions_historique_etudiant')}}" >
+                    <i class="fa fa-history fa-5x"></i>
+                    <h4 style="overflow-wrap: anywhere">Historique etudiant</h4>
+                </a>
+            </div>
         </div>
 
         <!--<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
@@ -87,6 +118,17 @@
 
 
             </div>
+
+            @if(Auth::user()->canDoAction(\gesecole\Action::ACTION_REGISTRATION_LIST))
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                    <div class="div-square">
+                        <a href="{{route('inscriptions_effectifs')}}" >
+                            <i class="fa fa-table fa-5x"></i>
+                            <h4 style="overflow-wrap: anywhere">Effectifs par cycle</h4>
+                        </a>
+                    </div>
+                </div>
+            @endif
 
             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
                 <div class="div-square">
@@ -164,6 +206,27 @@
 
 
         </div>
+
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+            <div class="div-square">
+                <a href="{{URL::to('/inscriptions/etat-caisse')}}" >
+                    <i class="fa fa-bank fa-5x"></i>
+                    <h4>Mon etat de caisse</h4>
+                </a>
+            </div>
+
+        </div>
+
+        @if(Auth::user()->canDoAction(\gesecole\Action::ACTION_REGISTRATION_SUBSCRIPTION_CERTIFICATE))
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                <div class="div-square">
+                    <a href="{{URL::to('/inscriptions/certificates')}}" >
+                        <i class="fa fa-file-text-o fa-5x"></i>
+                        <h4 style="overflow-wrap: anywhere">@lang('admin.certificat_scolarite')</h4>
+                    </a>
+                </div>
+            </div>
+        @endif
 
     </div>
 

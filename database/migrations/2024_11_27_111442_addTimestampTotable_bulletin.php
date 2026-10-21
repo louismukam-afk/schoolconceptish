@@ -14,28 +14,40 @@ class AddTimestampTotableBulletin extends Migration {
 	{
         Schema::table('moyenne_classe', function(Blueprint $table)
         {
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            if (!Schema::hasColumn('moyenne_classe', 'created_at')) {
+                $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            }
+            if (!Schema::hasColumn('moyenne_classe', 'updated_at')) {
+                $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            }
         });
         Schema::table('moyenne_eleve', function(Blueprint $table)
         {
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            if (!Schema::hasColumn('moyenne_eleve', 'created_at')) {
+                $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            }
+            if (!Schema::hasColumn('moyenne_eleve', 'updated_at')) {
+                $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            }
         });
         Schema::table('moyenne_matiere', function(Blueprint $table)
         {
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            if (!Schema::hasColumn('moyenne_matiere', 'created_at')) {
+                $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            }
+            if (!Schema::hasColumn('moyenne_matiere', 'updated_at')) {
+                $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            }
         });
         Schema::table('bulletin_genere', function(Blueprint $table)
         {
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            if (!Schema::hasColumn('bulletin_genere', 'created_at')) {
+                $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            }
+            if (!Schema::hasColumn('bulletin_genere', 'updated_at')) {
+                $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            }
         });
-
-
-
-
     }
 
 	/**
@@ -47,19 +59,39 @@ class AddTimestampTotableBulletin extends Migration {
 	{
         Schema::table('bulletin_genere', function(Blueprint $table)
         {
-            $table->dropTimestamps();
+            if (Schema::hasColumn('bulletin_genere', 'created_at')) {
+                $table->dropColumn('created_at');
+            }
+            if (Schema::hasColumn('bulletin_genere', 'updated_at')) {
+                $table->dropColumn('updated_at');
+            }
         });
         Schema::table('moyenne_classe', function(Blueprint $table)
         {
-            $table->dropTimestamps();
+            if (Schema::hasColumn('moyenne_classe', 'created_at')) {
+                $table->dropColumn('created_at');
+            }
+            if (Schema::hasColumn('moyenne_classe', 'updated_at')) {
+                $table->dropColumn('updated_at');
+            }
         });
         Schema::table('moyenne_eleve', function(Blueprint $table)
         {
-            $table->dropTimestamps();
+            if (Schema::hasColumn('moyenne_eleve', 'created_at')) {
+                $table->dropColumn('created_at');
+            }
+            if (Schema::hasColumn('moyenne_eleve', 'updated_at')) {
+                $table->dropColumn('updated_at');
+            }
         });
         Schema::table('moyenne_matiere', function(Blueprint $table)
         {
-            $table->dropTimestamps();
+            if (Schema::hasColumn('moyenne_matiere', 'created_at')) {
+                $table->dropColumn('created_at');
+            }
+            if (Schema::hasColumn('moyenne_matiere', 'updated_at')) {
+                $table->dropColumn('updated_at');
+            }
         });
 	}
 

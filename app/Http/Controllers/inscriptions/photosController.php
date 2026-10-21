@@ -60,7 +60,9 @@ class photosController extends Controller {
 
 
 
-        $e=DB::select('SELECT e.id,e.nom,e.prenom FROM eleve e,inscription i WHERE i.annee_scolaire=? AND i.id_classe=? AND i.id_eleve=e.id AND i.id_cycle=? AND i.id_nniveau=? ORDER BY e.nom,e.prenom',[session('year'),$id_classe,$id_cycle,$id_nniveau]);
+        $idCampus = $this->currentCampusId();
+
+        $e=DB::select('SELECT e.id,e.nom,e.prenom FROM eleve e,inscription i WHERE i.annee_scolaire=? AND ' . $this->campusVisibilitySql('i.id_campus') . ' AND i.desinscrire=0 AND i.id_classe=? AND i.id_eleve=e.id AND i.id_cycle=? AND i.id_nniveau=? ORDER BY e.nom,e.prenom',[session('year'),$idCampus,$id_classe,$id_cycle,$id_nniveau]);
         $i=0;
         $e_list=array();
         foreach ($e as $eleve){
@@ -113,7 +115,19 @@ class photosController extends Controller {
 
             return redirect()->to(url('/select/classe?url='.URL::to('/inscriptions/photos')));
         }
+        $idCampus = $this->currentCampusId();
+        $allowedEleves = inscription::where('annee_scolaire', '=', session('year'))
+            ->where('id_campus', '=', $idCampus)
+            ->where('desinscrire', '=', 0)
+            ->whereIn('id_eleve', $eleveList)
+            ->lists('id_eleve')
+            ->toArray();
+
         foreach ($eleveList as $e){
+            if(!in_array($e, $allowedEleves)) {
+                $i++;
+                continue;
+            }
             if($photoList[$i]!=null)
             {
                 $p=$photoList[$i];
@@ -163,7 +177,12 @@ class photosController extends Controller {
 
         if($eleve!=null)
         {
-            $i=inscription::whereAnneeScolaire(session('year'))->where('id_eleve','=',$eleve)->first();
+            $idCampus = $this->currentCampusId();
+            $i=inscription::whereAnneeScolaire(session('year'))
+                ->whereRaw($this->campusVisibilitySql('id_campus'), array($idCampus))
+                ->where('desinscrire', '=', 0)
+                ->where('id_eleve','=',$eleve)
+                ->first();
             if($i==null)
             {
                 $values['inscription']=0;
@@ -228,10 +247,13 @@ class photosController extends Controller {
             $id_cycle=$request->input('cycle');
             $nn=NNiveau::find($id_nniveau);
             $classe=classe::find($id_classe);
+            $idCampus = $this->currentCampusId();
             $e=inscription::where('inscription.annee_scolaire','=',session('year'))
-                ->where('id_cycle','=',$id_cycle)
-                ->where('id_classe','=',$id_classe)
-                ->where('id_nniveau','=',$id_nniveau)
+                ->whereRaw($this->campusVisibilitySql('inscription.id_campus'), array($idCampus))
+                ->where('inscription.desinscrire','=',0)
+                ->where('inscription.id_cycle','=',$id_cycle)
+                ->where('inscription.id_classe','=',$id_classe)
+                ->where('inscription.id_nniveau','=',$id_nniveau)
                 ->join('eleve','eleve.id','=','inscription.id_eleve')
 
                 ->select(['eleve.*'])

@@ -2,19 +2,20 @@
 @section('sub-content')
     <h4>{{trans('eleve.choix_classe')}}</h4>
     <hr>
+    @include('eleves.partials.cycle_niveau_filiere_filter', array('selectionBaseUrl' => URL::to('/eleves/notes/matieres_soa/')))
     <div class="liste-classe col-md-12">
         <ul>
 
 
 
             @foreach($niveaux as $n)
-                <div class="col-md-6">
+                <div class="col-md-6 niveau-block" data-filiere="{{$n->id}}" style="display:none;">
                     <h4 class="page-header"> {{$n->getNom()}}</h4>
 
                     @foreach($classes as $c)
                         <div class="col-md-12">
                             @if($c->id_niveau==$n->id)
-                                <li class="col-md-12"><a class="special" data-toggle="modal" data-backdrop="false" href="#choose_level" onclick="choose_level({{$c->id}}, '{{URL::to('/eleves/notes/matieres_soa/')}}', '')">{{$c->getNom()}}</a></li>
+                                <li class="col-md-12"><a class="special cycle-niveau-specialite-link" href="#" data-classe="{{$c->id}}">{{$c->getNom()}}</a></li>
                             @endif
                         </div>
                     @endforeach

@@ -420,7 +420,7 @@
     <div class="table table-print">
         <center>
             <div class="titre">
-                <h2>INSTITUT SUPERIEUR HINTEL</h2>
+                <h2>CENTRE DE FORMATION HINTEL</h2>
                 <strong>PROCÈS VERBAL ANNUEL</strong><br>
                 Année académique : {{ $annee }}
             </div>

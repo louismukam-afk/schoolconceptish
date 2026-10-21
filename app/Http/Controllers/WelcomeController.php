@@ -1,6 +1,7 @@
 <?php namespace gesecole\Http\Controllers;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Request;
+use gesecole\Campus;
 use gesecole\parametres;
 use Closure;
 use Illuminate\Support\Facades\App;
@@ -45,6 +46,39 @@ class WelcomeController extends Controller {
        //dump($c->encrypt('schoooncept'));
         return view('home',['isHome'=>true]);
 	}
+
+    public function selectCampus()
+    {
+        $user = \Auth::user();
+        $campus = $user && $user->isAdmin() ? Campus::orderBy('nom')->get() : ($user ? $user->campus()->orderBy('nom')->get() : array());
+        return view('select_campus', array('titre' => 'Choix du campus', 'campus' => $campus));
+    }
+
+    public function setCampus(Request $request)
+    {
+        $this->validate($request, array('id_campus' => 'required|numeric'));
+        $user = \Auth::user();
+        $campus = null;
+        if ($user && $user->isAdmin()) {
+            $campus = Campus::find($request->input('id_campus'));
+        } elseif ($user) {
+            $campus = $user->campus()->where('campus.id', '=', $request->input('id_campus'))->first();
+        }
+        if ($campus) {
+            $campusNom = $campus->nom;
+            if ($campus->sigle) {
+                $campusNom .= ' - '.$campus->sigle;
+            }
+            session(array(
+                'campus_id' => $campus->id,
+                'campus_nom' => $campusNom,
+                'campus_sigle' => $campus->sigle,
+                'campus_localisation' => $campus->localisation,
+                'nom_etab' => $campusNom
+            ));
+        }
+        return redirect()->to(url('/'));
+    }
 
 	public function editYear(Request $req){
         $this->validate($req,[

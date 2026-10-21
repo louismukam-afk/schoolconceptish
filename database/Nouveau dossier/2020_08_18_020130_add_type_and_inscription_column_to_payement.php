@@ -14,22 +14,22 @@ class AddTypeAndInscriptionColumnToPayement extends Migration {
 	{
 		Schema::table('payement', function(Blueprint $table)
 		{
-			/*$table->integer('id_inscription')->default(0);
-			$table->integer('type')->default(0);*/
+			$table->integer('id_inscription')->default(0);
+			$table->integer('type')->default(0);
 		});
 	}
 
-	*
+	/**
 	 * Reverse the migrations.
 	 *
 	 * @return void
-	 
+	 */
 	public function down()
 	{
 		Schema::table('payement', function(Blueprint $table)
 		{
-			/*$table->dropColumn('id_inscription');
-			$table->dropColumn('type');*/
+			$table->dropColumn('id_inscription');
+			$table->dropColumn('type');
 		});
 	}
 

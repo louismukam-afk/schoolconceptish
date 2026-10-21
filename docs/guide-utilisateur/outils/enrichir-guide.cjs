@@ -1,0 +1,11 @@
+const fs=require('node:fs'),path=require('node:path');const dir=path.resolve(__dirname,'..');
+const content=JSON.parse(fs.readFileSync(path.join(dir,'contenu.json'),'utf8'));
+const inventory=JSON.parse(fs.readFileSync(path.join(dir,'inventaire.json'),'utf8'));
+const original=fs.existsSync(path.join(dir,'contenu-1.1.json'))?JSON.parse(fs.readFileSync(path.join(dir,'contenu-1.1.json'),'utf8')):content;
+if(!fs.existsSync(path.join(dir,'contenu-1.1.json')))fs.writeFileSync(path.join(dir,'contenu-1.1.json'),JSON.stringify(content,null,2));
+content.version='2.0';content.subtitle='Manuel détaillé des procédures et support de formation';
+const intro=JSON.parse(JSON.stringify(original.chapters[0]));
+intro.paragraphs.push('Cette édition ajoute les dépendances de configuration et des procédures par opération et par tutelle. Les aperçus locaux portent une légende distincte : ils illustrent les vues du projet sans sauvegarder de nouvelles générations. Les attestations pédagogiques utilisent un nom et des résultats fictifs clairement signalés. Les historiques présentés sont ceux de la session réelle.');
+content.chapters=[intro,...require('./procedures-detaillees.cjs')(inventory),...original.chapters.filter(c=>/Résoudre les difficultés|Organiser la formation/.test(c.title))];
+fs.writeFileSync(path.join(dir,'contenu.json'),JSON.stringify(content,null,2));
+console.log(JSON.stringify({chapters:content.chapters.length,procedures:content.chapters.reduce((n,c)=>n+(c.tasks?.length||0),0)}));

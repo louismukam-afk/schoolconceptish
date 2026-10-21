@@ -58,7 +58,7 @@
         .btn, .dt-buttons { display:none !important; }
     </style>
     <div style="text-align:center;margin-bottom:10px;">
-        <H1>INSTITUT SUPERIEUR HINTEL</H1>
+        <H1>CENTRE DE FORMATION HINTEL</H1>
         <strong>PROCÈS VERBAL DES CONTRÔLES CONTINUS {{ $sequence }}</strong><br>
         Année académique : {{ $annee }}
     </div>
@@ -127,7 +127,7 @@
     </table>
     <div class="table table-print">
     <div style="text-align:center;margin-bottom:10px;">
-        <H1>INSTITUT SUPERIEUR HINTEL</H1>
+        <H1>CENTRE DE FORMATION HINTEL</H1>
         <strong>PROCÈS VERBAL DES CONTRÔLES CONTINUS {{ $sequence }}</strong><br>
         Année académique : {{ $annee }}
     </div>

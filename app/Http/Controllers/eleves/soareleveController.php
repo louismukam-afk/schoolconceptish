@@ -14,7 +14,10 @@ use Illuminate\Support\Facades\DB;
 use gesecole\note;
 use gesecole\classeMatiere;
 use gesecole\matiere;
+use gesecole\TutelleAcademique;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use gesecole\ReleveNoteGeneration;
 use PhpParser\Node\Expr\Array_;
 
 class soareleveController extends Controller {
@@ -62,6 +65,33 @@ class soareleveController extends Controller {
         return view('eleves/classe_releves_soa',$values);
     }
 
+    public function history(Request $request, $idClasse = null)
+    {
+        $query = ReleveNoteGeneration::where('type', 'licence_soa')
+            ->orderBy('created_at', 'desc');
+        if ($idClasse) {
+            $query->where('id_classe', (int) $idClasse);
+        }
+        if ($request->input('cycle')) {
+            $query->where('id_cycle', (int) $request->input('cycle'));
+        }
+        if ($request->input('nniveau')) {
+            $query->where('id_nniveau', (int) $request->input('nniveau'));
+        }
+        if ($request->input('annee_academique')) {
+            $query->where('annee_academique', $request->input('annee_academique'));
+        }
+
+        $classe = $idClasse ? classe::find($idClasse) : null;
+        return view('eleves/releves_soa_historique', array(
+            'titre' => 'Historique des relevés SOA',
+            'generations' => $query->orderBy('created_at', 'desc')->get(),
+            'classe' => $classe,
+            'cycle' => $request->input('cycle') ? cycle::find($request->input('cycle')) : null,
+            'nniveau' => $request->input('nniveau') ? NNiveau::find($request->input('nniveau')) : null,
+        ));
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -86,7 +116,7 @@ class soareleveController extends Controller {
         $sequences_pv=array(1,2,3,4,5,6);
 
 
-        $e = DB::select('SELECT e.* FROM eleve e,inscription i WHERE i.annee_scolaire=? AND i.id_classe=? AND i.id_eleve=e.id AND i.id_cycle=? AND i.id_nniveau=? ORDER BY e.nom,e.prenom', [session('year'), $id, $id_cycle,$nniveau]);
+        $e = DB::select('SELECT e.* FROM eleve e,inscription i WHERE i.annee_scolaire=? AND i.id_classe=? AND i.id_eleve=e.id AND i.id_cycle=? AND i.id_nniveau=? AND (i.id_campus = ? OR i.id_campus IS NULL) ORDER BY e.nom,e.prenom', [session('year'), $id, $id_cycle,$nniveau, $this->currentCampusId()]);
         $j=0;
         $matieres=array();
         foreach ($e as $el){
@@ -123,11 +153,11 @@ class soareleveController extends Controller {
 //$m=matiere::whereIn('id',$matiere_list)->whereIn('id',$matieres_pv)->get();
         $m=matiere::whereIn('matiere.id',$matiere_list)
             ->Join('classe_matiere','matiere.id','=','classe_matiere.id_matiere')
-//->join('codages','codages.id','=','classe_matiere.id_code'   )
+            ->leftJoin('codages', DB::raw('codages.id::text'), '=', 'classe_matiere.id_code')
             ->where('id_classe','=',$id)
             ->where('id_cycle','=',$id_cycle)
             ->where('classe_matiere.id_nniveau','=',$nniveau)
-            ->select(['matiere.*','id_code','semestre','type','coef','classe_matiere.id AS id_classe_matiere'])
+            ->select(['matiere.*','classe_matiere.id_code AS classe_matiere_id_code','codages.nom AS codage_nom','semestre','type','coef','classe_matiere.id AS id_classe_matiere'])
 
             ->get();
 
@@ -240,13 +270,25 @@ class soareleveController extends Controller {
 
                 }
                 $note=0;
-                if(is_numeric($noteS1) && is_numeric($noteS2)){
+                $sessionNote='N';
+                if((int) $matiere->semestre != 0){
+                    if(((int) $matiere->semestre % 2) == 0){
+                        $note=$noteS2;
+                        $sessionNote=$this->soaSessionSuffix($note_cc2, $note_sn2, $note_rattrap2);
+                    }else{
+                        $note=$noteS1;
+                        $sessionNote=$this->soaSessionSuffix($note_cc1, $note_sn1, $note_rattrap1);
+                    }
+                }elseif(is_numeric($noteS1) && is_numeric($noteS2)){
                     $note=($noteS1+$noteS2)/2;
+                    $sessionNote=($this->soaSessionSuffix($note_cc1, $note_sn1, $note_rattrap1) == 'R' || $this->soaSessionSuffix($note_cc2, $note_sn2, $note_rattrap2) == 'R') ? 'R' : 'N';
 
                 }elseif (!is_numeric($noteS2)){
                     $note=$noteS1;
+                    $sessionNote=$this->soaSessionSuffix($note_cc1, $note_sn1, $note_rattrap1);
                 }elseif (!is_numeric($noteS1)){
                     $note=$noteS2;
+                    $sessionNote=$this->soaSessionSuffix($note_cc2, $note_sn2, $note_rattrap2);
                 }
 
                 if(is_numeric($note)){
@@ -258,13 +300,13 @@ class soareleveController extends Controller {
 
 
                 if((!$cpst) && (!$cps)){
-                    $matieres[$l]=new pv1_matiere($matiere->id,$note,$credit,$nom,$matiere->type,$matiere->semestre,$matiere->id_code);
+                    $matieres[$l]=new PV1SoaMatiere($matiere->id,$note,$credit,$nom,$matiere->type,$matiere->semestre,$this->resolveMatiereCode($matiere),$sessionNote);
 
                 }
 
                 if($cpst){
                     //$composantes[$cst]= new composante($matiere->id,$note,$credit,$cpstList,$nom,$matiere->id_classe_matiere,$nom,$matiere->type,$matiere->semestre,$matiere->id_code);
-					$composantes[$cst]= new composante($matiere->id,$note,$nom,$credit,$matiere->type,$matiere->semestre,$matiere->id_code,$matiere->coef, $matiere->id_classe_matiere);;
+					$composantes[$cst]= new PV1SoaComposante($matiere->id,$note,$nom,$credit,$matiere->type,$matiere->semestre,$this->resolveMatiereCode($matiere),$matiere->coef, $matiere->id_classe_matiere,$sessionNote);;
 
                     $cst++;
 
@@ -275,7 +317,7 @@ class soareleveController extends Controller {
 
 
                 if($cps){
-                    $composes[$c]= new compose($matiere->id,$note,$credit,$cpstList,$nom,$credit,$matiere->type,$matiere->semestre,$matiere->id_code);
+                    $composes[$c]= new PV1SoaCompose($matiere->id,$note,$credit,$cpstList,$nom,$credit,$matiere->type,$matiere->semestre,$this->resolveMatiereCode($matiere),$sessionNote);
                     $c++;
 
                 }
@@ -343,7 +385,7 @@ class soareleveController extends Controller {
 
 // $sNote+=$co_note;
 
-                $matieres[$l]=new pv1_matiere($compt->id_matiere,$co_note/$co_n,$s_co_coef,$compt->nom,$compt->type,$compt->semestre,$compt->id_code);
+                $matieres[$l]=new PV1SoaMatiere($compt->id_matiere,$co_n > 0 ? $co_note/$co_n : 0,$s_co_coef,$compt->nom,$compt->type,$compt->semestre,$compt->id_code,isset($compt->session) ? $compt->session : 'N');
                 $l++;
 				
 				  }
@@ -360,13 +402,13 @@ class soareleveController extends Controller {
 
 
             if($sCoef==0) $sCoef=1;
-            $hh=$sNote/$cst;
+            $hh=$cst > 0 ? $sNote/$cst : 0;
 
 
       /*  dump($hh);
       die();*/
 
-            $proces_v[$k]=new PV1($eleve->id,$matieres,$hh);
+            $proces_v[$k]=new PV1Soa($eleve,$matieres,$hh);
             $k++;
       
 		}
@@ -374,6 +416,7 @@ class soareleveController extends Controller {
         $values['eleves'] = $e;
         $values['PV'] = $proces_v;
         $values['matieres'] = $m;
+        $values['module_groups'] = $this->buildModuleGroups($m, $gm);
         $values['nb_matieres'] = $m->count();
         $values['moyenne']=$hh;
     /* dump($values['moyenne']=$hh);
@@ -383,10 +426,200 @@ class soareleveController extends Controller {
         $values['nniveau']=NNiveau::find($nniveau);
         $values['niveau']= niveau::find($classe->id_niveau);
         $values['semestre'] = $semestre;
+        $values['pv_type'] = 'licence_soa';
+        $pageSize = strtolower((string) $request->input('page_size', 'a4'));
+        $values['page_size'] = in_array($pageSize, array('a3', 'a4')) ? strtoupper($pageSize) : 'A4';
+        $values['page_orientation'] = 'portrait';
+        $values['campus'] = $this->currentCampus();
+        $values['tutelle'] = $this->resolveSoaTutelle($id);
+
+        if ($request->input('save') == 1) {
+            $generation = $this->saveGeneration($request, $values);
+            return \Response::json(array(
+                'success' => true,
+                'id' => $generation->id,
+                'nb_releves' => $generation->nb_releves,
+                'url' => \URL::to('/eleves/releves_soa/generation/'.$generation->id.'/print')
+            ));
+        }
 
         return view('eleves/print_releves_soa', $values);
 
 
+    }
+
+    public function generate(Request $request)
+    {
+        $request->merge(array('save' => 1));
+        return $this->create($request);
+    }
+
+    private function saveGeneration(Request $request, $values)
+    {
+        $payload = array(
+            'PV' => $values['PV'], 'eleves' => $values['eleves'],
+            'matieres' => $values['matieres'], 'nb_matieres' => $values['nb_matieres'],
+            'module_groups' => $values['module_groups'],
+            'classe' => $values['classe'], 'cycle' => $values['cycle'],
+            'nniveau' => $values['nniveau'],             'niveau' => $values['niveau'],
+            'campus' => isset($values['campus']) ? $values['campus'] : $this->currentCampus(),
+            'tutelle' => isset($values['tutelle']) ? $values['tutelle'] : null
+        );
+        $json = json_encode($payload);
+        $generation = new ReleveNoteGeneration();
+        $generation->type = 'licence_soa';
+        $generation->annee_academique = session('year');
+        $generation->id_niveau = $values['classe'] ? $values['classe']->id_niveau : null;
+        $generation->id_classe = (int) $request->input('id');
+        $generation->id_cycle = (int) $request->input('cycle');
+        $generation->id_nniveau = (int) $request->input('nniveau');
+        $generation->periode_debut = $request->input('periode_debut') ?: null;
+        $generation->periode_fin = $request->input('periode_fin') ?: null;
+        $generation->nb_releves = count($values['PV']);
+        $generation->hash_generation = hash('sha256', $json);
+        $generation->contenu = $json;
+        $generation->id_creator = Auth::check() ? Auth::user()->id : null;
+        $generation->save();
+        return $generation;
+    }
+
+    private function buildModuleGroups($matieres, $groups)
+    {
+        $byClasseMatiere = array();
+        foreach ($matieres as $matiereItem) {
+            $matiereItem->id_code = $this->resolveMatiereCode($matiereItem);
+            $byClasseMatiere[$matiereItem->id_classe_matiere] = $matiereItem;
+        }
+        $result = array();
+        foreach ($groups as $group) {
+            $mother = null;
+            foreach ($matieres as $candidate) {
+                if ((int) $candidate->id === (int) $group->id_matiere_mere) {
+                    $mother = $candidate;
+                    break;
+                }
+            }
+            if (!$mother) {
+                continue;
+            }
+            $key = (int) $group->id_matiere_mere;
+            if (!isset($result[$key])) {
+                $result[$key] = array('module' => $mother, 'matieres' => array());
+            }
+            if (isset($byClasseMatiere[$group->id_classe_matiere])) {
+                $result[$key]['matieres'][] = $byClasseMatiere[$group->id_classe_matiere];
+            }
+        }
+        return array_values($result);
+    }
+
+    private function resolveMatiereCode($matiere)
+    {
+        if (isset($matiere->codage_nom) && trim((string) $matiere->codage_nom) !== '') {
+            return $matiere->codage_nom;
+        }
+        if (isset($matiere->classe_matiere_id_code) && trim((string) $matiere->classe_matiere_id_code) !== '') {
+            return $matiere->classe_matiere_id_code;
+        }
+        if (isset($matiere->id_code) && trim((string) $matiere->id_code) !== '') {
+            return $matiere->id_code;
+        }
+        if (isset($matiere->code_matiere) && trim((string) $matiere->code_matiere) !== '') {
+            return $matiere->code_matiere;
+        }
+        if (isset($matiere->code) && trim((string) $matiere->code) !== '') {
+            return $matiere->code;
+        }
+        return isset($matiere->id) ? $matiere->id : '';
+    }
+
+    private function soaSessionSuffix($cc, $sn, $rattrap)
+    {
+        if ($rattrap == null) {
+            return 'N';
+        }
+        $normalNote = 0;
+        $hasNormal = false;
+        if ($cc != null && isset($cc->note) && is_numeric($cc->note)) {
+            $normalNote += (float) $cc->note;
+            $hasNormal = true;
+        }
+        if ($sn != null && isset($sn->note) && is_numeric($sn->note)) {
+            $normalNote += (float) $sn->note;
+            $hasNormal = true;
+        }
+        return (!$hasNormal || $normalNote < 50) ? 'R' : 'N';
+    }
+
+    public function printSaved($id)
+    {
+        $generation = ReleveNoteGeneration::findOrFail($id);
+        $payload = json_decode($generation->contenu);
+        $savedClasse = isset($payload->classe) ? $payload->classe : classe::find($generation->id_classe);
+        $savedTutelle = isset($payload->tutelle) ? $payload->tutelle : null;
+        if ($savedClasse) {
+            $resolvedTutelle = $this->resolveSoaTutelle($savedClasse->id);
+            if ($resolvedTutelle) {
+                $savedTutelle = $resolvedTutelle;
+            }
+        }
+
+        return view('eleves/print_releves_soa', array(
+            'titre' => trans('admin.releve_notes'),
+            'PV' => isset($payload->PV) ? $payload->PV : array(),
+            'eleves' => isset($payload->eleves) ? $payload->eleves : array(),
+            'matieres' => isset($payload->matieres) ? $payload->matieres : array(),
+            'module_groups' => isset($payload->module_groups) ? $payload->module_groups : array(),
+            'nb_matieres' => isset($payload->nb_matieres) ? $payload->nb_matieres : 0,
+            'classe' => $savedClasse,
+            'cycle' => isset($payload->cycle) ? $payload->cycle : cycle::find($generation->id_cycle),
+            'nniveau' => isset($payload->nniveau) ? $payload->nniveau : NNiveau::find($generation->id_nniveau),
+            'niveau' => isset($payload->niveau) ? $payload->niveau : niveau::find($generation->id_niveau),
+            'campus' => isset($payload->campus) ? $payload->campus : $this->currentCampus(),
+            'tutelle' => $savedTutelle,
+            'semestre' => array(1, 2),
+            'page_size' => in_array(strtolower(\Input::get('page_size', 'a4')), array('a3', 'a4')) ? strtoupper(\Input::get('page_size', 'a4')) : 'A4',
+            'page_orientation' => 'portrait',
+            'generation' => $generation
+        ));
+    }
+
+    private function resolveSoaTutelle($idClasse)
+    {
+        $tutelles = TutelleAcademique::whereHas('specialites', function ($query) use ($idClasse) {
+            $query->where('classe.id', '=', $idClasse);
+        })->get();
+
+        $matchesSoa = function ($tutelle) {
+            $identity = strtoupper(
+                (isset($tutelle->nom) ? $tutelle->nom : '').' '.
+                (isset($tutelle->tutelle_anglophone) ? $tutelle->tutelle_anglophone : '').' '.
+                (isset($tutelle->ville) ? $tutelle->ville : '').' '.
+                (isset($tutelle->localisation) ? $tutelle->localisation : '')
+            );
+            return strpos($identity, 'SOA') !== false
+                || strpos($identity, 'YAOUND') !== false;
+        };
+
+        foreach ($tutelles as $tutelle) {
+            if ($matchesSoa($tutelle)) {
+                return $tutelle;
+            }
+        }
+
+        $fallback = TutelleAcademique::where(function ($query) {
+            $query->where('nom', 'LIKE', '%SOA%')
+                ->orWhere('nom', 'LIKE', '%YAOUND%')
+                ->orWhere('tutelle_anglophone', 'LIKE', '%SOA%')
+                ->orWhere('tutelle_anglophone', 'LIKE', '%YAOUND%')
+                ->orWhere('ville', 'LIKE', '%YAOUND%')
+                ->orWhere('localisation', 'LIKE', '%YAOUND%');
+        })->first();
+        if ($fallback) {
+            return $fallback;
+        }
+
+        return null;
     }
 
     /**
@@ -516,19 +749,19 @@ class soareleveController extends Controller {
 
     }
 }
-class PV1{
+class PV1Soa{
     public $eleve;
     public $matieres;
     public $mgp;
-    public  function __construct($id_e,$ma,$mg)
+    public  function __construct($student,$ma,$mg)
     {
-        $this->eleve=eleve::find($id_e);
+        $this->eleve=$student;
         $this->matieres=$ma;
         $this->mgp=$mg;
 
     }
 }
-class pv1_matiere{
+class PV1SoaMatiere{
     public $id_matiere;
     public $note;
     public $credit;
@@ -536,9 +769,10 @@ class pv1_matiere{
     public $type;
     public $semestre;
     public $id_code;
+    public $session;
 
 
-    public  function __construct($id_m,$not,$cr,$an,$ty,$se,$co)
+    public  function __construct($id_m,$not,$cr,$an,$ty,$se,$co,$session='N')
     {
         $this->id_matiere=$id_m;
         $this->note=$not;
@@ -547,13 +781,14 @@ class pv1_matiere{
         $this->type=$ty;
         $this->semestre=$se;
         $this->id_code=$co;
+        $this->session=$session;
 
 
     }
 
 }
 
-class composante{
+class PV1SoaComposante{
     public $id_matiere;
     public $note;
 	public $nom;
@@ -561,9 +796,10 @@ class composante{
 	public $type;
     public $semestre;
     public $id_code;
+    public $session;
 	public $coef;
  public $id_classe_matiere;
-    public function __construct($id,$n,$no,$credit,$ty,$se,$co,$c,$icm)
+    public function __construct($id,$n,$no,$credit,$ty,$se,$co,$c,$icm,$session='N')
     {
         $this->id_matiere=$id;
         $this->note=$n;
@@ -572,6 +808,7 @@ class composante{
 		$this->type=$ty;
         $this->semestre=$se;
         $this->id_code=$co;
+        $this->session=$session;
 		$this->coef=$c;
 		$this->id_classe_matiere=$icm;
 		//$this->cpsList=$cl;
@@ -579,7 +816,7 @@ class composante{
 		  
     }
 }
-class compose{
+class PV1SoaCompose{
     public $id_matiere;
     public $note;
     public $coef;
@@ -589,8 +826,9 @@ class compose{
     public $type;
     public $semestre;
     public $id_code;
+    public $session;
 
-    public function __construct($id,$n,$c,$cl,$no,$cr,$ty,$se,$co)
+    public function __construct($id,$n,$c,$cl,$no,$cr,$ty,$se,$co,$session='N')
     {
         $this->id_matiere=$id;
         $this->note=$n;
@@ -601,6 +839,6 @@ class compose{
         $this->type=$ty;
         $this->semestre=$se;
         $this->id_code=$co;
+        $this->session=$session;
     }
 }
-

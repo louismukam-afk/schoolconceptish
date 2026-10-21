@@ -26,7 +26,7 @@
 
 </div>
 <div class="titre-ecole" style=" font-family: 'Arial Black'; text-align: center;">
-    <h1 class="titre-ecole" style="font-size: large; font-family: 'Arial Black'; text-align: center;">INSTITUT SUPERIEUR HINTEL</h1>
+    <h1 class="titre-ecole" style="font-size: large; font-family: 'Arial Black'; text-align: center;">CENTRE DE FORMATION HINTEL</h1>
     <p class="traductions">Autorisation de Création N° T4-09342 du 17 Décembre 2014 </p>
     <p class="traductions">Arreté MINESUP N° 16-0855/MINESUP/ESUP du 14/09/2016</p>
     <P class="traductions">BP:4615 Yaoundé-Cameroun Tel:(+237)655 711 614 / 695320131 Fax:(+237)220 04 68</P>

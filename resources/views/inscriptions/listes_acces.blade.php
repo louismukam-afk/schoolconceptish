@@ -1,5 +1,6 @@
 @extends('skeleton')
 @section('sub-content')
+<div class="ajax-list-fragment">
     @include('perso.functions')
     <div class="row">
         <div class="col-md-12">
@@ -219,6 +220,7 @@
             modal: true
         });
     </script>
+</div>
 @endsection
 @section('breadcrumb')
     <li><strong><a href="{{url('inscriptions')}}">@lang('menu.gestion_inscriptions')</a></strong></li>

@@ -88,10 +88,25 @@
 
 </div>
 <?php $u=\Illuminate\Support\Facades\Auth::user();
-if(session('nom_etab')==null){
-    $p=\gesecole\parametres::all();
-    $nom_etab=$p->where('nom','nom_etablissement')->first();
-    session(['nom_etab'=>$nom_etab->valeur]);
+$campus_actif = null;
+$nom_etab_affiche = null;
+if(session('campus_id')){
+    $campus_actif = \gesecole\Campus::find(session('campus_id'));
+}
+if($campus_actif){
+    $nom_etab_affiche = $campus_actif->nom;
+    if($campus_actif->sigle){
+        $nom_etab_affiche .= ' - '.$campus_actif->sigle;
+    }
+    session(array('campus_nom' => $nom_etab_affiche, 'nom_etab' => $nom_etab_affiche));
+}
+else{
+    if(session('nom_etab')==null){
+        $p=\gesecole\parametres::all();
+        $nom_etab=$p->where('nom','nom_etablissement')->first();
+        session(['nom_etab'=>$nom_etab ? $nom_etab->valeur : 'Etablissement']);
+    }
+    $nom_etab_affiche = session('nom_etab');
 }
 ?>
 
@@ -122,7 +137,7 @@ if(session('nom_etab')==null){
 
                     </a>
                 </div>
-                <div class="nom-etab"><strong>{{session('nom_etab')}}</strong></div>
+                <div class="nom-etab"><strong>{{ $nom_etab_affiche }}</strong></div>
 
 
                 <span class="logout-spn" >
@@ -512,13 +527,17 @@ if(session('nom_etab')==null){
 
         console.log('Scan active')
 
-        $('#qrcode-input')[0].addEventListener('focusout', giveFocus)
+        if ($('#qrcode-input')[0]) {
+            $('#qrcode-input')[0].addEventListener('focusout', giveFocus)
+        }
     }
 
     function disableScan() {
         scanActivated = false;
         console.log('Scan desactive')
-        $('#qrcode-input')[0].removeEventListener('focusout', giveFocus)
+        if ($('#qrcode-input')[0]) {
+            $('#qrcode-input')[0].removeEventListener('focusout', giveFocus)
+        }
     }
 
     function giveFocus(e) {

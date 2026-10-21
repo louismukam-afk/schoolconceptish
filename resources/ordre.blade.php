@@ -30,7 +30,7 @@
     </div>
 
 
-    <P style="text-align: justify"><strong>L'INTITUT SUPERIEUR AZIMUT</strong> souhaite effectué un virement bancaire dans le cadre du payement
+    <P style="text-align: justify"><strong>L'INSTITUT SUPERIEUR HINTEL</strong> souhaite effectué un virement bancaire dans le cadre du payement
     des salaires  des personnels a partir de son compte n°0000001233 vers les comptes suivant</P>
 
 
