@@ -38,6 +38,7 @@
         </div>
 
         <div class="col-md-10">
+            <div class="table-responsive">
                 <table class="table table-bordered table-striped table-condensed table-inverse" style="margin-top: 15px;">
                     <thead>
                     <caption style="font-size: 22px">{{  trans('inscription.search_result')  }}</caption>
@@ -47,6 +48,7 @@
                     <th>{{  trans('inscription.date_naiss')  }}</th>
                     <th>{{  trans('inscription.lieu_naiss')  }}</th>
                     <th>{{  trans('inscription.sexe')  }}</th>
+                    <th>Actions</th>
 
                     </thead>
                     <tbody>
@@ -64,6 +66,14 @@
                                     <a href="#" class=" btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <b class="caret"></b></a>
                                     <ul class="dropdown-menu">
                                         <li><a style="" href="{{ URL::to('/inscriptions/eleve/status').'?id='.$e->id }}"   class="btn-default"><span class="glyphicon glyphicon-cloud-upload"></span> {{  trans('admin.status_eleve')  }}</a></li>
+                                        @if(isset($inscriptions[$e->id]) && !$inscriptions[$e->id]->desinscrire)
+                                            @if(Auth::user()->canDoAction(\gesecole\Action::ACTION_REGISTRATION_SUBSCRIPTION_UPDATE))
+                                                <li><a href="{{ URL::to('/inscriptions/edit/'.$e->id) }}"><span class="glyphicon glyphicon-pencil"></span> Modifier l'inscription</a></li>
+                                            @endif
+                                            @if(Auth::user()->canDoAction(\gesecole\Action::ACTION_ADMIN_STUDENT_SUBCRIPTION_DELETE))
+                                                <li><a href="#" onclick="fill_delete_modal({{$e->id}}, '{{ URL::to('/inscriptions/remove/'.$e->id) }}', null, 'Confirmer la desinscription de cet etudiant ?'); return false;"><span class="glyphicon glyphicon-ban-circle"></span> {{ trans('admin.desinscrire') }}</a></li>
+                                            @endif
+                                        @endif
                                         @if(Auth::user()->canDoAction(\gesecole\Action::ACTION_REGISTRATION_SUBSCRIPTION_CREATE))
                                             <li><a style="color: white" href="{{ URL::to('/inscriptions/create/').'/'.$e->id }}"   class="btn-success"><span class="glyphicon glyphicon-cloud-upload"></span> {{  trans('inscription.inscrire')  }}</a></li>
                                         @endif
@@ -87,10 +97,14 @@
                                         @endif
                                     </ul>
                                 </div>
+                                @if(isset($inscriptions[$e->id]) && $inscriptions[$e->id]->desinscrire)
+                                    <span class="text-muted">Desinscrit</span>
+                                @endif
                         </tr>
                     @endforeach
                     </tbody>
                 </table>
+            </div>
                 <div class="paginate" style="text-align: center;"> <?php echo(str_replace('/?', '?', $eleves->render()) ); ?></div>
 
 

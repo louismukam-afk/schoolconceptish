@@ -84,6 +84,8 @@ class tutelleAcademiqueController extends Controller {
 
     private function fillTutelle(TutelleAcademique $tutelle, Request $request)
     {
+        $this->validate($request, array('modele_documents' => 'in:,soa,ngaoundere,esstic,isabee,polytechnique'));
+        if(array_key_exists('modele_documents',$request->all()))$tutelle->modele_documents = $request->input('modele_documents') ?: null;
         $fields = array(
             'nom', 'ville', 'localisation', 'telephone', 'email', 'description1',
             'description2', 'ministere_tutelle', 'faculte',

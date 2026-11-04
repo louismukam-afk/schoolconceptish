@@ -89,6 +89,15 @@ class payementController extends Controller {
         $e=eleve::find($id_eleve);
         $values= array('titre'=>trans('inscription.get_payement'));
         $values['e']=$e;
+        $registration = inscription::where('id_eleve', '=', $id_eleve)
+            ->where('annee_scolaire', '=', session('year'))
+            ->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
+            ->first();
+        $values['registrationFeeProfile'] = scolarite::forInscription($registration);
+        $values['registrationPaid'] = payement::where('id_eleve', '=', $id_eleve)
+            ->where('annee_scolaire', '=', session('year'))
+            ->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
+            ->where('type', '=', 0)->where('id_inscription', '=', 0)->sum('montant');
         $values['campus']=Campus::where('id', '=', $this->currentCampusId())->get();
         $values['campus_actif']=$this->currentCampus();
         $values['caisses']=Caisse::where('type_caisse','=','entree')->orderBy('nom')->get();
@@ -215,12 +224,13 @@ class payementController extends Controller {
         $p->id_creator = $current_user->id;
         $p->id_last_editor = $current_user->id;
 
-        $p->save();
-        $numero=sprintf('%08d',$p->id);
-        $p->numero=$numero;
-        $p->save();
+        DB::transaction(function () use ($p, $operation_source, $id_caisse, $id_banque, $montant, $numero_versement, $reference_operation, $demande_operation) {
+            $p->save();
+            $p->numero = sprintf('%08d', $p->id);
+            $p->save();
 
-        $this->recordFinancialEntry($p, $operation_source, $id_caisse, $id_banque, $montant, $numero_versement, $reference_operation, $demande_operation);
+            $this->recordFinancialEntry($p, $operation_source, $id_caisse, $id_banque, $montant, $numero_versement, $reference_operation, $demande_operation);
+        });
 
         session(['success'=>$p->id]);
 
@@ -284,7 +294,7 @@ class payementController extends Controller {
 
 
      public function print_receipe($id){
-        $p=payement::where('id', '=', $id)->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))->first();
+        $p=payement::where('id', '=', $id)->where('annee_scolaire', '=', session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))->first();
         if(!$p) { abort(404); }
         $isFrais = $p->type <> 0;
 
@@ -294,6 +304,7 @@ class payementController extends Controller {
         }
 
         $i=inscription::whereAnneeScolaire(session('year'))->where('id_eleve',$p->id_eleve)->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))->first();
+        if(!$i) { abort(404); }
         $cycle=cycle::find($i->id_cycle);
                 $cy=$cycle->nom;
         $c=classe::find($i->id_classe);

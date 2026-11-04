@@ -171,6 +171,21 @@ public function index()
         //$e=eleve::whereRaw("nom LIKE '%?%' or prenom LIKE '%?%' or matricule LIKE '%?%'",[$pattern,$pattern,$pattern]);
         $values= array('titre'=>trans('inscription.title_search_register'));
         $values['eleves']=$e;
+        $inscriptions = array();
+        $studentIds = array();
+        foreach ($e as $student) {
+            $studentIds[] = $student->id;
+        }
+        if (count($studentIds)) {
+            $currentInscriptions = inscription::whereIn('id_eleve', $studentIds)
+                ->where('annee_scolaire', '=', session('year'))
+                ->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))
+                ->get();
+            foreach ($currentInscriptions as $currentInscription) {
+                $inscriptions[$currentInscription->id_eleve] = $currentInscription;
+            }
+        }
+        $values['inscriptions']=$inscriptions;
         //session(['search_result'=>true]);
 
         return view('inscriptions.eleve_operations',$values);
@@ -214,7 +229,6 @@ public function index()
         $values['cycles']=$cy;
         $values['nniveaux']=$nniveau;
         $values['niveaux']=$niveaux;
-        $values['scolarites']=scolarite::all();
         $values['campus']=Campus::where('id', '=', $this->currentCampusId())->get();
         $values['campus_actif']=$this->currentCampus();
         $values['caisses']=Caisse::where('type_caisse','=','entree')->orderBy('nom')->get();
@@ -275,21 +289,9 @@ public function index()
        $classe = classe::find($id_classe);
 
        if($scolarite_style === 0) {
-           $scolarite = null;
-           if($id_scolarite) {
-               $selectedScolarite = scolarite::find($id_scolarite);
-               if($selectedScolarite
-                   && intval($selectedScolarite->id_cycle) == intval($id_cycle)
-                   && intval($selectedScolarite->id_niveau) == intval($classe->id_niveau)
-                   && intval($selectedScolarite->type_scolarite) == intval($type_scolarite)) {
-                   $scolarite = $selectedScolarite;
-               }
-           }
-           if(!$scolarite) {
-               $scolarite = scolarite::matchingOldStyle($id_cycle, $classe->id_niveau, $type_scolarite)->first();
-           }
+           $scolarite = $this->resolveScolariteForRegistration($id_scolarite, $id_cycle, $classe, $type_scolarite, $id_classe, $id_nniveau, $annee_scolaire, 0);
        } else {
-           $scolarite = $this->resolveScolariteForRegistration($id_scolarite, $id_cycle, $classe, $type_scolarite, $id_classe, $id_nniveau, $annee_scolaire);
+           $scolarite = $this->resolveScolariteForRegistration($id_scolarite, $id_cycle, $classe, $type_scolarite, $id_classe, $id_nniveau, $annee_scolaire, 1);
        }
 
        if (!$scolarite) {
@@ -297,6 +299,8 @@ public function index()
                 ->withErrors(['no_scolarite' => trans('admin.scolarite_not_set')])
                 ->withInput();
        }
+
+       $type_scolarite = $scolarite->type_scolarite;
 
        if($montant === null || trim($montant) === '') {
            $montant = $scolarite->inscription;
@@ -986,6 +990,8 @@ public function index()
         $values['classes']=$c;
         $values['cycles']=$cy;
         $values['inscription']=$i;
+        $selectedScolarite = $i && $i->id_scolarite ? scolarite::find($i->id_scolarite) : null;
+        $values['scolarite_style'] = $selectedScolarite && $selectedScolarite->annee_scolaire ? 1 : 0;
         $values['e']=$e;
         $values['nniveaux']=$nniveau;
         $values['niveaux']=$niveaux;
@@ -1006,9 +1012,10 @@ public function index()
 	}
 
 	public function print_receipe($id){
-	    $p=payement::where('id', '=', $id)->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))->first();
+	    $p=payement::where('id', '=', $id)->where('annee_scolaire', '=', session('year'))->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))->first();
         if(!$p) { abort(404); }
         $i=inscription::whereAnneeScolaire(session('year'))->where('id_eleve',$p->id_eleve)->whereRaw($this->campusVisibilitySql('id_campus'), array($this->currentCampusId()))->first();
+        if(!$i) { abort(404); }
         $cy=cycle::find($i->id_cycle)->nom;
         $c=classe::find($i->id_classe);
         $n=niveau::find($c->id_niveau);
@@ -1181,7 +1188,8 @@ public function index()
             return redirect()->action('inscriptions\inscriptionController@edit',['id_eleve'=>$id_eleve]);
         }
 
-        $scolarite = $this->resolveScolariteForRegistration($id_scolarite, $id_cycle, $classe, $type_scolarite, $id_classe, $id_nniveau, $annee_scolaire);
+        $scolarite_style=intval($req->input('scolarite_style', 0));
+        $scolarite = $this->resolveScolariteForRegistration($id_scolarite, $id_cycle, $classe, $type_scolarite, $id_classe, $id_nniveau, $annee_scolaire, $scolarite_style);
 
         if (!$scolarite) {
             return redirect(\URL::previous())
@@ -1192,7 +1200,7 @@ public function index()
         $i->id_classe=$id_classe;
         $i->id_cycle=$id_cycle;
         $i->id_nniveau=$id_nniveau;
-        $i->type_scolarite=$type_scolarite;
+        $i->type_scolarite=$scolarite->type_scolarite;
         if(Schema::hasColumn('inscription', 'id_scolarite')) {
             $i->id_scolarite=$scolarite->id;
         }
@@ -1423,24 +1431,34 @@ public function index()
         return $query->orderBy('id', 'desc')->first();
     }
 
-    private function resolveScolariteForRegistration($idScolarite, $idCycle, $classe, $typeScolarite, $idClasse, $idNniveau, $anneeScolaire)
+    private function resolveScolariteForRegistration($idScolarite, $idCycle, $classe, $typeScolarite, $idClasse, $idNniveau, $anneeScolaire, $style = null)
     {
+        if (!$classe) {
+            return null;
+        }
+
+        if ($style === 1) {
+            if (!$idScolarite) {
+                return null;
+            }
+            return scolarite::matchingNewStyle($idCycle, $classe->id_niveau, $idClasse, $idNniveau, $anneeScolaire)
+                ->where('id', '=', $idScolarite)->first();
+        }
+
+        if ($style === 0) {
+            $query = scolarite::matchingOldStyle($idCycle, $classe->id_niveau, $typeScolarite);
+            return $idScolarite ? $query->where('id', '=', $idScolarite)->first() : $query->first();
+        }
+
         if ($idScolarite) {
             $scolarite = scolarite::find($idScolarite);
-            if ($scolarite
-                && intval($scolarite->id_cycle) == intval($idCycle)
-                && intval($scolarite->id_niveau) == intval($classe->id_niveau)
-                && intval($scolarite->type_scolarite) == intval($typeScolarite)) {
+            if ($scolarite && intval($scolarite->id_cycle) == intval($idCycle)
+                && intval($scolarite->id_niveau) == intval($classe->id_niveau)) {
                 return $scolarite;
             }
         }
 
-        $scolarite = scolarite::matching($idCycle, $classe->id_niveau, $typeScolarite, $idClasse, $idNniveau, $anneeScolaire)->first();
-        if(!$scolarite && $anneeScolaire !== null) {
-            $scolarite = scolarite::matching($idCycle, $classe->id_niveau, $typeScolarite, $idClasse, $idNniveau, null)->first();
-        }
-
-        return $scolarite;
+        return scolarite::matchingOldStyle($idCycle, $classe->id_niveau, $typeScolarite)->first();
     }
 
     private function historiqueResultat($inscriptionItem)

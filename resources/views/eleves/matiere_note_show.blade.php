@@ -1,6 +1,7 @@
 @extends('skeleton')
 
 @section('sub-content')
+    <p><a class="btn btn-primary" href="{{ url('/eleves/documents-tutelles?'.http_build_query(array('id_classe' => $id, 'id_cycle' => $id_cycle, 'id_nniveau' => $id_nniveau))) }}">Tous les documents et notes par tutelle</a></p>
     <div class="col-md-12">
         {{-- Messages flash --}}
         @if(isset($success))

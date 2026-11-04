@@ -677,6 +677,12 @@ Route::group(['middleware'=>'auth'],function (){
             Route::get('/eleves/', ['middleware' => 'action', 'action' => Action::ACTION_STUDENT, 'uses' => 'eleves\eleveController@index']);
 
             Route::group(['middleware' => 'action', 'action' => Action::ACTION_STUDENT_NOTE], function () {
+                Route::get('/eleves/documents-tutelles', 'eleves\academicDocumentController@index');
+                Route::get('/eleves/documents-tutelles/apercu', 'eleves\academicDocumentController@preview');
+                Route::get('/eleves/documents-tutelles/export', 'eleves\academicDocumentController@exportCsv');
+                Route::get('/eleves/documents-tutelles/etudiants', 'eleves\academicDocumentController@students');
+                Route::get('/eleves/documents-tutelles/historique', 'eleves\academicDocumentController@history');
+                Route::get('/eleves/documents-tutelles/generations/{id}', 'eleves\academicDocumentController@printSaved');
                 Route::get('/eleves/notes/','eleves\noteController@index2');
                 Route::get('/eleves/notes/show','eleves\noteController@show');
                 Route::get('/eleves/notes/fiche','eleves\noteController@show_fiche');
@@ -685,13 +691,27 @@ Route::group(['middleware'=>'auth'],function (){
                 Route::get('/eleves/notes/matieres/fiche/','eleves\noteController@matiere_fiche');
                 Route::get('/eleves/notes/matieres_deliberer/show/','eleves\noteController@matiere_deliberer');
                 Route::any('/eleves/notes/print_note/{id}','eleves\noteController@print_note');
-                Route::get('/eleves/notes/deliberations/{id}', ['as' => 'notes.deliberations-etudiants', 'uses' => 'eleves\noteController@deliberationsEtudiants']);
-                Route::post('/eleves/notes/deliberations/apply', ['as' => 'notes.deliberations-apply', 'uses' => 'eleves\noteController@applyDeliberationsEtudiants']);
+                Route::get('/eleves/notes/deliberations/rapport', 'eleves\academicDeliberationController@report');
+                Route::get('/eleves/notes/deliberations/rapport/imprimer', 'eleves\academicDeliberationController@printReport');
+                Route::get('/eleves/notes/deliberations/rapport/export', 'eleves\academicDeliberationController@exportReport');
+                Route::get('/eleves/notes/deliberations/{id}', ['middleware'=>'tutelle.notes', 'as' => 'notes.deliberations-etudiants', 'uses' => 'eleves\noteController@deliberationsEtudiants']);
                 Route::get('/eleves/notes/pv/rattrapages/{id}', ['as' => 'pv.rattrapages-session-exams', 'uses' => 'eleves\noteController@listeRattrapagesSessionExams']);
 
             });
 
-            Route::group(['middleware' => 'action', 'action' => Action::ACTION_STUDENT_NOTE_CU], function () {
+            Route::group(['middleware' => array('action', 'tutelle.notes'), 'action' => Action::ACTION_STUDENT_NOTE_CU], function () {
+                Route::post('/eleves/notes/deliberations/apply', ['as' => 'notes.deliberations-apply', 'uses' => 'eleves\noteController@applyDeliberationsEtudiants']);
+                Route::get('/eleves/notes/deliberations', 'eleves\academicDeliberationController@index');
+                Route::post('/eleves/notes/deliberations/appliquer', 'eleves\academicDeliberationController@apply');
+                Route::get('/eleves/notes/anonymats', 'eleves\academicAnonymatController@index');
+                Route::get('/eleves/notes/anonymats/saisie', 'eleves\academicAnonymatController@entry');
+                Route::post('/eleves/notes/anonymats/generer', 'eleves\academicAnonymatController@generateCodes');
+                Route::post('/eleves/notes/anonymats/supprimer', 'eleves\academicAnonymatController@removeCode');
+                Route::post('/eleves/notes/anonymats/notes', 'eleves\academicAnonymatController@storeAnonymousNotes');
+                Route::post('/eleves/documents-tutelles/generer', 'eleves\academicDocumentController@generate');
+                Route::post('/eleves/documents-tutelles/generations/{id}/supprimer', 'eleves\academicDocumentController@destroy');
+                Route::get('/eleves/documents-tutelles/notes', 'eleves\academicDocumentController@notes');
+                Route::post('/eleves/documents-tutelles/notes', 'eleves\academicDocumentController@saveNotes');
                 Route::get('/eleves/notes/edit','eleves\noteController@index');
                 Route::get('/eleves/notes/matieres/','eleves\noteController@matiere');
                 Route::get('/eleves/notes/import', ['as' => 'notes_import', 'uses' => 'eleves\noteController@importPage']);

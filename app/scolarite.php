@@ -120,6 +120,17 @@ class scolarite extends Model {
         return $query->orderBy('id', 'desc');
     }
 
+    public static function matchingNewStyle($idCycle, $idNiveau, $idClasse, $idNniveau, $anneeScolaire)
+    {
+        return static::where('id_cycle', '=', $idCycle)
+            ->where('id_niveau', '=', $idNiveau)
+            ->where('id_classe', '=', $idClasse)
+            ->where('id_nniveau', '=', $idNniveau)
+            ->whereIn('annee_scolaire', static::schoolYearVariants($anneeScolaire))
+            ->orderBy('libelle')
+            ->orderBy('id');
+    }
+
     private static function applyProfileFilters($query, $idClasse = null, $idNniveau = null, $anneeScolaire = null)
     {
         if (Schema::hasColumn('scolarite', 'annee_scolaire') && $anneeScolaire !== null) {

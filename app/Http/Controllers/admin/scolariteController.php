@@ -116,6 +116,10 @@ class scolariteController extends Controller {
             return redirect(\URL::previous())->withErrors(array('annee_scolaire' => trans('validation.required', array('attribute' => trans('admin.year')))))->withInput();
         }
 
+        if($styleMode === 1 && !$this->validNewProfile($req, 'classe')) {
+            return redirect(\URL::previous())->withErrors(array('specialite' => 'Choisissez un cycle, une filiere, une specialite, un niveau et un nom de profil coherents.'))->withInput();
+        }
+
         $classe=$req->input('classe');
         $cycle=$req->input('cycle');
         $specialite=$styleMode === 1 ? $req->input('specialite') : null;
@@ -183,7 +187,9 @@ class scolariteController extends Controller {
         $s->type_scolarite=($type_scolarite);
         $s->total=$tranche1+$tranche2+$tranche3+$tranche4+$tranche5;
 
-        $s->id_creator = $current_user ? $current_user->id : 0;
+        if(!$s->exists) {
+            $s->id_creator = $current_user ? $current_user->id : 0;
+        }
         $s->id_last_editor = $current_user ? $current_user->id : 0;
         $s->edition_details = 'total : ' . $s->total. ', inscription : ' . $inscription;
 
@@ -243,6 +249,11 @@ class scolariteController extends Controller {
             return redirect(\URL::previous())->withErrors(array('annee_scolaire' => trans('validation.required', array('attribute' => trans('admin.year')))))->withInput();
         }
 
+
+        if($styleMode === 1 && !$this->validNewProfile($req, 'classes')) {
+            return redirect(\URL::previous())->withErrors(array('specialite' => 'Choisissez un cycle, une filiere, une specialite, un niveau et un nom de profil coherents.'))->withInput();
+        }
+
         $id=$req->input('id');
         $classe=$req->input('classes');
         $cycle=$req->input('cycle');
@@ -258,7 +269,7 @@ class scolariteController extends Controller {
         $tranche5=$req->input('tranche5');
         $type_scolarite=$req->input('type_scolarite');
 
-        $s=scolarite::find($id);
+        $s=scolarite::findOrFail($id);
         $s->id_niveau=$classe;
         $s->id_cycle=$cycle;
         if(Schema::hasColumn('scolarite', 'id_classe')) {
@@ -322,10 +333,9 @@ class scolariteController extends Controller {
             $options=scolarite::matchingOldStyle($cycle, $niveau, $type_scolarite)->get();
         }
         else {
-            $options=scolarite::matching($cycle, $niveau, $type_scolarite, $classe, $nniveau, $annee_scolaire)->get();
-            if(count($options) == 0) {
-                $options=scolarite::matching($cycle, $niveau, $type_scolarite, $classe, $nniveau, null)->get();
-            }
+            $options=$classe && $nniveau && $annee_scolaire
+                ? scolarite::matchingNewStyle($cycle, $niveau, $classe, $nniveau, $annee_scolaire)->get()
+                : new \Illuminate\Support\Collection(array());
         }
         $s=$options->first();
         if($s==null){
@@ -336,8 +346,36 @@ class scolariteController extends Controller {
             return response()->json($s);
         }
 
-        $s->options = $options;
-        return response()->json($s);
+        return response()->json(array(
+            'id' => $s->id,
+            'inscription' => $s->inscription,
+            'type_scolarite' => $s->type_scolarite,
+            'options' => $options->map(function($profile) {
+                return array(
+                    'id' => $profile->id,
+                    'libelle' => $profile->libelle,
+                    'inscription' => $profile->inscription,
+                    'tranche1' => $profile->tranche1,
+                    'tranche2' => $profile->tranche2,
+                    'tranche3' => $profile->tranche3,
+                    'tranche4' => $profile->tranche4,
+                    'tranche5' => $profile->tranche5,
+                    'type_scolarite' => $profile->type_scolarite
+                );
+            })->all()
+        ));
+    }
+
+    private function validNewProfile(Request $request, $filiereField)
+    {
+        $filiere = niveau::find($request->input($filiereField));
+        $specialite = classe::find($request->input('specialite'));
+        $niveau = NNiveau::find($request->input('nniveau'));
+
+        return $filiere && $specialite && $niveau
+            && intval($specialite->id_niveau) === intval($filiere->id)
+            && intval($niveau->id_cycle) === intval($request->input('cycle'))
+            && trim((string) $request->input('libelle')) !== '';
     }
 	/**
 	 * Remove the specified resource from storage.

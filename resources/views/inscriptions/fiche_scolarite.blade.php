@@ -163,7 +163,7 @@
             </tr>
             <tr>
 
-                <th class="center-cell">{{$scolarite_ancien->inscription . ($scolarite_nouveau ? '/'.$scolarite_nouveau->inscription : '')}}</th>
+                <th class="center-cell">Selon le profil</th>
                 @foreach($frais as $f)
                     <th class="center-cell"> @if($f->isKind()) ----  @else {{$f->montant}} @endif </th>
                 @endforeach
@@ -177,7 +177,7 @@
             <?php $m= 0?>
             <tr>
                 <td class="center-cell" rowspan="2">{{$i++}}</td>
-                <td class="center-vertical-cell" rowspan="2"><strong >{{$e->nom.' '.$e->prenom}}</strong></td>
+                <td class="center-vertical-cell" rowspan="2"><strong >{{$e->nom.' '.$e->prenom}}</strong><br>{{ $e->scolarite ? $e->scolarite->libelle : '' }}</td>
                 <td class="center-cell" rowspan="2">
                     {{$e->montant_inscription}}
                     <?php $sumIns += $e->montant_inscription ?>
@@ -202,7 +202,7 @@
                     </td>
                     <?php $m++ ?>
                 @endforeach
-                <td class="center-cell border-left-bold" rowspan="2">{{$e->scolarite->total}}</td>
+                <td class="center-cell border-left-bold" rowspan="2">{{ $e->scolarite ? $e->scolarite->total : 0 }}</td>
                 @for($j = 0; $j < $maxNbVersements; $j++)
                     <td class="center-cell" >
                             @if(isset($e->payements[$j]))
@@ -216,7 +216,7 @@
                     </td>
                 @endfor
                 <td rowspan="2">{{ $e->total_paye }} <div style="color: green; font-weight: 600"> {{ $e->montant_bourse ? '(+' . $e->montant_bourse . ')' : '' }} </div></td>
-                <td rowspan="2">{{ $e->scolarite->total - $e->total_paye }}</td>
+                <td rowspan="2">{{ ($e->scolarite ? $e->scolarite->total : 0) - $e->total_paye }}</td>
 
             </tr>
             <tr>

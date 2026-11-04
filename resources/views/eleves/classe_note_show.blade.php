@@ -1,5 +1,8 @@
 @extends('skeleton')
 @section('sub-content')
+    @if(Auth::user()->canDoAction(\gesecole\Action::ACTION_STUDENT_NOTE_CU) && !Auth::user()->isTeacher())
+    <p><a class="btn btn-success" href="{{ url('/eleves/notes/deliberations') }}">Délibérations par tutelle</a> <a class="btn btn-info" href="{{ url('/eleves/notes/deliberations/rapport') }}">Rapport des délibérations</a></p>
+    @endif
     <h4>{{trans('eleve.choix_classe')}}</h4>
     <hr>
     @include('eleves.partials.cycle_niveau_filiere_filter', array('selectionBaseUrl' => Request::is('eleves/notes/show_esstic') ? URL::to('/eleves/notes/matieres/show_esstic/') : URL::to('/eleves/notes/matieres/show/')))

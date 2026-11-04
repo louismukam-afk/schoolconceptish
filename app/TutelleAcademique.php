@@ -6,7 +6,7 @@ class TutelleAcademique extends Model {
     protected $table = 'tutelles_academiques';
 
     protected $fillable = array(
-        'nom', 'ville', 'localisation', 'telephone', 'email', 'description1',
+        'nom', 'ville', 'localisation', 'telephone', 'email', 'description1', 'modele_documents',
         'description2', 'ministere_tutelle', 'faculte', 'logo', 'logo_faculte',
         'republique_francophone', 'republique_anglophone',
         'patrie_francophone', 'patrie_anglophone',

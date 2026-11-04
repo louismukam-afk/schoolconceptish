@@ -14,6 +14,9 @@ class Kernel extends ConsoleKernel {
 	 * @var array
 	 */
 	protected $commands = [
+		'gesecole\Console\Commands\ImportTestok',
+		'gesecole\Console\Commands\InstallTestokTutelles',
+		'gesecole\Console\Commands\PrepareTestok',
 		'gesecole\Console\Commands\Inspire',
 	];
 

@@ -6240,6 +6240,9 @@ return ($a['moyenne'] < $b['moyenne']) ? 1 : -1; });
         }
 
         $classeMatiere = $this->findNoteImportClasseMatiere($row, $idClasse, $idCycle, $idNniveau, $idMatiere);
+        if (\gesecole\Services\AcademicDocumentService::isManagedContext($idClasse, $idCycle, $idNniveau, $annee)) {
+            throw new \Exception('Cette formation utilise les sessions par tutelle. Utilisez l’import CSV de l’écran Notes et documents par tutelle.');
+        }
         $sessionExam = $this->findNoteImportSession($row, $classeMatiere, $idMatiere, $annee);
         $storedNote = $this->calculateImportedNote($rawNote, $sequence, $sessionExam);
 

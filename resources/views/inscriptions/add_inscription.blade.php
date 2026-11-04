@@ -32,8 +32,15 @@
                 <input type="hidden" name="id_eleve" value="{{$e->id}}">
                 <div class="col-md-6">
                     <div class="form-group">
+                        <label for="edit_scolarite_style">Profil de scolarite :</label>
+                        <select id="edit_scolarite_style" name="scolarite_style" class="form-control" onchange="getScolarite('edit_')" required>
+                            <option value="0" @if($scolarite_style === 0) selected @endif>Ancien style</option>
+                            <option value="1" @if($scolarite_style === 1) selected @endif>Nouveau style</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label>  @lang('admin.cycle'): </label>
-                        <select required form="edit_inscription_form" id="edit_cycle"  name="cycle" class="form-control" onchange="filterEditInscriptionFields()">
+                        <select required form="edit_inscription_form" id="edit_cycle"  name="cycle" class="form-control" onchange="filterEditInscriptionFields(); getScolarite('edit_')">
                             @foreach($cycles as $c)
                                 <option value="{{$c->id}}" @if($inscription->id_cycle==$c->id) selected @endif>{{$c->nom}}</option>
                             @endforeach
@@ -42,7 +49,7 @@
                     </div>
                     <div class="form-group">
                         <label>@lang('admin.filiere')  : </label>
-                        <select form="edit_inscription_form" id="edit_filiere" name="id_niveau" class="form-control" onchange="filterEditInscriptionFields()" required>
+                        <select form="edit_inscription_form" id="edit_filiere" name="id_niveau" class="form-control" onchange="filterEditInscriptionFields(); getScolarite('edit_')" required>
                             <option value=""> -- Choisir --</option>
                             @foreach($niveaux as $n)
                                 <option value="{{$n->id}}" @if($inscription && $inscription->classe && $inscription->classe->id_niveau==$n->id) selected @endif>{{$n->getNom()}}</option>
@@ -52,7 +59,7 @@
                     <div class="form-group">
                         <label>@lang('admin.specialites')  : </label>
 
-                        <select required form="edit_inscription_form" id="edit_classe" name="classe" class="form-control autocomplete">
+                        <select required form="edit_inscription_form" id="edit_classe" name="classe" class="form-control autocomplete" onchange="getScolarite('edit_')">
                             <option value=""> -- @lang('admin.choix_classe') --</option>
                             @foreach($classes as $c)
                                 <option value="{{$c->id}}" data-filiere="{{$c->id_niveau}}" @if($inscription->id_classe==$c->id) selected @endif>{{$c->getNom()}}</option>
@@ -63,7 +70,7 @@
                     </div>
                     <div class="form-group">
                         <label>  @lang('admin.nniveau') </label>
-                        <select form="edit_inscription_form" id="edit_nniveau" name="nniveau" class="form-control" required>
+                        <select form="edit_inscription_form" id="edit_nniveau" name="nniveau" class="form-control" onchange="getScolarite('edit_')" required>
                             <option value=""> -- Choisir --</option>
                             @foreach($nniveaux as $nn)
                                 <option value="{{$nn->id}}" data-cycle="{{$nn->id_cycle}}" @if($inscription->id_nniveau==$nn->id) selected @endif>{{$nn->nom}}</option>
@@ -73,10 +80,14 @@
                     </div>
                     <div class="form-group">
                         <label for="edit_type_scolarite">{{  trans('admin.type_scolarite')  }} : </label>
-                        <select form="edit_inscription_form" id="edit_type_scolarite" name="type_scolarite" class="form-control" required>
+                        <select form="edit_inscription_form" id="edit_type_scolarite" name="type_scolarite" class="form-control" onchange="getScolarite('edit_')" required>
                             <option value="0" @if($inscription->type_scolarite==0) selected @endif>{{ trans('admin.ancien') }}</option>
                             <option value="1" @if($inscription->type_scolarite==1) selected @endif>{{ trans('admin.nouveau') }}</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_id_scolarite">Tarif applique :</label>
+                        <select id="edit_id_scolarite" name="id_scolarite" class="form-control" data-selected="{{ old('id_scolarite', $inscription->id_scolarite) }}" onchange="applySelectedProfile('edit_')" required></select>
                     </div>
                         <div class="form-group">
                             <label>{{trans('admin.matricule')}} : (@lang('admin.no_matricule'))</label>
@@ -106,7 +117,8 @@
                             <option value="0" @if(strcmp(old('scolarite_style'),'0')==0) selected @endif>Ancien profil / ancien style de scolarite</option>
                             <option value="1" @if(strcmp(old('scolarite_style','1'),'1')==0) selected @endif>Nouveau profil / nouveau style de scolarite</option>
                         </select>
-                        <input type="hidden" id="id_scolarite" name="id_scolarite" value="{{ old('id_scolarite') }}">
+                        <label for="id_scolarite">Tarif applique :</label>
+                        <select id="id_scolarite" name="id_scolarite" class="form-control" data-selected="{{ old('id_scolarite') }}" onchange="applySelectedProfile('')" required></select>
                     </div>
                     <div class="form-group">
                         <label>  @lang('admin.cycle'): </label>
@@ -313,23 +325,6 @@
             @endif
         ];
 
-        var scolariteProfiles = [
-            @if(isset($scolarites))
-                @foreach($scolarites as $s)
-                {
-                    id: '{{$s->id}}',
-                    cycle: '{{$s->id_cycle}}',
-                    filiere: '{{$s->id_niveau}}',
-                    classe: '{{isset($s->id_classe) ? $s->id_classe : ''}}',
-                    nniveau: '{{isset($s->id_nniveau) ? $s->id_nniveau : ''}}',
-                    annee: {!! json_encode(isset($s->annee_scolaire) ? $s->annee_scolaire : '') !!},
-                    type: '{{$s->type_scolarite}}',
-                    inscription: {!! json_encode($s->inscription) !!}
-                },
-                @endforeach
-            @endif
-        ];
-
         var editInscriptionClasses = [
             @if(isset($old_record))
                 @foreach($classes as $c)
@@ -411,24 +406,24 @@
             rebuildSelectOptions('#edit_classe', editInscriptionClasses, 'filiere', $('#edit_filiere').val(), classPlaceholder);
         }
 
-        function getScolarite() {
+        var scolariteRequestSeq = {'': 0, 'edit_': 0};
 
-            var cycle=$('#cycle').val();
-            var niveau= $('#filiere').val();
-            var classe= $('#classe').val();
-            var nniveau= $('#nniveau').val();
-            var type_scolarite= $('#type_scolarite').val();
-            var scolarite_style= $('#scolarite_style').val();
+        function getScolarite(prefix) {
+            prefix = prefix || '';
+            var requestId = ++scolariteRequestSeq[prefix];
+            var cycle=$('#' + prefix + 'cycle').val() || '';
+            var niveau= $('#' + prefix + 'filiere').val() || '';
+            var classe= $('#' + prefix + 'classe').val() || '';
+            var nniveau= $('#' + prefix + 'nniveau').val() || '';
+            var type_scolarite= $('#' + prefix + 'type_scolarite').val();
+            var scolarite_style= $('#' + prefix + 'scolarite_style').val();
+            $('#' + prefix + 'type_scolarite').closest('.form-group').toggle(scolarite_style === '0');
             var token='{{csrf_token()}}';
+            var profileSelect = $('#' + prefix + 'id_scolarite');
+            profileSelect.empty().append($('<option>', {value: '', text: 'Choisir un tarif'}));
 
             if(cycle.length>0 && (niveau.length>0 || classe.length>0) && (scolarite_style === '0' || (classe.length>0 && nniveau.length>0)))
             {
-                var localScolarite = resolveLocalScolarite(cycle, niveau, classe, nniveau, type_scolarite, scolarite_style, '{{session('year')}}');
-                if(localScolarite) {
-                    applyResolvedScolarite(localScolarite);
-                    return;
-                }
-
                 $.ajax({
                     url:'{{route('get_scolarite')}}',
                     type:'POST',
@@ -444,112 +439,43 @@
                         scolarite_style: scolarite_style
                     },
                     success: function (obj) {
-                        applyResolvedScolarite(obj);
+                        if(requestId !== scolariteRequestSeq[prefix]) return;
+                        var selected = profileSelect.attr('data-selected') || '';
+                        $.each(obj.options || [], function(index, profile) {
+                            var amount = parseFloat(profile.tranche1 || 0) + parseFloat(profile.tranche2 || 0) + parseFloat(profile.tranche3 || 0) + parseFloat(profile.tranche4 || 0) + parseFloat(profile.tranche5 || 0);
+                            var label = (profile.libelle || (profile.type_scolarite == 0 ? 'Ancien' : 'Nouveau')) + ' - inscription ' + profile.inscription + ' - scolarite ' + amount;
+                            profileSelect.append($('<option>', {value: profile.id, text: label}).attr('data-inscription', profile.inscription).attr('data-type', profile.type_scolarite));
+                        });
+                        if(selected && profileSelect.find('option[value="' + selected + '"]').length) {
+                            profileSelect.val(selected);
+                        } else if((obj.options || []).length === 1) {
+                            profileSelect.val(obj.options[0].id);
+                        }
+                        profileSelect.removeAttr('data-selected');
+                        applySelectedProfile(prefix);
                     },
                     error: function () {
-                        applyResolvedScolarite({id: null, inscription: 0});
+                        if(requestId !== scolariteRequestSeq[prefix]) return;
+                        if(!prefix) applyResolvedScolarite({id: null, inscription: 0});
                     }
                 })
             }
             else {
-                $('#id_scolarite').val('');
-                $('#show_montant').addClass('hidden');
-                $('#scolarite_error').addClass('hidden');
-                $('#montant-group').addClass('hidden');
-                $('#montant').val('');
-
+                if(!prefix) applyResolvedScolarite({id: null, inscription: 0});
             }
-
-
         }
 
-        function normalizeYear(value) {
-            return String(value || '').replace(/\s+/g, '');
-        }
-
-        function isEmptyProfileValue(value) {
-            return value === null || value === undefined || value === '' || String(value) === '0';
-        }
-
-        function filiereFromClasse(classeId, fallbackFiliere) {
-            var filiere = fallbackFiliere;
-            $.each(inscriptionClasses, function(index, item) {
-                if(String(item.id) === String(classeId)) {
-                    filiere = item.filiere;
-                    return false;
-                }
-            });
-            return filiere;
-        }
-
-        function resolveLocalScolarite(cycle, niveau, classe, nniveau, typeScolarite, scolariteStyle, anneeScolaire) {
-            var effectiveNiveau = classe ? filiereFromClasse(classe, niveau) : niveau;
-            var matches = [];
-
-            $.each(scolariteProfiles, function(index, item) {
-                if(String(item.cycle) !== String(cycle)) {
-                    return true;
-                }
-                if(String(item.filiere) !== String(effectiveNiveau)) {
-                    return true;
-                }
-                if(String(item.type) !== String(typeScolarite)) {
-                    return true;
-                }
-
-                if(String(scolariteStyle) === '0') {
-                    if(!isEmptyProfileValue(item.classe) || !isEmptyProfileValue(item.nniveau) || normalizeYear(item.annee) !== '') {
-                        return true;
-                    }
-                    matches.push({score: 0, item: item});
-                    return true;
-                }
-
-                var score = 0;
-                if(!isEmptyProfileValue(item.classe)) {
-                    if(String(item.classe) !== String(classe)) {
-                        return true;
-                    }
-                    score += 4;
-                }
-                if(!isEmptyProfileValue(item.nniveau)) {
-                    if(String(item.nniveau) !== String(nniveau)) {
-                        return true;
-                    }
-                    score += 3;
-                }
-                if(normalizeYear(item.annee) !== '') {
-                    if(normalizeYear(item.annee) === normalizeYear(anneeScolaire)) {
-                        score += 2;
-                    }
-                    else {
-                        score += 1;
-                    }
-                }
-                matches.push({score: score, item: item});
-            });
-
-            if(matches.length === 0) {
-                return null;
+        function applySelectedProfile(prefix) {
+            var selected = $('#' + prefix + 'id_scolarite option:selected');
+            if(selected.val()) {
+                $('#' + prefix + 'type_scolarite').val(selected.attr('data-type'));
             }
-
-            matches.sort(function(a, b) {
-                if(b.score !== a.score) {
-                    return b.score - a.score;
-                }
-                return parseInt(b.item.id, 10) - parseInt(a.item.id, 10);
-            });
-
-            var selected = matches[0].item;
-            return {
-                id: selected.id,
-                inscription: selected.inscription,
-                type_scolarite: selected.type
-            };
+            if(!prefix) {
+                applyResolvedScolarite({id: selected.val(), inscription: selected.attr('data-inscription') || 0});
+            }
         }
 
         function applyResolvedScolarite(obj) {
-            $('#id_scolarite').val(obj.id || '');
             if(obj.inscription && parseFloat(obj.inscription) > 0) {
                 $('#scolarite_error').addClass('hidden');
                 $('#show_montant').removeClass('hidden');
@@ -586,6 +512,7 @@
             filterEditInscriptionFields();
             toggleOperationSource();
             getScolarite();
+            getScolarite('edit_');
         });
     </script>
 @endsection

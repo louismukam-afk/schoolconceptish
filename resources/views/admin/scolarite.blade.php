@@ -152,7 +152,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="libelle">Profil / Cas de scolarite : </label>
-                                        <input class="form-control" id="libelle" name="libelle" type="text" value="{{ old('libelle') }}" placeholder="Ex: mutation externe, reduction speciale">
+                                        <input class="form-control" id="libelle" name="libelle" type="text" value="{{ old('libelle') }}" placeholder="Ex: BTS 2 provenant d'un autre etablissement" required>
                                     </div>
                                 @endif
                                 <div class="form-group">
@@ -166,8 +166,8 @@
                                 @if(intval($style) === 1)
                                     <div class="form-group">
                                         <label for="specialite">@lang('admin.specialites') : </label>
-                                        <select id="specialite" name="specialite" form="add_level_form" class="form-control">
-                                            <option value="">Toutes les specialites de cette filiere</option>
+                                        <select id="specialite" name="specialite" form="add_level_form" class="form-control" required>
+                                            <option value="">Choisir une specialite</option>
                                             @foreach($classes as $c)
                                                 <option value="{{  $c->id  }}" data-filiere="{{$c->id_niveau}}" @if($c->id == old('specialite')) selected @endif>{{  $c->getNom()  }}</option>
                                             @endforeach
@@ -175,8 +175,8 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="nniveau">@lang('admin.nniveau') : </label>
-                                        <select id="nniveau" name="nniveau" form="add_level_form" class="form-control">
-                                            <option value="">Tous les niveaux du cycle</option>
+                                        <select id="nniveau" name="nniveau" form="add_level_form" class="form-control" required>
+                                            <option value="">Choisir un niveau</option>
                                             @foreach($nniveaux as $nn)
                                                 <option value="{{  $nn->id  }}" data-cycle="{{$nn->id_cycle}}" @if($nn->id == old('nniveau')) selected @endif>{{  $nn->nom  }}</option>
                                             @endforeach
@@ -287,7 +287,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="edit_libelle">Profil / Cas de scolarite : </label>
-                                        <input class="form-control" id="edit_libelle" name="libelle" type="text">
+                                        <input class="form-control" id="edit_libelle" name="libelle" type="text" required>
                                     </div>
                                 @endif
                                 <div class="form-group">
@@ -301,8 +301,8 @@
                                 @if($style !== null && intval($style) === 1)
                                     <div class="form-group">
                                         <label for="edit_specialite">@lang('admin.specialites') : </label>
-                                        <select id="edit_specialite" name="specialite" form="edit_scolarite_form" class="form-control">
-                                            <option value="">Toutes les specialites de cette filiere</option>
+                                        <select id="edit_specialite" name="specialite" form="edit_scolarite_form" class="form-control" required>
+                                            <option value="">Choisir une specialite</option>
                                             @foreach($classes as $c)
                                                 <option value="{{  $c->id  }}" data-filiere="{{$c->id_niveau}}">{{  ($c->getNom())  }}</option>
                                             @endforeach
@@ -310,8 +310,8 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="edit_nniveau">@lang('admin.nniveau') : </label>
-                                        <select id="edit_nniveau" name="nniveau" form="edit_scolarite_form" class="form-control">
-                                            <option value="">Tous les niveaux du cycle</option>
+                                        <select id="edit_nniveau" name="nniveau" form="edit_scolarite_form" class="form-control" required>
+                                            <option value="">Choisir un niveau</option>
                                             @foreach($nniveaux as $nn)
                                                 <option value="{{  $nn->id  }}" data-cycle="{{$nn->id_cycle}}">{{  $nn->nom  }}</option>
                                             @endforeach
@@ -392,8 +392,8 @@
     </div>
 
     <script>
-        var specialitePlaceholder = {!! json_encode('Toutes les specialites de cette filiere') !!};
-        var nniveauPlaceholder = {!! json_encode('Tous les niveaux du cycle') !!};
+        var specialitePlaceholder = {!! json_encode('Choisir une specialite') !!};
+        var nniveauPlaceholder = {!! json_encode('Choisir un niveau') !!};
 
         var scolariteSpecialites = [
             @foreach($classes as $c)

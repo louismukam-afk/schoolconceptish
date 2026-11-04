@@ -20,6 +20,13 @@
         <p style="font-size: 18px"> <strong>Matricule : {{$e->matricule}} </strong></p>
         <p style="font-size: 18px"> <strong>{{trans('admin.nom')}} : {{$e->nom.' '.$e->prenom}} </strong></p>
 
+        @if($registrationFeeProfile)
+            <p><strong>Profil de scolarite :</strong> {{ $registrationFeeProfile->libelle ?: ($registrationFeeProfile->type_scolarite == 0 ? trans('admin.ancien') : trans('admin.nouveau')) }}
+                | <strong>Total :</strong> {{ number_format($registrationFeeProfile->total, 0, ',', ' ') }} {{ trans('inscription.devise') }}
+                | <strong>Reste :</strong> {{ number_format(max(0, $registrationFeeProfile->total - $registrationPaid), 0, ',', ' ') }} {{ trans('inscription.devise') }}
+            </p>
+        @endif
+
         <div class="col-md-8">
             <form class="form-horizontal" id="add_inscription_form" method="post" action="{{URL::to('/inscriptions/payement/store/'.$e->id)}}">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}"/>

@@ -1,6 +1,19 @@
 @extends('index')
 
 @section('content')
+    @if(Auth::user()->canDoAction(\gesecole\Action::ACTION_STUDENT_NOTE_CU) && !Auth::user()->isTeacher())
+    <p><a class="btn btn-success" href="{{ url('/eleves/notes/deliberations') }}">Délibérations par tutelle</a> <a class="btn btn-info" href="{{ url('/eleves/notes/deliberations/rapport') }}">Rapport des délibérations</a></p>
+    @endif
+    <div class="alert alert-info">
+        <a class="btn btn-primary" href="{{ url('/eleves/documents-tutelles') }}">Notes et documents par tutelle</a>
+        <a class="btn btn-warning" href="{{ url('/eleves/notes/anonymats') }}">Anonymats par tutelle</a>
+        SOA · Ngaoundéré · ESSTIC · ISABEE / Ebolowa · Polytechnique
+    </div>
+    <div class="row">
+        @foreach(config('academic_documents.profiles') as $model => $profile)
+            <div class="col-md-2"><a class="btn btn-primary btn-block" href="{{ url('/eleves/documents-tutelles?modele='.$model) }}">{{ $profile['label'] }}</a></div>
+        @endforeach
+    </div>
     <div class="row text-center pad-top">
         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
             <div class="div-square">

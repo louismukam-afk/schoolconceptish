@@ -49,6 +49,13 @@
                 <div class="col-md-4"><label>Tutelle anglophone</label><input name="tutelle_anglophone" class="form-control"></div>
             </div>
         </div>
+        <div class="form-group"><label>Modèle des documents académiques</label>
+            <select name="modele_documents" class="form-control"><option value="">Non défini</option>
+                @foreach(config('academic_documents.profiles') as $key => $profile)
+                    <option value="{{ $key }}">{{ $profile['label'] }}</option>
+                @endforeach
+            </select>
+        </div>
     </form>
     <table class="table table-bordered table-striped table-condensed">
         <thead><tr><th>#</th><th>Logos</th><th>Nom</th><th>Faculte</th><th>Ville</th><th>Contact</th><th>Actions</th></tr></thead>
@@ -151,6 +158,13 @@
                                 </tr>
                             </table>
                             <h4>Modifier les informations</h4>
+                            <div class="form-group"><label>Modèle des documents académiques</label>
+                                <select name="modele_documents" class="form-control"><option value="">Non défini</option>
+                                    @foreach(config('academic_documents.profiles') as $key => $profile)
+                                        <option value="{{ $key }}" {{ $t->modele_documents == $key ? 'selected' : '' }}>{{ $profile['label'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div class="row">
                                 <div class="col-md-4"><label>Nom</label><input name="nom" value="{{ $t->nom }}" class="form-control" required></div>
                                 <div class="col-md-3"><label>Ville</label><input name="ville" value="{{ $t->ville }}" class="form-control"></div>

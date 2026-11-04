@@ -209,7 +209,7 @@ class listesController extends Controller {
             if ($id == 0) {
                 $values['titre'] = trans('inscription.listes');
 
-                $e = DB::select('SELECT e.*,e.telephone_wathsapp_eleve,e.telephone_wathsapp_pere,e.telephone_wathsapp_mere,e.telephone_wathsapp_tuteur,e.matricule,inscription.type_scolarite,inscription.date_inscription,e.id, e.nom ,e.prenom,e.date_naiss,e.lieu_naiss,e.diplome_preinscription,e.sexe,c.nom as nom_classe,c.code as code_classe,sol.solde,' . $tranche . ' AS tranche ,(' . $tranches . ' - sol.solde) AS reste, nn.nom as nniveau, b.montant as montant_bourse FROM n_niveaus nn, eleve e LEFT JOIN bourses as b ON (e.id = b.id_eleve AND b.annee_scolaire = ? AND ' . $this->campusVisibilitySql('b.id_campus') . '),inscription,classe c,niveau n,scolarite s, (SELECT SUM(CASE WHEN p.type = 0 AND p.id_inscription=0 THEN p.montant ELSE 0 END) as solde,e.id FROM eleve e LEFT JOIN payement p ON p.id_eleve=e.id  WHERE  p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve   and inscription.desinscrire=0 and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . ' and inscription.id_classe=c.id AND sol.id=e.id AND c.id_niveau=n.id AND ' . $scolariteMatchWhere . $scolariteProfileWhere . ' AND (sol.solde ' . $boursesQueryPart . ' - ' . $tranches . ')'.$opComp.'0 AND inscription.id_nniveau=nn.id AND (?=0 OR inscription.id_nniveau=?) ORDER BY code_classe,nom,prenom', [session('year'), $idCampus, session('year'), $idCampus, session('year'), $idCampus, $nniveau, $nniveau]);
+                $e = DB::select('SELECT e.*,e.telephone_wathsapp_eleve,e.telephone_wathsapp_pere,e.telephone_wathsapp_mere,e.telephone_wathsapp_tuteur,e.matricule,inscription.type_scolarite,inscription.date_inscription,e.id, e.nom ,e.prenom,e.date_naiss,e.lieu_naiss,e.diplome_preinscription,e.sexe,c.nom as nom_classe,c.code as code_classe,sol.solde,' . $tranche . ' AS tranche ,(' . $tranches . ' - sol.solde) AS reste, nn.nom as nniveau, b.montant as montant_bourse FROM n_niveaus nn, eleve e LEFT JOIN bourses as b ON (e.id = b.id_eleve AND b.annee_scolaire = ? AND ' . $this->campusVisibilitySql('b.id_campus') . '),inscription,classe c,niveau n,scolarite s, (SELECT SUM(CASE WHEN p.type = 0 AND p.id_inscription=0 THEN p.montant ELSE 0 END) as solde,e.id FROM eleve e LEFT JOIN payement p ON p.id_eleve=e.id AND p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve   and inscription.desinscrire=0 and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . ' and inscription.id_classe=c.id AND sol.id=e.id AND c.id_niveau=n.id AND ' . $scolariteMatchWhere . $scolariteProfileWhere . ' AND (sol.solde ' . $boursesQueryPart . ' - ' . $tranches . ')'.$opComp.'0 AND inscription.id_nniveau=nn.id AND (?=0 OR inscription.id_nniveau=?) ORDER BY code_classe,nom,prenom', [session('year'), $idCampus, session('year'), $idCampus, session('year'), $idCampus, $nniveau, $nniveau]);
                 $p=parents::all();
                 $values['parents']=$p;
                 $values['eleves'] = $e;
@@ -223,7 +223,7 @@ class listesController extends Controller {
                 $values['titre'] = trans('inscription.listes');
                 $classe = classe::find($id);
                 $classe_name = $classe->getNom();
-                $e = DB::select('SELECT e.*,e.telephone_wathsapp_eleve,e.telephone_wathsapp_pere,e.telephone_wathsapp_mere,e.telephone_wathsapp_tuteur,e.matricule,e.id, inscription.type_scolarite,inscription.date_inscription, e.nom ,e.prenom,e.date_naiss,e.lieu_naiss,e.diplome_preinscription,e.sexe,c.nom as nom_classe,sol.solde,' . $tranche . ' AS tranche ,(' . $tranches . ' - sol.solde) AS reste, b.montant as montant_bourse  FROM eleve e LEFT JOIN bourses as b ON (e.id = b.id_eleve AND b.annee_scolaire = ? AND ' . $this->campusVisibilitySql('b.id_campus') . '),inscription,classe c,niveau n,scolarite s, (SELECT SUM(CASE WHEN p.type = 0 AND p.id_inscription=0 THEN p.montant ELSE 0 END) as solde,e.id FROM eleve e LEFT JOIN payement p ON p.id_eleve=e.id WHERE  p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . ' and inscription.id_classe=c.id  AND inscription.desinscrire=0  AND sol.id=e.id AND c.id_niveau=n.id AND ' . $scolariteMatchWhere . $scolariteProfileWhere . '  AND (sol.solde + ' . $boursesQueryPart . ' - ' . $tranches . ')'.$opComp.'0 AND c.id=? AND (?=0 OR inscription.id_cycle=?) AND (?=0 OR inscription.id_nniveau=?) ORDER BY nom_classe,nom,prenom', [session('year'), $idCampus, session('year'), $idCampus, session('year'), $idCampus, $id, $cycle, $cycle, $nniveau, $nniveau]);
+                $e = DB::select('SELECT e.*,e.telephone_wathsapp_eleve,e.telephone_wathsapp_pere,e.telephone_wathsapp_mere,e.telephone_wathsapp_tuteur,e.matricule,e.id, inscription.type_scolarite,inscription.date_inscription, e.nom ,e.prenom,e.date_naiss,e.lieu_naiss,e.diplome_preinscription,e.sexe,c.nom as nom_classe,sol.solde,' . $tranche . ' AS tranche ,(' . $tranches . ' - sol.solde) AS reste, b.montant as montant_bourse  FROM eleve e LEFT JOIN bourses as b ON (e.id = b.id_eleve AND b.annee_scolaire = ? AND ' . $this->campusVisibilitySql('b.id_campus') . '),inscription,classe c,niveau n,scolarite s, (SELECT SUM(CASE WHEN p.type = 0 AND p.id_inscription=0 THEN p.montant ELSE 0 END) as solde,e.id FROM eleve e LEFT JOIN payement p ON p.id_eleve=e.id AND p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . ' and inscription.id_classe=c.id  AND inscription.desinscrire=0  AND sol.id=e.id AND c.id_niveau=n.id AND ' . $scolariteMatchWhere . $scolariteProfileWhere . '  AND (sol.solde + ' . $boursesQueryPart . ' - ' . $tranches . ')'.$opComp.'0 AND c.id=? AND (?=0 OR inscription.id_cycle=?) AND (?=0 OR inscription.id_nniveau=?) ORDER BY nom_classe,nom,prenom', [session('year'), $idCampus, session('year'), $idCampus, session('year'), $idCampus, $id, $cycle, $cycle, $nniveau, $nniveau]);
                 $p=parents::all();
                 $values['parents']=$p;
                 $values['eleves'] = $e;
@@ -364,7 +364,7 @@ class listesController extends Controller {
             if ($id == 0) {
                 $values['titre'] = trans('inscription.listes');
 
-                $e = DB::select('SELECT e.*,e.telephone_wathsapp_eleve,e.moyenne_generale,e.serie,e.localisation_ecole,e.source_financement,e.canal_decouvert,e.site_internet,e.abonnement,e.telephone_wathsapp_pere,e.telephone_wathsapp_mere,e.telephone_wathsapp_tuteur,e.matricule,inscription.type_scolarite,inscription.date_inscription,e.id, e.nom ,e.prenom,e.date_naiss,e.lieu_naiss,e.diplome_preinscription,e.sexe,c.nom as nom_classe,c.code as code_classe,sol.solde,' . $tranche . ' AS tranche ,(' . $tranches . ' - sol.solde) AS reste, nn.nom as nniveau, b.montant as montant_bourse FROM n_niveaus nn, eleve e LEFT JOIN bourses as b ON (e.id = b.id_eleve AND b.annee_scolaire = ? AND ' . $this->campusVisibilitySql('b.id_campus') . '),inscription,classe c,niveau n,scolarite s, (SELECT SUM(CASE WHEN p.type = 0 AND p.id_inscription=0 THEN p.montant ELSE 0 END) as solde,e.id FROM eleve e LEFT JOIN payement p ON p.id_eleve=e.id  WHERE  p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve and inscription.desinscrire=0 and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . ' and inscription.id_classe=c.id AND sol.id=e.id AND c.id_niveau=n.id AND ((inscription.id_scolarite IS NOT NULL AND s.id=inscription.id_scolarite) OR (inscription.id_scolarite IS NULL AND s.id_niveau=n.id AND s.id_cycle=inscription.id_cycle AND inscription.type_scolarite=s.type_scolarite)) AND (sol.solde ' . $boursesQueryPart . ' - ' . $tranches . ')'.$opComp.'0 AND inscription.id_nniveau=nn.id AND (?=0 OR inscription.id_nniveau=?) ORDER BY code_classe,nom,prenom', [session('year'), $idCampus, session('year'), $idCampus, session('year'), $idCampus, $nniveau, $nniveau]);
+                $e = DB::select('SELECT e.*,e.telephone_wathsapp_eleve,e.moyenne_generale,e.serie,e.localisation_ecole,e.source_financement,e.canal_decouvert,e.site_internet,e.abonnement,e.telephone_wathsapp_pere,e.telephone_wathsapp_mere,e.telephone_wathsapp_tuteur,e.matricule,inscription.type_scolarite,inscription.date_inscription,e.id, e.nom ,e.prenom,e.date_naiss,e.lieu_naiss,e.diplome_preinscription,e.sexe,c.nom as nom_classe,c.code as code_classe,sol.solde,' . $tranche . ' AS tranche ,(' . $tranches . ' - sol.solde) AS reste, nn.nom as nniveau, b.montant as montant_bourse FROM n_niveaus nn, eleve e LEFT JOIN bourses as b ON (e.id = b.id_eleve AND b.annee_scolaire = ? AND ' . $this->campusVisibilitySql('b.id_campus') . '),inscription,classe c,niveau n,scolarite s, (SELECT SUM(CASE WHEN p.type = 0 AND p.id_inscription=0 THEN p.montant ELSE 0 END) as solde,e.id FROM eleve e LEFT JOIN payement p ON p.id_eleve=e.id AND p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve and inscription.desinscrire=0 and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . ' and inscription.id_classe=c.id AND sol.id=e.id AND c.id_niveau=n.id AND ((inscription.id_scolarite IS NOT NULL AND s.id=inscription.id_scolarite) OR (inscription.id_scolarite IS NULL AND s.id=(SELECT MAX(legacy.id) FROM scolarite legacy WHERE legacy.id_niveau=n.id AND legacy.id_cycle=inscription.id_cycle AND legacy.type_scolarite=inscription.type_scolarite AND (legacy.id_classe IS NULL OR legacy.id_classe=0) AND (legacy.id_nniveau IS NULL OR legacy.id_nniveau=0) AND (legacy.annee_scolaire IS NULL OR legacy.annee_scolaire=\'\')))) AND (sol.solde ' . $boursesQueryPart . ' - ' . $tranches . ')'.$opComp.'0 AND inscription.id_nniveau=nn.id AND (?=0 OR inscription.id_nniveau=?) ORDER BY code_classe,nom,prenom', [session('year'), $idCampus, session('year'), $idCampus, session('year'), $idCampus, $nniveau, $nniveau]);
                 $p=parents::all();
                 $values['parents']=$p;
                 $values['eleves'] = $e;
@@ -378,7 +378,7 @@ class listesController extends Controller {
                 $values['titre'] = trans('inscription.listes');
                 $classe = classe::find($id);
                 $classe_name = $classe->getNom();
-                $e = DB::select('SELECT e.*,e.telephone_wathsapp_eleve,e.moyenne_generale,e.serie,e.localisation_ecole,e.source_financement,e.canal_decouvert,e.site_internet,e.abonnement,e.telephone_wathsapp_pere,e.telephone_wathsapp_mere,e.telephone_wathsapp_tuteur,e.matricule,e.id, inscription.type_scolarite,inscription.date_inscription, e.nom ,e.prenom,e.date_naiss,e.lieu_naiss,e.diplome_preinscription,e.sexe,c.nom as nom_classe,sol.solde,' . $tranche . ' AS tranche ,(' . $tranches . ' - sol.solde) AS reste, b.montant as montant_bourse  FROM eleve e LEFT JOIN bourses as b ON (e.id = b.id_eleve AND b.annee_scolaire = ? AND ' . $this->campusVisibilitySql('b.id_campus') . '),inscription,classe c,niveau n,scolarite s, (SELECT SUM(CASE WHEN p.type = 0 AND p.id_inscription=0 THEN p.montant ELSE 0 END) as solde,e.id FROM eleve e LEFT JOIN payement p ON p.id_eleve=e.id WHERE  p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . ' and inscription.desinscrire=0 and inscription.id_classe=c.id AND sol.id=e.id AND c.id_niveau=n.id AND ((inscription.id_scolarite IS NOT NULL AND s.id=inscription.id_scolarite) OR (inscription.id_scolarite IS NULL AND s.id_niveau=n.id AND s.id_cycle=inscription.id_cycle AND inscription.type_scolarite=s.type_scolarite))  AND (sol.solde + ' . $boursesQueryPart . ' - ' . $tranches . ')'.$opComp.'0 AND c.id=? AND (?=0 OR inscription.id_cycle=?) AND (?=0 OR inscription.id_nniveau=?) ORDER BY nom_classe,nom,prenom', [session('year'), $idCampus, session('year'), $idCampus, session('year'), $idCampus, $id, $cycle, $cycle, $nniveau, $nniveau]);
+                $e = DB::select('SELECT e.*,e.telephone_wathsapp_eleve,e.moyenne_generale,e.serie,e.localisation_ecole,e.source_financement,e.canal_decouvert,e.site_internet,e.abonnement,e.telephone_wathsapp_pere,e.telephone_wathsapp_mere,e.telephone_wathsapp_tuteur,e.matricule,e.id, inscription.type_scolarite,inscription.date_inscription, e.nom ,e.prenom,e.date_naiss,e.lieu_naiss,e.diplome_preinscription,e.sexe,c.nom as nom_classe,sol.solde,' . $tranche . ' AS tranche ,(' . $tranches . ' - sol.solde) AS reste, b.montant as montant_bourse  FROM eleve e LEFT JOIN bourses as b ON (e.id = b.id_eleve AND b.annee_scolaire = ? AND ' . $this->campusVisibilitySql('b.id_campus') . '),inscription,classe c,niveau n,scolarite s, (SELECT SUM(CASE WHEN p.type = 0 AND p.id_inscription=0 THEN p.montant ELSE 0 END) as solde,e.id FROM eleve e LEFT JOIN payement p ON p.id_eleve=e.id AND p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . ' and inscription.desinscrire=0 and inscription.id_classe=c.id AND sol.id=e.id AND c.id_niveau=n.id AND ((inscription.id_scolarite IS NOT NULL AND s.id=inscription.id_scolarite) OR (inscription.id_scolarite IS NULL AND s.id=(SELECT MAX(legacy.id) FROM scolarite legacy WHERE legacy.id_niveau=n.id AND legacy.id_cycle=inscription.id_cycle AND legacy.type_scolarite=inscription.type_scolarite AND (legacy.id_classe IS NULL OR legacy.id_classe=0) AND (legacy.id_nniveau IS NULL OR legacy.id_nniveau=0) AND (legacy.annee_scolaire IS NULL OR legacy.annee_scolaire=\'\'))))  AND (sol.solde + ' . $boursesQueryPart . ' - ' . $tranches . ')'.$opComp.'0 AND c.id=? AND (?=0 OR inscription.id_cycle=?) AND (?=0 OR inscription.id_nniveau=?) ORDER BY nom_classe,nom,prenom', [session('year'), $idCampus, session('year'), $idCampus, session('year'), $idCampus, $id, $cycle, $cycle, $nniveau, $nniveau]);
                 $p=parents::all();
                 $values['parents']=$p;
                 $values['eleves'] = $e;
@@ -435,9 +435,9 @@ class listesController extends Controller {
 
             if($frais != 0)
 
-                $e = DB::select('SELECT e.*, nn.nom as nniveau,c.nom as nom_classe, c.code AS code_classe,f.montant as total, sol.solde as tranche,(f.montant-sol.solde) as reste, sol.nb_payement  FROM eleve e,inscription,classe c,frais f, n_niveaus nn, (SELECT SUM(CASE WHEN (p.type=?) THEN p.montant ELSE 0 END) as solde, e.id, COUNT(CASE WHEN (p.type=?) THEN 1 ELSE null END) as nb_payement FROM eleve e LEFT JOIN payement p ON (p.id_eleve=e.id) WHERE p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . '  AND inscription.desinscrire=0 AND sol.id = e.id and inscription.id_classe=c.id AND inscription.id_nniveau = nn.id AND (?=0 OR inscription.id_nniveau=?) AND f.id=? AND (((f.montant-sol.solde) ' . $opComp . ' 0 AND sol.nb_payement > 0) OR (sol.nb_payement <= 0 AND ' . $type . ' = 0))  ORDER BY nom_classe,nom,prenom ', [$frais, $frais, session('year'), $idCampus, session('year'), $idCampus, $nniveau, $nniveau, $frais]);
+                $e = DB::select('SELECT e.*, nn.nom as nniveau,c.nom as nom_classe, c.code AS code_classe,f.montant as total, sol.solde as tranche,(f.montant-sol.solde) as reste, sol.nb_payement  FROM eleve e,inscription,classe c,frais f, n_niveaus nn, (SELECT SUM(CASE WHEN (p.type=?) THEN p.montant ELSE 0 END) as solde, e.id, COUNT(CASE WHEN (p.type=?) THEN 1 ELSE null END) as nb_payement FROM eleve e LEFT JOIN payement p ON (p.id_eleve=e.id) AND p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . '  AND inscription.desinscrire=0 AND sol.id = e.id and inscription.id_classe=c.id AND inscription.id_nniveau = nn.id AND (?=0 OR inscription.id_nniveau=?) AND f.id=? AND (((f.montant-sol.solde) ' . $opComp . ' 0 AND sol.nb_payement > 0) OR (sol.nb_payement <= 0 AND ' . $type . ' = 0))  ORDER BY nom_classe,nom,prenom ', [$frais, $frais, session('year'), $idCampus, session('year'), $idCampus, $nniveau, $nniveau, $frais]);
             else
-                $e = DB::select('SELECT e.*, nn.nom as nniveau, c.nom as nom_classe, c.code AS code_classe, s.inscription as total, sol.solde as tranche,(s.inscription-sol.solde) as reste  FROM eleve e,inscription,classe c,niveau n,scolarite s, n_niveaus nn, (SELECT SUM(CASE WHEN (p.id_inscription<>0) THEN p.montant ELSE 0 END) as solde,e.id FROM eleve e LEFT JOIN payement p ON p.id_eleve=e.id WHERE  p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve  AND sol.id=e.id and inscription.id_classe=c.id and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . '  AND inscription.desinscrire=0 AND c.id_niveau=n.id AND ' . $scolariteMatchWhere . $scolariteProfileWhere . ' AND inscription.id_nniveau = nn.id AND (?=0 OR inscription.id_nniveau=?) AND (s.inscription - sol.solde) ' . $opComp . ' 0  ORDER BY nom_classe,nom,prenom ', [session('year'), $idCampus, session('year'), $idCampus, $nniveau, $nniveau]);
+                $e = DB::select('SELECT e.*, nn.nom as nniveau, c.nom as nom_classe, c.code AS code_classe, s.inscription as total, sol.solde as tranche,(s.inscription-sol.solde) as reste  FROM eleve e,inscription,classe c,niveau n,scolarite s, n_niveaus nn, (SELECT SUM(CASE WHEN (p.id_inscription<>0) THEN p.montant ELSE 0 END) as solde,e.id FROM eleve e LEFT JOIN payement p ON p.id_eleve=e.id AND p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve  AND sol.id=e.id and inscription.id_classe=c.id and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . '  AND inscription.desinscrire=0 AND c.id_niveau=n.id AND ' . $scolariteMatchWhere . $scolariteProfileWhere . ' AND inscription.id_nniveau = nn.id AND (?=0 OR inscription.id_nniveau=?) AND (s.inscription - sol.solde) ' . $opComp . ' 0  ORDER BY nom_classe,nom,prenom ', [session('year'), $idCampus, session('year'), $idCampus, $nniveau, $nniveau]);
         }
         else
         {
@@ -445,9 +445,9 @@ class listesController extends Controller {
 
             if($frais!=0)
 
-                $e = DB::select('SELECT e.*, nn.nom as nniveau, c.nom as nom_classe, c.code AS code_classe, f.montant as total, sol.solde as tranche,(f.montant-sol.solde) as reste, sol.nb_payement  FROM eleve e,inscription,classe c,frais f, n_niveaus nn, (SELECT SUM(CASE WHEN (p.type=?) THEN p.montant ELSE 0 END) as solde, e.id, COUNT(CASE WHEN (p.type=?) THEN 1 ELSE null END) as nb_payement FROM eleve e LEFT JOIN payement p ON p.id_eleve=e.id WHERE  p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . '   AND inscription.desinscrire=0 AND sol.id=e.id and inscription.id_classe=c.id AND inscription.id_nniveau = nn.id AND (?=0 OR nn.id=?)  AND f.id=? AND (((f.montant-sol.solde) ' . $opComp . ' 0 AND sol.nb_payement > 0) OR (sol.nb_payement <= 0 AND ' . $type . ' = 0)) AND c.id=? ORDER BY nom_classe,nom,prenom ', [$frais, $frais, session('year'), $idCampus, session('year'), $idCampus, $nniveau, $nniveau,$frais,$classe]);
+                $e = DB::select('SELECT e.*, nn.nom as nniveau, c.nom as nom_classe, c.code AS code_classe, f.montant as total, sol.solde as tranche,(f.montant-sol.solde) as reste, sol.nb_payement  FROM eleve e,inscription,classe c,frais f, n_niveaus nn, (SELECT SUM(CASE WHEN (p.type=?) THEN p.montant ELSE 0 END) as solde, e.id, COUNT(CASE WHEN (p.type=?) THEN 1 ELSE null END) as nb_payement FROM eleve e LEFT JOIN payement p ON p.id_eleve=e.id AND p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . '   AND inscription.desinscrire=0 AND sol.id=e.id and inscription.id_classe=c.id AND inscription.id_nniveau = nn.id AND (?=0 OR nn.id=?)  AND f.id=? AND (((f.montant-sol.solde) ' . $opComp . ' 0 AND sol.nb_payement > 0) OR (sol.nb_payement <= 0 AND ' . $type . ' = 0)) AND c.id=? ORDER BY nom_classe,nom,prenom ', [$frais, $frais, session('year'), $idCampus, session('year'), $idCampus, $nniveau, $nniveau,$frais,$classe]);
             else
-                $e = DB::select('SELECT e.*, nn.nom as nniveau, c.nom as nom_classe, c.code AS code_classe, s.inscription as total, sol.solde as tranche,(s.inscription-sol.solde) as reste  FROM eleve e,inscription,classe c,niveau n,scolarite s, n_niveaus nn, (SELECT SUM(CASE WHEN (p.id_inscription<>0) THEN p.montant ELSE 0 END) as solde,e.id FROM eleve e LEFT JOIN payement p ON p.id_eleve=e.id WHERE  p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . ' AND sol.id=e.id    AND inscription.desinscrire=0 and inscription.id_classe=c.id AND c.id=? AND c.id_niveau=n.id AND ' . $scolariteMatchWhere . $scolariteProfileWhere . ' AND inscription.id_nniveau = nn.id AND (?=0 OR nn.id=?) AND (s.inscription-sol.solde) ' . $opComp . ' 0  ORDER BY nom_classe,nom,prenom ', [session('year'), $idCampus, session('year'), $idCampus, $classe, $nniveau, $nniveau]);
+                $e = DB::select('SELECT e.*, nn.nom as nniveau, c.nom as nom_classe, c.code AS code_classe, s.inscription as total, sol.solde as tranche,(s.inscription-sol.solde) as reste  FROM eleve e,inscription,classe c,niveau n,scolarite s, n_niveaus nn, (SELECT SUM(CASE WHEN (p.id_inscription<>0) THEN p.montant ELSE 0 END) as solde,e.id FROM eleve e LEFT JOIN payement p ON p.id_eleve=e.id AND p.annee_scolaire=? AND ' . $this->campusVisibilitySql('p.id_campus') . ' GROUP BY e.id) AS sol WHERE e.id=inscription.id_eleve and inscription.annee_scolaire=? and ' . $this->campusVisibilitySql('inscription.id_campus') . ' AND sol.id=e.id    AND inscription.desinscrire=0 and inscription.id_classe=c.id AND c.id=? AND c.id_niveau=n.id AND ' . $scolariteMatchWhere . $scolariteProfileWhere . ' AND inscription.id_nniveau = nn.id AND (?=0 OR nn.id=?) AND (s.inscription-sol.solde) ' . $opComp . ' 0  ORDER BY nom_classe,nom,prenom ', [session('year'), $idCampus, session('year'), $idCampus, $classe, $nniveau, $nniveau]);
 
         }
 
@@ -492,8 +492,12 @@ class listesController extends Controller {
                 ->join('n_niveaus', 'n_niveaus.id', '=', 'inscription.id_nniveau')
                 ->join('classe', 'classe.id', '=', 'inscription.id_classe')
                 ->where('acces_eleves.annee_scolaire', '=', session('year'))
-               // ->where('acces_eleves.decision', '=', 2)
-                ->where('acces_eleves.date_fin','>', $today)
+                ->where(function($q) use ($today) {
+                    $q->where('acces_eleves.decision', '=', \gesecole\Vars::DECISION_DENY)
+                        ->orWhere('acces_eleves.date_debut', '>', $today)
+                        ->orWhere('acces_eleves.date_fin', '<', $today);
+                })
+                ->whereRaw($this->campusVisibilitySql('acces_eleves.id_campus'), array($idCampus))
 
                 ->where('inscription.annee_scolaire', '=', session('year'))
                 ->whereRaw($this->campusVisibilitySql('inscription.id_campus'), array($idCampus))
@@ -517,8 +521,12 @@ class listesController extends Controller {
                 ->join('classe', 'classe.id', '=', 'inscription.id_classe')
                 ->where('acces_eleves.annee_scolaire', '=', session('year'))
                 ->where('desinscrire','=',0)
-               // ->where('acces_eleves.decision', '=', 2)
-               ->where('acces_eleves.date_fin','>', $today)
+                ->where(function($q) use ($today) {
+                    $q->where('acces_eleves.decision', '=', \gesecole\Vars::DECISION_DENY)
+                        ->orWhere('acces_eleves.date_debut', '>', $today)
+                        ->orWhere('acces_eleves.date_fin', '<', $today);
+                })
+                ->whereRaw($this->campusVisibilitySql('acces_eleves.id_campus'), array($idCampus))
 
                 ->where('inscription.annee_scolaire', '=', session('year'))
                 ->whereRaw($this->campusVisibilitySql('inscription.id_campus'), array($idCampus))
@@ -570,8 +578,14 @@ class listesController extends Controller {
                 ->join('n_niveaus', 'n_niveaus.id', '=', 'inscription.id_nniveau')
                 ->join('classe', 'classe.id', '=', 'inscription.id_classe')
                 ->where('acces_eleves.annee_scolaire', '=', session('year'))
-               // ->where('acces_eleves.decision', '=', 1)
-               ->where('acces_eleves.date_fin','>', $today)
+                ->where('acces_eleves.decision', '=', \gesecole\Vars::DECISION_ALLOW)
+                ->whereRaw($this->campusVisibilitySql('acces_eleves.id_campus'), array($idCampus))
+                ->where(function($q) use ($today) {
+                    $q->whereNull('acces_eleves.date_debut')->orWhere('acces_eleves.date_debut', '<=', $today);
+                })
+                ->where(function($q) use ($today) {
+                    $q->whereNull('acces_eleves.date_fin')->orWhere('acces_eleves.date_fin', '>=', $today);
+                })
 
                 ->where('inscription.annee_scolaire', '=', session('year'))
                 ->whereRaw($this->campusVisibilitySql('inscription.id_campus'), array($idCampus))
@@ -595,8 +609,14 @@ class listesController extends Controller {
                 ->join('n_niveaus', 'n_niveaus.id', '=', 'inscription.id_nniveau')
                 ->join('classe', 'classe.id', '=', 'inscription.id_classe')
                 ->where('acces_eleves.annee_scolaire', '=', session('year'))
-               // ->where('acces_eleves.decision', '=', 1)
-               ->where('acces_eleves.date_fin','>', $today)
+                ->where('acces_eleves.decision', '=', \gesecole\Vars::DECISION_ALLOW)
+                ->whereRaw($this->campusVisibilitySql('acces_eleves.id_campus'), array($idCampus))
+                ->where(function($q) use ($today) {
+                    $q->whereNull('acces_eleves.date_debut')->orWhere('acces_eleves.date_debut', '<=', $today);
+                })
+                ->where(function($q) use ($today) {
+                    $q->whereNull('acces_eleves.date_fin')->orWhere('acces_eleves.date_fin', '>=', $today);
+                })
                 ->where('inscription.annee_scolaire', '=', session('year'))
                 ->whereRaw($this->campusVisibilitySql('inscription.id_campus'), array($idCampus))
                 ->where('desinscrire','=',0)
@@ -847,16 +867,6 @@ class listesController extends Controller {
             ->get();
         $frais_array = $frais_report->fetch('id')->toArray();
 
-        $scolarite_ancien = scolarite::where('id_cycle', '=', $id_cycle)
-                ->where('id_niveau', '=', $classe->id_niveau)
-                ->where('type_scolarite', '=', 0)
-                ->first();
-        $scolarite_nouveau = scolarite::where('id_cycle', '=', $id_cycle)
-            ->where('id_niveau', '=', $classe->id_niveau)
-            ->where('type_scolarite', '=', 1)
-            ->first();
-
-
             $eleves_inscrits = eleve::join('inscription', 'inscription.id_eleve', '=', 'eleve.id')
                 ->where('inscription.annee_scolaire', '=', session('year'))
                 ->whereRaw($this->campusVisibilitySql('inscription.id_campus'), array($idCampus))
@@ -885,12 +895,8 @@ class listesController extends Controller {
                 ->where('annee_scolaire', '=', session('year'))
                 ->whereRaw($this->campusVisibilitySql('id_campus'), array($idCampus))
                 ->where('type', '=', 0)
+                ->where('id_inscription', '=', 0)
                 ->orderBy('date_payement')
-                ->get();
-            $payements_total = payement::where('id_eleve', '=', $e->id)
-                ->where('annee_scolaire', '=', session('year'))
-                ->whereRaw($this->campusVisibilitySql('id_campus'), array($idCampus))
-                ->where('desinscrire', '=', 0)
                 ->get();
             $inscriptionScolarite = new inscription();
             $inscriptionScolarite->id_eleve = $e->id;
@@ -914,10 +920,10 @@ class listesController extends Controller {
                 $e->montant_bourse = $bourse->montant;
             }
 
-            $e->montant_inscription = $inscription->montant;
+            $e->montant_inscription = $inscription ? $inscription->montant : 0;
             $e->payements_frais = $frais;
             $e->payements = $payements;
-            $e->total_paye = $payements_total->sum('montant') + ($e->montant_bourse ? $e->montant_bourse : 0);
+            $e->total_paye = $payements->sum('montant') + ($e->montant_bourse ? $e->montant_bourse : 0);
             $e->scolarite=$scolarite_eleve;
 
         }
@@ -926,15 +932,13 @@ class listesController extends Controller {
             ->with('eleves', $eleves_inscrits)
             ->with('titre_liste', trans('admin.fiche_scolarite_eleve') . ' / ' . trans('admin.year') . ' ' . session('year')  . ' / ' . trans('admin.classe') . ' ' . $classe->code . ' - ' . $nniveau->nom)
             ->with('frais', $frais_report)
-            ->with('scolarite_ancien', $scolarite_ancien)
-            ->with('scolarite_nouveau', $scolarite_nouveau)
             ->with('titre', trans('admin.fiche_scolarite_eleve'))
             ->with('page_title', trans('admin.fiche_scolarite_eleve'));
     }
 
     private function scolariteMatchWhere()
     {
-        return "((inscription.id_scolarite IS NOT NULL AND s.id=inscription.id_scolarite) OR (inscription.id_scolarite IS NULL AND s.id_niveau=n.id AND s.id_cycle=inscription.id_cycle AND inscription.type_scolarite=s.type_scolarite AND (s.id_classe IS NULL OR s.id_classe=0 OR s.id_classe=inscription.id_classe) AND (s.id_nniveau IS NULL OR s.id_nniveau=0 OR s.id_nniveau=inscription.id_nniveau) AND (s.annee_scolaire IS NULL OR s.annee_scolaire='' OR s.annee_scolaire=inscription.annee_scolaire)))";
+        return "((inscription.id_scolarite IS NOT NULL AND s.id=inscription.id_scolarite) OR (inscription.id_scolarite IS NULL AND s.id=(SELECT MAX(legacy.id) FROM scolarite legacy WHERE legacy.id_niveau=n.id AND legacy.id_cycle=inscription.id_cycle AND legacy.type_scolarite=inscription.type_scolarite AND (legacy.id_classe IS NULL OR legacy.id_classe=0) AND (legacy.id_nniveau IS NULL OR legacy.id_nniveau=0) AND (legacy.annee_scolaire IS NULL OR legacy.annee_scolaire=''))))";
     }
 
     private function scolariteProfileWhere($style)
