@@ -18,19 +18,16 @@
         <ul>
 
 
-            @foreach($cycles as $cy)
-                <h3 class="page-header col-md-12">{{$cy->nom}}</h3>
-
                 @foreach($niveaux as $n)
-                    <div class="col-md-6 niveau-block" data-cycle="{{$cy->id}}" data-filiere="{{$n->id}}" style="display:none;">
+                    <div class="col-md-6 niveau-block" data-filiere="{{$n->id}}" style="display:none;">
                         <h4 class="page-header"> {{(App::getLocale()=='en')?$n->nom_anglais:$n->nom}}</h4>
 
-                        @foreach($classes as $c)
+                        @foreach($classesByNiveau->get($n->id, array()) as $c)
                             <div class="col-md-12">
                                 @if($c->id_niveau==$n->id)
                                     <li class="col-md-12">
-                                        <a data-toggle="modal" data-backdrop="false" href="#choose_level" onclick="getNniveau({{$cy->id}});choix_lvl({{$c->id}},{{$cy->id}})">{{(App::getLocale()=='en')?$c->nom_anglais:$c->nom}}</a>
-                                        <a href="#generate_releves_ndere" data-toggle="modal" data-backdrop="false" class="btn btn-xs btn-success" data-classe="{{$c->id}}" data-cycle="{{$cy->id}}" data-niveau="{{$n->id}}" onclick="prepareNdereGeneration(this);">
+                                        <a data-toggle="modal" data-backdrop="false" href="#choose_level" onclick="getNniveau(window.selectionCycleNiveauFiliere.cycleValue());choix_lvl({{$c->id}},window.selectionCycleNiveauFiliere.cycleValue())">{{(App::getLocale()=='en')?$c->nom_anglais:$c->nom}}</a>
+                                        <a href="#generate_releves_ndere" data-toggle="modal" data-backdrop="false" class="btn btn-xs btn-success" data-classe="{{$c->id}}" data-niveau="{{$n->id}}" onclick="prepareNdereGeneration(this);">
                                             Générer et sauvegarder
                                         </a>
                                     </li>
@@ -40,9 +37,6 @@
                         @endforeach
                     </div>
                 @endforeach
-
-            @endforeach
-
 
         </ul>
     </div>
@@ -135,7 +129,7 @@
             document.getElementById('ndere_generation_classe').value = link.getAttribute('data-classe');
             document.getElementById('ndere_specialite').innerHTML = link.innerHTML.replace(/<[^>]+>/g, '');
             var cycle = document.getElementById('ndere_generation_cycle');
-            cycle.value = link.getAttribute('data-cycle');
+            cycle.value = window.selectionCycleNiveauFiliere.cycleValue();
             cycle.onchange();
         }
         document.getElementById('ndere_generation_cycle').onchange = function () {

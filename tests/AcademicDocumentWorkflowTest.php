@@ -500,6 +500,38 @@ class AcademicDocumentWorkflowTest extends TestCase {
         $this->assertEquals(302,$response->getStatusCode());$this->assertContains('choisir_deliberation=1',$response->getTargetUrl());
     }
 
+    public function testNgaoundereTranscriptRendersSeparateSemesterPages()
+    {
+        DB::table('specialite_tutelle')->insert(array('id_tutelle'=>910002,'id_classe'=>910001));
+        DB::table('eleve')->where('id',910001)->update(array('nom'=>'<script>bad()</script>'));
+        DB::table('classe_matiere')->insert(array('id'=>910005,'id_classe'=>910001,'id_cycle'=>910001,'id_nniveau'=>910001,'id_matiere'=>910001,'coef'=>30,'semestre'=>6));
+        DB::table('session_exams')->insert(array('id'=>910005,'id_tutelle'=>910002,'id_classe_matiere'=>910005,'annee_academique'=>'2026-2027','cc2'=>30,'sn2'=>70,'tpe2'=>0,'ratrappage2'=>70));
+        DB::table('note')->insert(array(array('id'=>910005,'id_campus'=>910001,'id_session'=>910005,'sequence'=>2,'note'=>15,'id_eleve'=>910001,'id_classe'=>910001,'id_classe_matiere'=>910005,'id_matiere'=>910001,'annee_scolaire'=>'2026-2027'),array('id'=>910006,'id_campus'=>910001,'id_session'=>910005,'sequence'=>4,'note'=>45,'id_eleve'=>910001,'id_classe'=>910001,'id_classe_matiere'=>910005,'id_matiere'=>910001,'annee_scolaire'=>'2026-2027')));
+        $input=$this->input(array('modele'=>'ngaoundere','id_tutelle'=>910002,'document'=>'releve','periode'=>'annuel'));
+        $html=(new academicDocumentController)->preview(Request::create('/','GET',$input))->render();
+        $this->assertEquals(2,substr_count($html,'class="ndere-transcript individual"'));
+        $this->assertContains('SEMESTRE 5',$html);
+        $this->assertContains('SEMESTRE 6',$html);
+        $this->assertEquals(1,substr_count($html,'Moyenne generale /20'));
+        $this->assertNotContains('<script>bad()</script>',$html);
+    }
+
+    public function testEssticTranscriptUsesConfiguredModulesAndScopedGrades()
+    {
+        DB::table('tutelles_academiques')->where('id',910001)->update(array('modele_documents'=>'esstic'));
+        DB::table('eleve')->where('id',910001)->update(array('nom'=>'<script>bad()</script>'));
+        $html=(new academicDocumentController)->preview(Request::create('/','GET',$this->input(array('modele'=>'esstic','document'=>'releve'))))->render();
+        $this->assertContains('class="individual esstic-transcript"',$html);
+        $this->assertContains('RELEVÉ DE NOTES / TRANSCRIPT',$html);
+        $this->assertContains('Calcul test',$html);
+        $this->assertContains('Crédits obtenus',$html);
+        $this->assertContains('alt="Logo ESSTIC"',$html);
+        $this->assertNotContains('<script>bad()</script>',$html);
+        $a3=(new academicDocumentController)->preview(Request::create('/','GET',$this->input(array('modele'=>'esstic','document'=>'releve','page_size'=>'a3'))))->render();
+        $this->assertContains('size: A3 portrait;',$a3);
+        $this->assertContains('class="individual esstic-transcript"',$a3);
+    }
+
     public function testAllDocumentFamiliesRenderWithEscapedStudentData()
     {
         DB::table('eleve')->where('id',910001)->update(array('nom'=>'<script>bad()</script>'));
@@ -524,6 +556,98 @@ class AcademicDocumentWorkflowTest extends TestCase {
         }
     }
 
+    public function testTranscriptSelectionPagesDoNotDuplicateClassesOrScripts()
+    {
+        $filiere = new \gesecole\niveau;
+        $filiere->id = 910001;
+        $filiere->nom = 'Filiere test';
+        $classe = new \gesecole\classe;
+        $classe->id = 910001;
+        $classe->id_niveau = $filiere->id;
+        $classe->nom = 'Specialite test';
+        $autreClasse = new \gesecole\classe;
+        $autreClasse->id = 910002;
+        $autreClasse->id_niveau = $filiere->id;
+        $autreClasse->nom = 'Autre specialite test';
+        $cycles = new \Illuminate\Support\Collection(array((object)array('id'=>1,'nom'=>'Licence'),(object)array('id'=>2,'nom'=>'Master')));
+        $values = array('titre'=>'Releves', 'classes'=>new \Illuminate\Support\Collection(array($classe,$autreClasse)),
+            'classesByNiveau'=>new \Illuminate\Support\Collection(array($filiere->id=>new \Illuminate\Support\Collection(array($classe,$autreClasse)))),
+            'niveaux'=>new \Illuminate\Support\Collection(array($filiere)), 'cycles'=>$cycles,
+            'nniveaux'=>new \Illuminate\Support\Collection(array((object)array('id'=>1,'id_cycle'=>1,'nom'=>'L1'))));
+
+        $soa = view('eleves.classe_releves_soa', $values)->render();
+        $this->assertEquals(1, substr_count($soa, 'id="generate_releves_soa"'));
+        $this->assertEquals(1, substr_count($soa, 'function chooseSoaGeneration'));
+        $this->assertEquals(1, substr_count($soa, 'class="special" href="#" data-classe="910001"'));
+
+        $ngaoundere = view('eleves.classe_releves_ndere', $values)->render();
+        $this->assertEquals(1, substr_count($ngaoundere, 'class="col-md-6 niveau-block"'));
+        $this->assertEquals(1, substr_count($ngaoundere, 'data-classe="910001"'));
+
+        $ebolowa = view('eleves.classe_releves_estic', $values)->render();
+        $this->assertEquals(2, substr_count($ebolowa, 'class="special cycle-niveau-specialite-link"'));
+    }
+
+    public function testTutelleDocumentSelectionOnlyLoadsAssignedExamSessions()
+    {
+        $view = (new academicDocumentController)->index(Request::create('/eleves/documents-tutelles', 'GET'));
+        $choices = $view->getData()['contextChoices'];
+        $this->assertCount(1, $choices);
+        $this->assertEquals(910001, $choices[0]->id_tutelle);
+        $this->assertContains('academic-context', $view->render());
+        DB::table('specialite_tutelle')->delete();
+        $empty = (new academicDocumentController)->index(Request::create('/eleves/documents-tutelles', 'GET'));
+        $this->assertCount(0, $empty->getData()['contextChoices']);
+    }
+
+    public function testEssticCertificateMatchesTheSuppliedModel()
+    {
+        DB::table('tutelles_academiques')->where('id',910001)->update(array('modele_documents'=>'esstic','nom'=>'Université de Yaoundé II - SOA'));
+        DB::table('classe_matiere')->insert(array('id'=>910005,'id_classe'=>910001,'id_cycle'=>910001,'id_nniveau'=>910001,'id_matiere'=>910001,'coef'=>45,'semestre'=>6));
+        DB::table('session_exams')->insert(array('id'=>910005,'id_tutelle'=>910001,'id_classe_matiere'=>910005,'annee_academique'=>'2026-2027','cc2'=>30,'sn2'=>70,'tpe2'=>0,'ratrappage2'=>70));
+        foreach(array(2=>15,4=>45)as $sequence=>$value)DB::table('note')->insert(array('id'=>910010+$sequence,'id_campus'=>910001,'id_session'=>910005,'sequence'=>$sequence,'note'=>$value,'id_eleve'=>910001,'id_classe'=>910001,'id_classe_matiere'=>910005,'id_matiere'=>910001,'annee_scolaire'=>'2026-2027'));
+
+        $controller = new academicDocumentController;
+        foreach (array('a4','a3') as $format) {
+            $input = $this->input(array('modele'=>'esstic','document'=>'attestation','id_eleve'=>910001,'page_size'=>$format,'attestation_jury_date'=>'2026-09-15'));
+            $html = $controller->preview(Request::create('/','GET',$input))->render();
+            $text = html_entity_decode($html, ENT_QUOTES, 'UTF-8');
+            $this->assertContains('ATTESTATION DE RÉUSSITE DE LICENCE PROFESSIONNELLE', $text);
+            $this->assertContains('PROFESSIONAL LICENSE SUCCESS TESTIMONIAL', $text);
+            $this->assertContains('N°001/ISH/YDE II-ESSTIC', $text);
+            $this->assertContains('15 septembre 2026', $text);
+            $this->assertContains('Mention globale', $text);
+            $this->assertContains('Yaoundé, le ........................', $text);
+            $this->assertContains('alt="Logo ESSTIC"', $html);
+            $this->assertContains('esstic-certificate-frame', $html);
+            $this->assertNotContains('Moyenne :', $text);
+            $this->assertNotContains('Date de soutenance', $text);
+        }
+    }
+
+    public function testIsabeeCertificateMatchesTheSuppliedModel()
+    {
+        DB::table('classe_matiere')->insert(array('id'=>910005,'id_classe'=>910001,'id_cycle'=>910001,'id_nniveau'=>910001,'id_matiere'=>910001,'coef'=>45,'semestre'=>6));
+        DB::table('session_exams')->insert(array('id'=>910005,'id_tutelle'=>910001,'id_classe_matiere'=>910005,'annee_academique'=>'2026-2027','cc2'=>30,'sn2'=>70,'tpe2'=>0,'ratrappage2'=>70));
+        foreach(array(2=>15,4=>45) as $sequence=>$value) DB::table('note')->insert(array('id'=>910010+$sequence,'id_campus'=>910001,'id_session'=>910005,'sequence'=>$sequence,'note'=>$value,'id_eleve'=>910001,'id_classe'=>910001,'id_classe_matiere'=>910005,'id_matiere'=>910001,'annee_scolaire'=>'2026-2027'));
+        $controller = new academicDocumentController;
+        foreach (array('a4','a3') as $format) {
+            $input = $this->input(array('modele'=>'isabee','document'=>'attestation','id_eleve'=>910001,'page_size'=>$format,'attestation_jury_date'=>'2026-09-15'));
+            $html = $controller->preview(Request::create('/','GET',$input))->render();
+            $text = html_entity_decode($html, ENT_QUOTES, 'UTF-8');
+            $this->assertContains('ATTESTATION DE RÉUSSITE INGENIEUR DE TRAVAUX', $text);
+            $this->assertContains('ENGINEER SUCCESS TESTIMONIAL', $text);
+            $this->assertContains('15 Avril 2024', $text);
+            $this->assertContains('15 septembre 2026', $text);
+            $this->assertContains('Mention Globale', $text);
+            $this->assertContains('EBOLOWA, le ........................', $text);
+            $this->assertContains('Le Directeur de l\'ISABEE', $text);
+            $this->assertContains('alt="Logo ISABEE"', $html);
+            $this->assertContains('isabee-corner-tl', $html);
+            $this->assertNotContains('Moyenne :', $text);
+        }
+    }
+
     public function testBilingualCertificatesUseSelectedTutelleAndPreserveIssueDetailsInArchives()
     {
         $controller=new academicDocumentController;
@@ -536,11 +660,37 @@ class AcademicDocumentWorkflowTest extends TestCase {
             foreach(array('a4','a3')as $format){
                 $html=$controller->preview(Request::create('/','GET',array_merge($input,array('page_size'=>$format))))->render();
                 $this->assertContains($authority,html_entity_decode($html,ENT_QUOTES,'UTF-8'));$this->assertContains('Université '.$model,html_entity_decode($html,ENT_QUOTES,'UTF-8'));
-                $this->assertContains('SUCCESS TESTIMONIAL',$html);$this->assertContains('15/09/2026',$html);$this->assertContains('30/10/2026',$html);
-                $this->assertContains('TEST-910001',$html);$this->assertContains('12.00/20',$html);
-                $this->assertNotContains('<script>unsafe</script>',$html);$this->assertContains('REF &lt;script&gt;unsafe&lt;/script&gt;',$html);
+                $this->assertContains('SUCCESS TESTIMONIAL',$html);
+                $this->assertContains($model==='esstic'?'15 septembre 2026':'15/09/2026',$html);
+                $this->assertContains('30/10/2026',$html);
+                $this->assertContains('TEST-910001',$html);
+                if($model!=='esstic')$this->assertContains('12.00/20',$html);
+                $this->assertNotContains('<script>unsafe</script>',$html);
+                if(in_array($model,array('soa','ngaoundere','esstic'))){
+                    $suffix=$model==='soa'?'/ISH/YDE II - SOA':($model==='esstic'?'/ISH/YDE II-ESSTIC':'UN/IUT/UN/CD-ISH/CS-ISH');
+                    $this->assertContains('001'.$suffix,$html);
+                    $this->assertNotContains('REF &lt;script&gt;unsafe&lt;/script&gt;',$html);
+                }else $this->assertContains('REF &lt;script&gt;unsafe&lt;/script&gt;',$html);
                 $this->assertContains('size: '.strtoupper($format).' landscape;',$html);
                 $this->assertContains('attestation_jury_date=2026-09-15',html_entity_decode($html));
+                if(in_array($model,array('soa','ngaoundere','esstic'))) $this->assertNotContains('attestation_reference=',html_entity_decode($html));
+                if($model==='esstic'){
+                    $this->assertContains('certificate-esstic',$html);
+                    $this->assertContains('alt="Logo ESSTIC"',$html);
+                    $this->assertContains('N&deg;001/ISH/YDE II-ESSTIC',$html);
+                    $this->assertContains('PROFESSIONAL LICENSE SUCCESS TESTIMONIAL',$html);
+                    $this->assertContains('Mention globale',$html);
+                    $this->assertContains('Le Directeur de l’ESSTIC',html_entity_decode($html,ENT_QUOTES,'UTF-8'));
+                    $this->assertNotContains('12.00/20',$html);
+                }
+                if($model==='soa'){
+                    $this->assertTrue(strpos($html,'alt="Logo du campus"')<strpos($html,'alt="Logo tutelle"'));
+                    $this->assertContains('certificate-soa',$html);
+                    $this->assertContains('ATTESTATION DE R&Eacute;USSITE DE',$html);
+                    $this->assertContains('soa-identity',$html);
+                    $this->assertContains('soa-signatures',$html);
+                    $this->assertContains('Yaoundé, le 30/10/2026',html_entity_decode($html,ENT_QUOTES,'UTF-8'));
+                }
                 if($model==='polytechnique'){
                     $this->assertContains('alt="Logo Polytechnique ENSPY"',$html);
                     $this->assertContains('data:image/png;base64,',$html);
@@ -550,6 +700,11 @@ class AcademicDocumentWorkflowTest extends TestCase {
                 }
                 if($model==='ngaoundere'){
                     $this->assertContains('alt="Logo IUT"',$html);
+                    $this->assertTrue(strpos($html,'alt="Logo du campus"')<strpos($html,'alt="Logo tutelle"'));
+                    $this->assertTrue(strpos($html,'alt="Logo tutelle"')<strpos($html,'alt="Logo IUT"'));
+                    $this->assertContains('ATTESTATION DE R&Eacute;USSITE DE',$html);
+                    $this->assertContains('certificate-reference',$html);
+                    $this->assertContains('ngaoundere-identity',$html);
                     $decoded=html_entity_decode($html,ENT_QUOTES,'UTF-8');
                     $this->assertContains('17 février 2021',$decoded);$this->assertContains('Convention Spécifique',$decoded);
                     $this->assertContains('Ngaoundéré, le 30/10/2026',$decoded);
@@ -560,11 +715,36 @@ class AcademicDocumentWorkflowTest extends TestCase {
         $controller->generate(Request::create('/','POST',$input));
         $g=gesecole\AcademicDocumentGeneration::first();$original=$g->verifiedContent();
         $snapshot=json_decode($g->contexte,true);$this->assertSame('2026-09-15',$snapshot['document_selection']['attestation_jury_date']);
-        $this->assertSame($input['attestation_reference'],$snapshot['document_selection']['attestation_reference']);
+        $this->assertFalse(isset($snapshot['document_selection']['attestation_reference']));
+        $this->assertSame('001UN/IUT/UN/CD-ISH/CS-ISH',$snapshot['attestation_numbers'][910001]);
+        $this->assertContains('N&deg;001UN/IUT/UN/CD-ISH/CS-ISH',$original);
         DB::table('note')->where('id',910002)->update(array('note'=>5));
         $this->assertSame($original,$controller->printSaved($g->id)->getContent());
         $empty=$controller->preview(Request::create('/','GET',$input))->render();
         $this->assertNotContains('SUCCESS TESTIMONIAL',$empty);$this->assertContains('Aucun étudiant',$empty);
+    }
+
+    public function testAutomaticAttestationNumbersAdvancePerStudentAndKeepArchivedNumbers()
+    {
+        $service=new \gesecole\Services\AcademicAttestationNumberService;
+        $context=array('id_campus'=>910001,'modele'=>'ngaoundere','year'=>'2026-2027');
+        $students=array(array('student'=>(object)array('id'=>910001)),array('student'=>(object)array('id'=>910002)));
+        $first=$service->references($context,$students);
+        $this->assertSame('001UN/IUT/UN/CD-ISH/CS-ISH',$first[910001]);
+        $this->assertSame('002UN/IUT/UN/CD-ISH/CS-ISH',$first[910002]);
+        DB::table('academic_document_generations')->insert(array('id_campus'=>910001,'id_tutelle'=>910002,'id_classe'=>910001,'id_cycle'=>910001,'id_nniveau'=>910001,'annee_academique'=>'2026-2027','modele'=>'ngaoundere','document'=>'attestation','periode'=>'annuel','effectif'=>2,'contexte'=>json_encode(array('attestation_numbers'=>$first)),'contenu'=>'test','empreinte'=>hash('sha256','test'),'deleted_at'=>date('Y-m-d H:i:s')));
+        $later=$service->references($context,array($students[0],array('student'=>(object)array('id'=>910003))));
+        $this->assertSame($first[910001],$later[910001]);
+        $this->assertSame('003UN/IUT/UN/CD-ISH/CS-ISH',$later[910003]);
+        $context['modele']='soa';
+        DB::table('academic_document_generations')->insert(array('id_campus'=>910001,'id_tutelle'=>910001,'id_classe'=>910001,'id_cycle'=>910001,'id_nniveau'=>910001,'annee_academique'=>'2026-2027','modele'=>'soa','document'=>'attestation','periode'=>'annuel','effectif'=>1,'contexte'=>json_encode(array('document_selection'=>array('id_eleve'=>910001,'attestation_reference'=>'N° 006/ISH/YDE II - SOA'))),'contenu'=>'test','empreinte'=>hash('sha256','test')));
+        $soa=$service->references($context,$students);
+        $this->assertSame('006/ISH/YDE II - SOA',$soa[910001]);
+        $this->assertSame('007/ISH/YDE II - SOA',$soa[910002]);
+        $context['year']='2027-2028';
+        $this->assertSame('001/ISH/YDE II - SOA',$service->references($context,array($students[0]))[910001]);
+        $context['modele']='esstic';
+        $this->assertSame('001/ISH/YDE II-ESSTIC',$service->references($context,array($students[0]))[910001]);
     }
 
     public function testArchiveIsImmutableAfterGradeChangeAndIsCampusScoped()

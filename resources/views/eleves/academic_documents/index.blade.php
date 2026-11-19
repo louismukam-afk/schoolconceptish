@@ -81,6 +81,7 @@
     var profile=document.getElementById('academic-profile'), tutelle=document.getElementById('academic-tutelle'), cycle=document.getElementById('academic-cycle'), level=document.getElementById('academic-level'), classe=document.getElementById('academic-class'), session=document.getElementById('academic-session');
     var student=document.getElementById('academic-student'), studentStatus=document.getElementById('academic-student-status'), studentRequest=0;
     function chooseSingle(select){var options=[].filter.call(select.options,function(o){return o.value && !o.disabled;});if(!options.some(function(o){return o.value===select.value;}))select.value='';if(!select.value && options.length===1)select.value=options[0].value;}
+    function refreshCertificateReference(){var field=document.querySelector('input[name="attestation_reference"]'),automatic=['ngaoundere','soa','esstic','isabee','polytechnique'].indexOf(profile.value)>=0,active=document.getElementById('academic-document').value==='attestation';field.disabled=!active||automatic;field.placeholder=automatic?'Attribuée automatiquement':'';field.parentNode.querySelector('label').textContent=automatic?'Numéro automatique':'Référence de l’attestation (facultatif)';}
     function refresh(){
         [].forEach.call(tutelle.options,function(o){o.hidden=o.value && o.dataset.profile!==profile.value;o.disabled=o.hidden;});
         chooseSingle(tutelle);
@@ -100,11 +101,12 @@
         }
         var p=profiles[profile.value];
         document.getElementById('academic-rules').textContent='Règles du modèle : validation UE à 10/20 ; crédits capitalisés à partir de '+p.credit_threshold+'/20 ; '+(p.admission==='credits'?'admission à '+p.credits_required+' crédits.':'admission pour une moyenne strictement supérieure à '+p.average_required+'/20 ; égalité à délibérer.')+' Une note manquante laisse le dossier à délibérer.';
+        refreshCertificateReference();
     }
     [].forEach.call(document.querySelectorAll('.academic-profile'),function(b){b.addEventListener('click',function(){profile.value=b.dataset.profile;refresh();});});
     [profile,tutelle,classe,cycle,level].forEach(function(e){e.addEventListener('change',refresh);});refresh();
     var certificateOptions=document.getElementById('academic-attestation-options');
-    document.getElementById('academic-document').addEventListener('change',function(){var active=this.value==='attestation';certificateOptions.style.display=active?'':'none';[].forEach.call(certificateOptions.querySelectorAll('input'),function(s){s.disabled=!active;});});
+    document.getElementById('academic-document').addEventListener('change',function(){var active=this.value==='attestation';certificateOptions.style.display=active?'':'none';[].forEach.call(certificateOptions.querySelectorAll('input'),function(s){s.disabled=!active;});refreshCertificateReference();});
     var anonOptions=document.getElementById('academic-anonymat-options');
     document.getElementById('academic-document').addEventListener('change',function(){var active=['anonymat_codes','anonymat_report','anonymat_presence','anonymat_fiches'].indexOf(this.value)>=0;anonOptions.style.display=active?'':'none';[].forEach.call(anonOptions.querySelectorAll('select'),function(s){s.disabled=!active;});});
     document.getElementById('academic-document').addEventListener('change',function(){var annual=['admis','merite','non_admis','a_deliberer','attestation'].indexOf(this.value)>=0,period=document.getElementById('academic-period');if(annual)period.value='annuel';[].forEach.call(period.options,function(o){o.disabled=annual&&o.value!=='annuel';});});

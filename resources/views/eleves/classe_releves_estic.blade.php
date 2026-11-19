@@ -24,7 +24,7 @@
                 <div class="col-md-6 niveau-block" data-filiere="{{$n->id}}" style="display:none;">
                     <h4 class="page-header"> {{$n->getNom()}}</h4>
 
-                    @foreach($classes as $c)
+                    @foreach($classesByNiveau->get($n->id, array()) as $c)
                         <div class="col-md-12">
                             @if($c->id_niveau==$n->id)
                                 <li class="col-md-12">

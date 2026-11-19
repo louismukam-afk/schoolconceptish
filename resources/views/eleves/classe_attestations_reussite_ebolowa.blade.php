@@ -86,6 +86,7 @@
                                 @endforeach
                             </select>
                         </div>
+                        @include('eleves.partials.attestation_releve_select', array('prefix' => 'attestation_ebolowa'))
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -118,6 +119,7 @@
             document.getElementById('attestation_ebolowa_classe').value = link.getAttribute('data-classe');
             document.getElementById('attestation_ebolowa_specialite').innerHTML = link.getAttribute('data-specialite') || '';
             window.selectionCycleNiveauFiliere.setModalValues('#attestation_ebolowa_cycle', '#attestation_ebolowa_nniveau');
+            updateAttestationReleveSources('attestation_ebolowa');
             return true;
         }
 
@@ -136,12 +138,14 @@
                     }
                     option.style.display = option.getAttribute('data-cycle') === cycleId ? '' : 'none';
                 }
+                updateAttestationReleveSources('attestation_ebolowa');
             }
 
             document.addEventListener('DOMContentLoaded', function () {
                 var cycle = document.getElementById('attestation_ebolowa_cycle');
                 var form = document.getElementById('generate_attestations_ebolowa_form');
                 if (cycle) cycle.addEventListener('change', updateLevels);
+                document.getElementById('attestation_ebolowa_nniveau').addEventListener('change', function () { updateAttestationReleveSources('attestation_ebolowa'); });
                 if (!form) return;
 
                 form.addEventListener('submit', function (event) {

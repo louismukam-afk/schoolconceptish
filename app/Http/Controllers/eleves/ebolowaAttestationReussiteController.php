@@ -2,7 +2,6 @@
 
 use gesecole\classe;
 use gesecole\cycle;
-use gesecole\eleve;
 use gesecole\Http\Controllers\Controller;
 use gesecole\niveau;
 use gesecole\NNiveau;
@@ -39,6 +38,9 @@ class ebolowaAttestationReussiteController extends Controller
         $values['cycles'] = cycle::all();
         $values['niveaux'] = niveau::all();
         $values['nniveaux'] = NNiveau::all();
+        $values['sources_releves'] = ReleveNoteGeneration::where('type', 'licence_ebolowa')
+            ->where('annee_academique', session('year'))
+            ->orderBy('id', 'desc')->get(array('id', 'id_classe', 'id_cycle', 'id_nniveau', 'created_at', 'nb_releves'));
         if (session('success')) {
             $values['success'] = session('success');
             Session::forget('success');
@@ -52,6 +54,7 @@ class ebolowaAttestationReussiteController extends Controller
             'id' => 'required|numeric',
             'cycle' => 'required|numeric',
             'nniveau' => 'required|numeric',
+            'source_releve_id' => 'required|numeric',
         );
         if ($request->input('periode_debut')) $rules['periode_debut'] = 'date';
         if ($request->input('periode_fin')) $rules['periode_fin'] = 'date';
@@ -66,7 +69,13 @@ class ebolowaAttestationReussiteController extends Controller
         $niveau = niveau::find($classe->id_niveau);
         $campus = $this->currentCampus();
         $tutelle = $this->resolveEbolowaTutelle($idClasse);
-        $attestations = $this->buildAttestations($idClasse, $idCycle, $idNniveau);
+        $attestations = $this->buildAttestations($idClasse, $idCycle, $idNniveau, (int) $request->input('source_releve_id'));
+        if ($this->sourceReleveGeneration === null) {
+            return \Response::json(array('success' => false, 'message' => 'Le releve selectionne ne correspond pas a cette specialite ou a cette annee.'), 422);
+        }
+        if (count($attestations) === 0) {
+            return \Response::json(array('success' => false, 'message' => 'Aucun etudiant admis dans le releve selectionne.'), 422);
+        }
 
         $generation = new ReleveNoteGeneration();
         $generation->type = self::GENERATION_TYPE;
@@ -75,8 +84,8 @@ class ebolowaAttestationReussiteController extends Controller
         $generation->id_classe = $idClasse;
         $generation->id_cycle = $idCycle;
         $generation->id_nniveau = $idNniveau;
-        $generation->periode_debut = $request->input('periode_debut') ?: null;
-        $generation->periode_fin = $request->input('periode_fin') ?: null;
+        $generation->periode_debut = $request->input('periode_debut') ?: $this->sourceReleveGeneration['periode_debut'];
+        $generation->periode_fin = $request->input('periode_fin') ?: $this->sourceReleveGeneration['periode_fin'];
         $generation->nb_releves = count($attestations);
         $generation->contenu = json_encode(array(
             'attestations' => $attestations,
@@ -112,8 +121,9 @@ class ebolowaAttestationReussiteController extends Controller
         $payload = json_decode($generation->contenu);
         if (!$payload) $payload = new \stdClass();
         if ((!isset($payload->attestations) || count($payload->attestations) <= 0)
+            && isset($payload->source_releve_generation->id)
             && $generation->id_classe && $generation->id_cycle && $generation->id_nniveau) {
-            $rebuilt = $this->buildAttestations($generation->id_classe, $generation->id_cycle, $generation->id_nniveau);
+            $rebuilt = $this->buildAttestations($generation->id_classe, $generation->id_cycle, $generation->id_nniveau, $payload->source_releve_generation->id);
             if (count($rebuilt) > 0) {
                 $payload->attestations = $rebuilt;
                 $payload->source_releve_generation = $this->sourceReleveGeneration;
@@ -168,7 +178,7 @@ class ebolowaAttestationReussiteController extends Controller
             ->with('success', 'Historique des attestations supprime.');
     }
 
-    private function buildAttestations($idClasse, $idCycle, $idNniveau)
+    private function buildAttestations($idClasse, $idCycle, $idNniveau, $sourceId)
     {
         $this->sourceReleveGeneration = null;
         $source = ReleveNoteGeneration::where('type', 'licence_ebolowa')
@@ -176,27 +186,19 @@ class ebolowaAttestationReussiteController extends Controller
             ->where('id_classe', '=', $idClasse)
             ->where('id_cycle', '=', $idCycle)
             ->where('id_nniveau', '=', $idNniveau)
+            ->where('id', '=', $sourceId)
             ->orderBy('id', 'desc')
             ->first();
 
         if (!$source) return array();
-        $this->sourceReleveGeneration = array('id' => $source->id, 'date' => $source->created_at, 'annee_academique' => $source->annee_academique);
+        $this->sourceReleveGeneration = array('id' => $source->id, 'date' => $source->created_at, 'annee_academique' => $source->annee_academique,
+            'periode_debut' => $source->periode_debut, 'periode_fin' => $source->periode_fin);
         $payload = json_decode($source->contenu);
         if (!$payload || !isset($payload->PV)) return array();
 
         $attestations = array();
         foreach ($payload->PV as $releve) {
-            $studentId = isset($releve->eleve->id) ? $releve->eleve->id : (isset($releve->id_eleve) ? $releve->id_eleve : null);
-            if (!$studentId) continue;
-            $student = eleve::join('inscription', 'inscription.id_eleve', '=', 'eleve.id')
-                ->where('inscription.annee_scolaire', '=', session('year'))
-                ->where('inscription.id_classe', '=', $idClasse)
-                ->where('inscription.id_cycle', '=', $idCycle)
-                ->where('inscription.id_nniveau', '=', $idNniveau)
-                ->where('inscription.desinscrire', '=', 0)
-                ->where('eleve.id', '=', $studentId)
-                ->select('eleve.*')
-                ->first();
+            $student = isset($releve->eleve) ? $releve->eleve : null;
             if (!$student || !isset($releve->mgp) || !is_numeric($releve->mgp)) continue;
 
             $average20 = (float) $releve->mgp;

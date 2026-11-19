@@ -10,6 +10,9 @@
         <a href="{{ url('/eleves/attestations_reussite_soa') }}" class="btn btn-success">
             <span class="glyphicon glyphicon-certificate"></span> Attestations SOA
         </a>
+        <a href="{{ url('/eleves/releves_ndere') }}" class="btn btn-default">
+            <span class="glyphicon glyphicon-file"></span> Releves Ngaoundere
+        </a>
         <a href="javascript:history.back();" class="btn btn-info">
             <span class="glyphicon glyphicon-arrow-left"></span> Retour
         </a>
@@ -86,6 +89,7 @@
                                 @endforeach
                             </select>
                         </div>
+                        @include('eleves.partials.attestation_releve_select', array('prefix' => 'attestation_ndere'))
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -121,6 +125,7 @@
             if (classe) classe.value = link.getAttribute('data-classe');
             if (label) label.innerHTML = link.getAttribute('data-specialite') || '';
             window.selectionCycleNiveauFiliere.setModalValues('#attestation_ndere_cycle', '#attestation_ndere_nniveau');
+            updateAttestationReleveSources('attestation_ndere');
             return true;
         }
 
@@ -139,12 +144,14 @@
                     }
                     option.style.display = option.getAttribute('data-cycle') === cycleId ? '' : 'none';
                 }
+                updateAttestationReleveSources('attestation_ndere');
             }
 
             document.addEventListener('DOMContentLoaded', function () {
                 var cycle = document.getElementById('attestation_ndere_cycle');
                 var form = document.getElementById('generate_attestations_ndere_form');
                 if (cycle) cycle.addEventListener('change', updateLevels);
+                document.getElementById('attestation_ndere_nniveau').addEventListener('change', function () { updateAttestationReleveSources('attestation_ndere'); });
                 if (!form) return;
 
                 form.addEventListener('submit', function (event) {

@@ -59,6 +59,7 @@ class soareleveController extends Controller {
         $nn=NNiveau::all();
         $values['niveaux']=$n;
         $values['classes']=$c;
+        $values['classesByNiveau']=$c->groupBy('id_niveau');
         $values['nniveaux']=$nn;
         $values['cycles']=$cy;
 

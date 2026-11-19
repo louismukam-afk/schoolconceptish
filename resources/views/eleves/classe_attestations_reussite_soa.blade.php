@@ -10,6 +10,9 @@
         <a href="{{ url('/eleves/attestations_reussite_ndere') }}" class="btn btn-default">
             <span class="glyphicon glyphicon-certificate"></span> Attestations Ngaoundere
         </a>
+        <a href="{{ url('/eleves/releves_soa') }}" class="btn btn-default">
+            <span class="glyphicon glyphicon-file"></span> Releves SOA
+        </a>
         <a href="javascript:history.back();" class="btn btn-info">
             <span class="glyphicon glyphicon-arrow-left"></span> Retour
         </a>
@@ -86,6 +89,7 @@
                                 @endforeach
                             </select>
                         </div>
+                        @include('eleves.partials.attestation_releve_select', array('prefix' => 'attestation_soa'))
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -118,6 +122,7 @@
             document.getElementById('attestation_soa_classe').value = link.getAttribute('data-classe');
             document.getElementById('attestation_soa_specialite').innerHTML = link.getAttribute('data-specialite') || '';
             window.selectionCycleNiveauFiliere.setModalValues('#attestation_soa_cycle', '#attestation_soa_nniveau');
+            updateAttestationReleveSources('attestation_soa');
             return true;
         }
 
@@ -136,12 +141,14 @@
                     }
                     option.style.display = option.getAttribute('data-cycle') === cycleId ? '' : 'none';
                 }
+                updateAttestationReleveSources('attestation_soa');
             }
 
             document.addEventListener('DOMContentLoaded', function () {
                 var cycle = document.getElementById('attestation_soa_cycle');
                 var form = document.getElementById('generate_attestations_soa_form');
                 if (cycle) cycle.addEventListener('change', updateLevels);
+                document.getElementById('attestation_soa_nniveau').addEventListener('change', function () { updateAttestationReleveSources('attestation_soa'); });
                 if (!form) return;
 
                 form.addEventListener('submit', function (event) {

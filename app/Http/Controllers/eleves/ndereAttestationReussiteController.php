@@ -2,7 +2,6 @@
 
 use gesecole\classe;
 use gesecole\cycle;
-use gesecole\eleve;
 use gesecole\Http\Controllers\Controller;
 use gesecole\niveau;
 use gesecole\NNiveau;
@@ -10,7 +9,6 @@ use gesecole\parametres;
 use gesecole\ReleveNoteGeneration;
 use gesecole\TutelleAcademique;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class ndereAttestationReussiteController extends Controller
@@ -43,6 +41,9 @@ class ndereAttestationReussiteController extends Controller
         $values['cycles'] = cycle::all();
         $values['niveaux'] = niveau::all();
         $values['nniveaux'] = NNiveau::all();
+        $values['sources_releves'] = ReleveNoteGeneration::where('type', 'licence_ngaoundere')
+            ->where('annee_academique', session('year'))->where('semestre', 6)
+            ->orderBy('id', 'desc')->get(array('id', 'id_classe', 'id_cycle', 'id_nniveau', 'created_at', 'nb_releves'));
         if (session('success')) {
             $values['success'] = session('success');
             Session::forget('success');
@@ -56,6 +57,7 @@ class ndereAttestationReussiteController extends Controller
             'id' => 'required|numeric',
             'cycle' => 'required|numeric',
             'nniveau' => 'required|numeric',
+            'source_releve_id' => 'required|numeric',
         );
         if ($request->input('periode_debut')) {
             $rules['periode_debut'] = 'date';
@@ -74,7 +76,13 @@ class ndereAttestationReussiteController extends Controller
         $niveau = niveau::find($classe->id_niveau);
         $campus = $this->currentCampus();
         $tutelle = $this->resolveNdereTutelle($idClasse);
-        $attestations = $this->buildAttestations($idClasse, $idCycle, $idNniveau);
+        $attestations = $this->buildAttestations($idClasse, $idCycle, $idNniveau, (int) $request->input('source_releve_id'));
+        if ($this->sourceReleveGeneration === null) {
+            return \Response::json(array('success' => false, 'message' => 'Le releve selectionne ne correspond pas a cette specialite ou a cette annee.'), 422);
+        }
+        if (count($attestations) === 0) {
+            return \Response::json(array('success' => false, 'message' => 'Aucun etudiant admis dans le releve selectionne.'), 422);
+        }
 
         $generation = new ReleveNoteGeneration();
         $generation->type = self::GENERATION_TYPE;
@@ -83,8 +91,8 @@ class ndereAttestationReussiteController extends Controller
         $generation->id_classe = $idClasse;
         $generation->id_cycle = $idCycle;
         $generation->id_nniveau = $idNniveau;
-        $generation->periode_debut = $request->input('periode_debut') ?: null;
-        $generation->periode_fin = $request->input('periode_fin') ?: null;
+        $generation->periode_debut = $request->input('periode_debut') ?: $this->sourceReleveGeneration['periode_debut'];
+        $generation->periode_fin = $request->input('periode_fin') ?: $this->sourceReleveGeneration['periode_fin'];
         $generation->nb_releves = count($attestations);
 
         $payload = array(
@@ -124,8 +132,9 @@ class ndereAttestationReussiteController extends Controller
             $payload = new \stdClass();
         }
         if ((!isset($payload->attestations) || count($payload->attestations) <= 0)
+            && isset($payload->source_releve_generation->id)
             && $generation->id_classe && $generation->id_cycle && $generation->id_nniveau) {
-            $rebuiltAttestations = $this->buildAttestations($generation->id_classe, $generation->id_cycle, $generation->id_nniveau);
+            $rebuiltAttestations = $this->buildAttestations($generation->id_classe, $generation->id_cycle, $generation->id_nniveau, $payload->source_releve_generation->id);
             if (count($rebuiltAttestations) > 0) {
                 $payload->attestations = $rebuiltAttestations;
                 $payload->source_releve_generation = $this->sourceReleveGeneration;
@@ -175,7 +184,7 @@ class ndereAttestationReussiteController extends Controller
             ->with('success', 'Historique des attestations supprime.');
     }
 
-    private function buildAttestations($idClasse, $idCycle, $idNniveau)
+    private function buildAttestations($idClasse, $idCycle, $idNniveau, $sourceId)
     {
         $this->sourceReleveGeneration = null;
         $source = ReleveNoteGeneration::where('type', 'licence_ngaoundere')
@@ -183,6 +192,7 @@ class ndereAttestationReussiteController extends Controller
             ->where('id_classe', '=', $idClasse)
             ->where('id_cycle', '=', $idCycle)
             ->where('id_nniveau', '=', $idNniveau)
+            ->where('id', '=', $sourceId)
             ->where('semestre', '=', 6)
             ->orderBy('id', 'desc')
             ->first();
@@ -196,6 +206,8 @@ class ndereAttestationReussiteController extends Controller
             'date' => $source->created_at,
             'annee_academique' => $source->annee_academique,
             'semestre' => $source->semestre,
+            'periode_debut' => $source->periode_debut,
+            'periode_fin' => $source->periode_fin,
         );
 
         $payload = json_decode($source->contenu);
@@ -207,15 +219,7 @@ class ndereAttestationReussiteController extends Controller
         foreach ($payload->PV as $releve) {
             if (!isset($releve->eleve) || !isset($releve->eleve->id)) continue;
 
-            $student = eleve::join('inscription', 'inscription.id_eleve', '=', 'eleve.id')
-                ->where('inscription.annee_scolaire', '=', session('year'))
-                ->where('inscription.id_classe', '=', $idClasse)
-                ->where('inscription.id_cycle', '=', $idCycle)
-                ->where('inscription.id_nniveau', '=', $idNniveau)
-                ->where('inscription.desinscrire', '=', 0)
-                ->where('eleve.id', '=', $releve->eleve->id)
-                ->select('eleve.*')
-                ->first();
+            $student = $releve->eleve;
 
             if (!$student) continue;
 

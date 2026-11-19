@@ -9,6 +9,8 @@ use gesecole\classe;
 use gesecole\note;
 use gesecole\Services\AcademicDocumentService;
 use gesecole\Services\AcademicResultCalculator;
+use gesecole\Services\NgaoundereTranscriptService;
+use gesecole\Services\AcademicAttestationNumberService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -20,9 +22,13 @@ class academicDocumentController extends Controller {
         $campusId = $this->currentCampusId();
         $classIds = DB::table('campus_specialite')->where('id_campus', $campusId)->lists('id_classe');
         $affectations = array();
-        foreach(DB::table('specialite_tutelle')->whereIn('id_classe',$classIds)->get() as $a) $affectations[$a->id_classe][]=(string)$a->id_tutelle;
+        $tutelleIds = array();
+        foreach(DB::table('specialite_tutelle')->whereIn('id_classe',$classIds)->get(array('id_classe','id_tutelle')) as $a){
+            $affectations[$a->id_classe][]=(string)$a->id_tutelle;
+            $tutelleIds[$a->id_tutelle]=$a->id_tutelle;
+        }
         $choices=DB::table('session_exams as se')->join('classe_matiere as cm','cm.id','=','se.id_classe_matiere')
-            ->join('matiere as m','m.id','=','cm.id_matiere')->whereIn('cm.id_classe',$classIds)->where('se.annee_academique',session('year'))
+            ->join('matiere as m','m.id','=','cm.id_matiere')->whereIn('cm.id_classe',$classIds)->whereIn('se.id_tutelle',array_values($tutelleIds))->where('se.annee_academique',session('year'))
             ->select('se.id','se.id_tutelle','cm.id_classe','cm.id_cycle','cm.id_nniveau','cm.semestre','m.nom')->get();
         return view('eleves.academic_documents.index', array(
             'titre' => 'Documents et notes par tutelle', 'profiles' => config('academic_documents.profiles'),
@@ -50,9 +56,10 @@ class academicDocumentController extends Controller {
         if($context['periode']!=='annuel' && in_array($request->input('document'),array('admis','merite','non_admis','a_deliberer','attestation'),true))abort(422,'Les listes d’admission et attestations utilisent l’année complète.');
         $summaryDocuments = array('pv','pv_groupes','pv_modules','admis','merite','non_admis','a_deliberer','releve','releve_modules','attestation','statistiques');
         $sessionId = in_array($request->input('document'), $summaryDocuments, true) ? null : $request->input('id_session');
-        $includeUngraded = in_array($request->input('document'), array('pv_modules','releve_modules','anonymat_codes','anonymat_report','anonymat_presence','anonymat_fiches','programme','presence','anonymat','report','matiere_cc','matiere_sn','matiere_tpe','matiere_rat'), true);
+        $includeUngraded = in_array($request->input('document'), array('pv_modules','releve_modules','anonymat_codes','anonymat_report','anonymat_presence','anonymat_fiches','programme','presence','anonymat','report','matiere_cc','matiere_sn','matiere_tpe','matiere_rat'), true)
+            || (in_array($context['modele'],array('ngaoundere','esstic','isabee'),true) && $request->input('document')==='releve');
         $data = (new AcademicDocumentService)->build($context, $request->input('id_eleve'), $sessionId, !$includeUngraded);
-        if(in_array($request->input('document'),array('pv_modules','releve_modules'),true))$data=(new \gesecole\Services\AcademicModuleService)->build($data);
+        if(in_array($request->input('document'),array('pv_modules','releve_modules'),true) || ($context['modele']==='esstic' && $request->input('document')==='releve'))$data=(new \gesecole\Services\AcademicModuleService)->build($data);
         $anonymatDocuments=array('anonymat_codes','anonymat_report','anonymat_presence','anonymat_fiches');
         if(in_array($request->input('document'),$anonymatDocuments,true)){
             if(!Auth::user()->canDoAction(\gesecole\Action::ACTION_STUDENT_NOTE_CU))abort(403,'Accès réservé aux utilisateurs autorisés à gérer les évaluations.');
@@ -80,13 +87,13 @@ class academicDocumentController extends Controller {
         $context=$data['context'];
         $data['document'] = $request->input('document');
         $data['label'] = config('academic_documents.documents.'.$data['document']);
-        $data['page_size'] = $request->input('page_size') ?: 'a4';
+        $data['page_size'] = $data['document']==='pv_modules'?'a3':($request->input('page_size') ?: 'a4');
         $large=$data['page_size']==='a3';
         $data['certificate']=$data['document']==='attestation' && config('academic_attestations.'.$context['modele'])!==null;
         $data['certificate_authority']=config('academic_attestations.'.$context['modele']);
         $data['attestation_reference']=$request->input('attestation_reference');
         $data['attestation_jury_date']=$request->input('attestation_jury_date')?date('d/m/Y',strtotime($request->input('attestation_jury_date'))):'……………………';
-        $data['attestation_issue_date']=$request->input('attestation_issue_date')?date('d/m/Y',strtotime($request->input('attestation_issue_date'))):date('d/m/Y');
+        $data['attestation_issue_date']=$request->input('attestation_issue_date')?date('d/m/Y',strtotime($request->input('attestation_issue_date'))):(in_array($context['modele'],array('ngaoundere','esstic','isabee'),true)?'........................':date('d/m/Y'));
         $landscape=in_array($data['document'],array('pv','pv_groupes','pv_modules','deliberation_rapport','rattrapage_global','report','programme'),true);
         $landscape=$landscape || $data['certificate'];
         $data['paper_orientation']=$landscape?'landscape':'portrait';
@@ -97,6 +104,7 @@ class academicDocumentController extends Controller {
         if(isset($data['modules']))foreach($data['modules'] as $module)if($module['is_grouped'])$columns++;
         $data['matrix_font']=$large?($columns>35?9:11):($columns>35?6:($columns>23?7:8));
         $paperQuery=$request->only('modele','id_tutelle','id_classe','id_cycle','id_nniveau','periode','session_mode','document','id_eleve','id_session','date_soutenance','attestation_reference','attestation_jury_date','attestation_issue_date','mode_generation','sequence','rapport_type','rapport_semestre','rapport_examen','rapport_format','rapport_portee','id_lot');
+        if($data['certificate'] && in_array($context['modele'],array('ngaoundere','soa','esstic','isabee'),true))unset($paperQuery['attestation_reference']);
         $data['paper_links']=array();
         foreach(array('a4','a3') as $format)$data['paper_links'][$format]=url('/eleves/documents-tutelles/apercu').'?'.http_build_query(array_merge($paperQuery,array('page_size'=>$format)));
         $data['date_soutenance'] = $request->input('date_soutenance');
@@ -125,9 +133,54 @@ class academicDocumentController extends Controller {
                 if ($info) $data[$key] = 'data:'.$info['mime'].';base64,'.base64_encode(file_get_contents($path));
             }
         }
-        if($data['certificate'] && $context['modele']==='ngaoundere' && !$data['logo_faculte']){
+        if($context['modele']==='polytechnique' && in_array($data['document'],array('releve','attestation','pv','pv_modules'),true)){
+            $universityLogos=glob(public_path('img/univ_*_1.png'));
+            $universityLogo=$universityLogos?reset($universityLogos):false;
+            if($universityLogo && is_file($universityLogo)){
+                $logoInfo=getimagesize($universityLogo);
+                if($logoInfo)$data['logo_polytechnique']='data:'.$logoInfo['mime'].';base64,'.base64_encode(file_get_contents($universityLogo));
+            }
+            if(!$data['logo_faculte']){
+                $facultyLogo=public_path('images/tutelles/testok/logoUEb.png');
+                if(is_file($facultyLogo))$data['logo_faculte']='data:image/png;base64,'.base64_encode(file_get_contents($facultyLogo));
+            }
+        }
+        if(($data['certificate'] || in_array($data['document'],array('pv','pv_modules'),true)) && $context['modele']==='ngaoundere' && !$data['logo_faculte']){
             $iutLogo=public_path('img/iut.jpg');
             if(is_file($iutLogo))$data['logo_faculte']='data:image/jpeg;base64,'.base64_encode(file_get_contents($iutLogo));
+        }
+        if(($data['certificate'] || in_array($data['document'],array('pv','pv_modules'),true)) && $context['modele']==='ngaoundere' && !$data['logo_tutelle']){
+            $universityLogo=public_path('img/ngaoundere.jpg');
+            if(is_file($universityLogo))$data['logo_tutelle']='data:image/jpeg;base64,'.base64_encode(file_get_contents($universityLogo));
+        }
+        if($data['certificate'] && $context['modele']==='ngaoundere')
+            $data['attestation_filiere']=DB::table('niveau')->where('id',$context['classe']->id_niveau)->first();
+        if($data['certificate'] && $context['modele']==='soa'){
+            $data['attestation_filiere']=DB::table('niveau')->where('id',$context['classe']->id_niveau)->first();
+            if(!$data['logo_tutelle']){
+                $soaLogo=public_path('img/releve_soa_univ_yde2.jpeg');
+                if(is_file($soaLogo))$data['logo_tutelle']='data:image/jpeg;base64,'.base64_encode(file_get_contents($soaLogo));
+            }
+        }
+        if($context['modele']==='esstic' && in_array($data['document'],array('releve','attestation','pv','pv_modules'),true)){
+            $data['esstic_filiere']=DB::table('niveau')->where('id',$context['classe']->id_niveau)->first();
+            if(!$data['logo_faculte']){
+                $essticLogo=public_path('img/esstic.png');
+                if(is_file($essticLogo))$data['logo_faculte']='data:image/png;base64,'.base64_encode(file_get_contents($essticLogo));
+            }
+            if($data['certificate'] && !$data['logo_tutelle']){
+                $universityLogo=public_path('img/releve_soa_univ_yde2.jpeg');
+                if(is_file($universityLogo))$data['logo_tutelle']='data:image/jpeg;base64,'.base64_encode(file_get_contents($universityLogo));
+            }
+        }
+        if($context['modele']==='isabee' && in_array($data['document'],array('releve','attestation','pv','pv_modules'),true)){
+            if(in_array($data['document'],array('releve','attestation'),true))$data['isabee_filiere']=DB::table('niveau')->where('id',$context['classe']->id_niveau)->first();
+            $isabeeLogo=public_path('img/isabee_ebolowa.jpeg');
+            if(is_file($isabeeLogo))$data['logo_tutelle']='data:image/jpeg;base64,'.base64_encode(file_get_contents($isabeeLogo));
+            if(!$data['logo_faculte']){
+                $universityLogo=public_path('images/tutelles/testok/logoUEb.png');
+                if(is_file($universityLogo))$data['logo_faculte']='data:image/png;base64,'.base64_encode(file_get_contents($universityLogo));
+            }
         }
         $filtered = array();
         foreach ($data['results'] as $r) {
@@ -139,6 +192,54 @@ class academicDocumentController extends Controller {
         }
         if ($data['document'] !== 'merite') usort($filtered, function ($a, $b) { return strcasecmp($a['student']->nom.' '.$a['student']->prenom, $b['student']->nom.' '.$b['student']->prenom); });
         $data['results'] = $filtered;
+        if($context['modele']==='esstic' && $data['document']==='releve'){
+            $parentIds=array();$data['esstic_module_codes']=array();
+            foreach($data['modules'] as $module)if($module['id_matiere_mere'])$parentIds[]=$module['id_matiere_mere'];
+            if($parentIds){
+                $programmeCodes=DB::table('classe_matiere')->where('id_classe',$context['id_classe'])
+                    ->where('id_nniveau',$context['id_nniveau'])->whereIn('id_matiere',array_unique($parentIds))
+                    ->select('id_matiere','id_code')->get();
+                $codeIds=array();foreach($programmeCodes as $row)if(ctype_digit((string)$row->id_code))$codeIds[]=(int)$row->id_code;
+                $names=$codeIds?DB::table('codages')->whereIn('id',array_unique($codeIds))->lists('nom','id'):array();
+                foreach($programmeCodes as $row)$data['esstic_module_codes'][$row->id_matiere]=ctype_digit((string)$row->id_code)
+                    ?(isset($names[(int)$row->id_code])?$names[(int)$row->id_code]:''):$row->id_code;
+            }
+        }
+        if($data['document']==='pv_modules'){
+            $parentIds=array();$parentNames=array();$data['module_codes']=array();
+            foreach($data['modules'] as $module)if($module['id_matiere_mere']){
+                $parentId=(int)$module['id_matiere_mere'];$parentIds[$parentId]=true;
+                $parentName=iconv('UTF-8','ASCII//TRANSLIT//IGNORE',(string)$module['nom']);
+                $parentNames[preg_replace('/[^a-z0-9]+/','',strtolower($parentName===false?$module['nom']:$parentName))][]=$parentId;
+            }
+            if($parentIds){
+                $programmeCodes=DB::table('classe_matiere')->where('id_classe',$context['id_classe'])
+                    ->where('id_nniveau',$context['id_nniveau'])->where('id_cycle',$context['id_cycle'])->orderBy('id','desc')
+                    ->select('id_matiere','id_code')->get();
+                $matterNames=DB::table('matiere')->lists('nom','id');
+                $codeIds=array();foreach($programmeCodes as $row)if(ctype_digit((string)$row->id_code))$codeIds[]=(int)$row->id_code;
+                $codageNames=$codeIds?DB::table('codages')->whereIn('id',array_unique($codeIds))->lists('nom','id'):array();
+                foreach($programmeCodes as $row){
+                    $code=ctype_digit((string)$row->id_code)?(isset($codageNames[(int)$row->id_code])?$codageNames[(int)$row->id_code]:''):$row->id_code;
+                    $matterName=isset($matterNames[$row->id_matiere])?iconv('UTF-8','ASCII//TRANSLIT//IGNORE',(string)$matterNames[$row->id_matiere]):'';
+                    $matterKey=preg_replace('/[^a-z0-9]+/','',strtolower($matterName===false?'':$matterName));
+                    $matchedParents=array();
+                    if(isset($parentIds[(int)$row->id_matiere]))$matchedParents[]=(int)$row->id_matiere;
+                    if(isset($parentNames[$matterKey]))$matchedParents=array_merge($matchedParents,$parentNames[$matterKey]);
+                    foreach(array_unique($matchedParents) as $parentId)if(!isset($data['module_codes'][$parentId]))$data['module_codes'][$parentId]=$code;
+                }
+            }
+        }
+        if($data['certificate'] && in_array($context['modele'],array('ngaoundere','soa','esstic','isabee','polytechnique'),true))
+            $data['attestation_references']=(new AcademicAttestationNumberService)->references($context,$filtered);
+        if ($context['modele']==='ngaoundere' && $data['document']==='releve') {
+            $data['ngaoundere_pages']=(new NgaoundereTranscriptService)->pages($filtered,$context);
+            $data['ngaoundere_filiere']=DB::table('niveau')->where('id',$context['classe']->id_niveau)->first();
+            if (!$data['logo_faculte']) {
+                $iutLogo=public_path('img/iut.jpg');
+                if (is_file($iutLogo)) $data['logo_faculte']='data:image/jpeg;base64,'.base64_encode(file_get_contents($iutLogo));
+            }
+        }
         return $data;
     }
 
@@ -209,19 +310,27 @@ class academicDocumentController extends Controller {
     public function generate(Request $request)
     {
         $data = $request->input('document')==='deliberation_rapport'?(new academicDeliberationController)->reportDocumentData($request):$this->documentData($request);
-        $data['archived'] = true;
-        $html = view('eleves.academic_documents.print', $data)->render();
-        $generation = new AcademicDocumentGeneration;
-        foreach (array('id_campus', 'id_tutelle', 'id_classe', 'id_cycle', 'id_nniveau', 'modele') as $key) $generation->$key = $data['context'][$key];
-        $generation->annee_academique = session('year');
-        $generation->document = $data['document']; $generation->periode = $data['context']['periode'];
-        $generation->effectif = isset($data['deliberation_report'])?$data['deliberation_report']['metrics']->etudiants:(isset($data['anonymat_rows'])?count($data['anonymat_rows']):count($data['results']));
-        $snapshot=$data['context'];
-        $snapshot['document_selection']=$request->only('id_eleve','id_session','date_soutenance','attestation_reference','attestation_jury_date','attestation_issue_date','page_size','mode_generation','sequence','rapport_type','rapport_semestre','rapport_examen','rapport_format','rapport_portee','id_lot');
-        $generation->contexte = json_encode($snapshot);
-        $generation->contenu = $html; $generation->empreinte = hash('sha256', $html);
-        $generation->id_creator = Auth::id(); $generation->save();
-        return redirect()->to('/eleves/documents-tutelles/generations/'.$generation->id);
+        return DB::transaction(function()use($request,$data){
+            if(isset($data['attestation_references'])){
+                DB::table('campus')->where('id',$data['context']['id_campus'])->lockForUpdate()->first();
+                $data['attestation_references']=(new AcademicAttestationNumberService)->references($data['context'],$data['results']);
+            }
+            $data['archived'] = true;
+            $html = view('eleves.academic_documents.print', $data)->render();
+            $generation = new AcademicDocumentGeneration;
+            foreach (array('id_campus', 'id_tutelle', 'id_classe', 'id_cycle', 'id_nniveau', 'modele') as $key) $generation->$key = $data['context'][$key];
+            $generation->annee_academique = session('year');
+            $generation->document = $data['document']; $generation->periode = $data['context']['periode'];
+            $generation->effectif = isset($data['deliberation_report'])?$data['deliberation_report']['metrics']->etudiants:(isset($data['anonymat_rows'])?count($data['anonymat_rows']):count($data['results']));
+            $snapshot=$data['context'];
+            $snapshot['document_selection']=$request->only('id_eleve','id_session','date_soutenance','attestation_reference','attestation_jury_date','attestation_issue_date','page_size','mode_generation','sequence','rapport_type','rapport_semestre','rapport_examen','rapport_format','rapport_portee','id_lot');
+            if(isset($data['attestation_references']))unset($snapshot['document_selection']['attestation_reference']);
+            if(isset($data['attestation_references']))$snapshot['attestation_numbers']=$data['attestation_references'];
+            $generation->contexte = json_encode($snapshot);
+            $generation->contenu = $html; $generation->empreinte = hash('sha256', $html);
+            $generation->id_creator = Auth::id(); $generation->save();
+            return redirect()->to('/eleves/documents-tutelles/generations/'.$generation->id);
+        });
     }
 
     public function history(Request $request)

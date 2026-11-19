@@ -21,10 +21,16 @@ return array(
     'soa' => array(
         'authority_fr' => 'Le Doyen de la Faculté des Sciences Économiques et de Gestion',
         'authority_en' => 'The Dean of the Faculty of Economics and Management',
+        'campus_signatory_fr' => 'Le Président du Conseil d’Établissement',
+        'campus_signatory_en' => 'The President of the School Council',
+        'city' => 'Yaoundé',
     ),
     'esstic' => array(
         'authority_fr' => 'Le Directeur de l’ESSTIC',
         'authority_en' => 'The Director of ESSTIC',
+        'campus_signatory_fr' => 'Le Directeur de l’Institut Supérieur Hintel',
+        'campus_signatory_en' => 'The Director of the Hintel Higher Institute',
+        'city' => 'Yaoundé',
     ),
     'isabee' => array(
         'authority_fr' => 'Le Directeur de l’ISABEE',

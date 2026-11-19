@@ -8,19 +8,41 @@ class AcademicModuleService {
     {
         $context=$data['context'];$ids=array();
         foreach($data['sessions'] as $s)$ids[]=$s->programme_id;
-        $rows=DB::table('groupe_matieres')->where('id_classe',$context['id_classe'])->where('id_nniveau',$context['id_nniveau'])->whereIn('id_classe_matiere',$ids)->get();
-        $names=DB::table('matiere')->lists('nom','id');$memberships=array();
-        foreach($rows as $row)$memberships[$row->id_classe_matiere][]=$row;
+        // Les lignes du programme courant peuvent avoir de nouveaux identifiants
+        // classe_matiere alors que groupe_matieres référence encore les anciens.
+        // On conserve la correspondance exacte et on ajoute un repli par nom d'UV.
+        $rows=DB::table('groupe_matieres')->where('id_classe',$context['id_classe'])->where('id_nniveau',$context['id_nniveau'])->get();
+        $names=DB::table('matiere')->lists('nom','id');$memberships=array();$membershipsByName=array();$groupProgrammeIds=array();
+        foreach($rows as $row)$groupProgrammeIds[]=$row->id_classe_matiere;
+        $groupProgrammes=$groupProgrammeIds?DB::table('classe_matiere')->where('id_classe',$context['id_classe'])
+            ->where('id_nniveau',$context['id_nniveau'])->where('id_cycle',$context['id_cycle'])
+            ->whereIn('id',array_unique($groupProgrammeIds))->get(array('id','id_matiere')):array();
+        $programmeMatiere=array();
+        foreach($groupProgrammes as $programme)$programmeMatiere[$programme->id]=$programme->id_matiere;
+        foreach($rows as $row){
+            if(!isset($programmeMatiere[$row->id_classe_matiere]))continue;
+            $memberships[$row->id_classe_matiere][]=$row;
+            $matiereId=$programmeMatiere[$row->id_classe_matiere];
+            if(isset($names[$matiereId]))$membershipsByName[$this->normalizeSubjectName($names[$matiereId])][]=$row;
+        }
         $definitions=array();$keys=array();
         foreach($data['sessions'] as $s){
-            $parents=array();
-            if(isset($memberships[$s->programme_id]))foreach($memberships[$s->programme_id] as $g){
+            $parents=array();$allParents=array();
+            $subjectNameKey=$this->normalizeSubjectName($s->nom);
+            $subjectMemberships=isset($memberships[$s->programme_id])?$memberships[$s->programme_id]
+                :(isset($membershipsByName[$subjectNameKey])?$membershipsByName[$subjectNameKey]:array());
+            foreach($subjectMemberships as $g){
+                $allParents[(int)$g->id_matiere_mere]=true;
                 // L'écran historique stocke aussi 1/2 pour les semestres impair/pair.
                 $semester=(int)$s->semestre;$groupSemester=(int)$g->semestre;
                 $legacyParity=$groupSemester>=1 && $groupSemester<=2 && $groupSemester===($semester%2?1:2);
                 if($groupSemester!==0 && $groupSemester!==$semester && !$legacyParity)continue;
                 $parents[(int)$g->id_matiere_mere]=true;
             }
+            // Older group assignments sometimes store a parity that differs
+            // from the real semester. Reuse a sole unambiguous parent group.
+            if(!count($parents) && count($allParents)===1)$parents=$allParents;
+            if(!count($parents) && count($allParents)>1)abort(422,'Semestre de groupe ambigu pour le programme '.$s->programme_id.'. Corrigez ses affectations avant de generer le PV.');
             if(count($parents)>1)abort(422,'Plusieurs groupes de matières pour la même UV et le même semestre : programme '.$s->programme_id.'. Corrigez les affectations avant de produire le document.');
             $parent=count($parents)?key($parents):null;
             if($parent && !isset($names[$parent]))abort(422,'Le groupe de matières référence un module absent : '.$parent);
@@ -45,5 +67,12 @@ class AcademicModuleService {
         }unset($result);
         $data['modules']=$definitions;
         return $data;
+    }
+
+    private function normalizeSubjectName($name)
+    {
+        $ascii=iconv('UTF-8','ASCII//TRANSLIT//IGNORE',(string)$name);
+        if($ascii!==false)$name=$ascii;
+        return preg_replace('/[^a-z0-9]+/','',strtolower((string)$name));
     }
 }

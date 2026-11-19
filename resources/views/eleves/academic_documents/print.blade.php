@@ -4,7 +4,7 @@
 @page {
     size: {{ strtoupper($page_size) }} {{ $paper_orientation }};
     margin: {{ $paper_margin }}mm {{ $paper_margin }}mm {{ $certificate?$paper_margin:($page_size==='a3'?28:24) }}mm;
-    @if(!$certificate)
+    @if(!$certificate && $document!=='pv_modules' && !(in_array($context['modele'],array('ngaoundere','esstic','isabee')) && $document==='releve'))
     @bottom-center {
         content:
         @foreach($footer_lines as $line)
@@ -23,15 +23,58 @@ body{font:11px Arial,sans-serif;color:#111;margin:16px}table{border-collapse:col
 .official-headings{align-items:flex-start;margin:0 0 10px}.official-fr{text-align:left}.official-en{text-align:right}
 .branding-polytechnique .campus-logo-block,.branding-polytechnique .tutelle-logos{flex-basis:100px}.polytechnique-logo{max-width:90px;max-height:85px;object-fit:contain}
 @include('eleves.academic_documents.paper')
+@if($context['modele']==='ngaoundere' && $document==='releve')
+@include('eleves.academic_documents.ngaoundere_transcript_style')
+@endif
+@if($document==='pv_modules')
+@include('eleves.academic_documents.soa_pv_modules_style')
+@endif
+@if($document==='pv')
+@include('eleves.academic_documents.pv_detaille_style')
+@endif
+@if(in_array($document,array('pv','pv_modules')) && in_array($context['modele'],array('ngaoundere','polytechnique','esstic','isabee')))
+@include('eleves.academic_documents.pv_header_style')
+@endif
+@if($context['modele']==='polytechnique' && $document==='releve')
+@include('eleves.academic_documents.polytechnique_transcript_style')
+@endif
+@if($context['modele']==='esstic' && $document==='releve')
+@include('eleves.academic_documents.esstic_transcript_style')
+@endif
+@if($context['modele']==='isabee' && $document==='releve')
+@include('eleves.academic_documents.isabee_transcript_style')
+@endif
 @if($certificate)
 @include('eleves.academic_documents.attestation_style')
+@if($context['modele']==='esstic')
+@include('eleves.academic_documents.attestation_esstic_style')
+@endif
+@if($context['modele']==='isabee')
+@include('eleves.academic_documents.attestation_isabee_style')
+@endif
 @endif
 </style></head><body class="modele-{{ $context['modele'] }} document-{{ $document }} paper-{{ $page_size }}">
 <div class="toolbar"><button onclick="window.print()">Imprimer / enregistrer en PDF</button> · Format {{ strtoupper($page_size) }} {{ $paper_orientation==='landscape'?'paysage':'portrait' }}
-    @if(!$archived) · <a href="{{ $paper_links['a4'] }}" aria-current="{{ $page_size==='a4'?'page':'false' }}">A4</a> · <a href="{{ $paper_links['a3'] }}" aria-current="{{ $page_size==='a3'?'page':'false' }}">A3</a>@endif
+    @if(!$archived && $document!=='pv_modules') · <a href="{{ $paper_links['a4'] }}" aria-current="{{ $page_size==='a4'?'page':'false' }}">A4</a> · <a href="{{ $paper_links['a3'] }}" aria-current="{{ $page_size==='a3'?'page':'false' }}">A3</a>@endif
     · {{ $archived?'Copie archivée':'Aperçu : utiliser « Générer et archiver » pour conserver ce document' }} · {{ $generated_at }}</div>
-@if(!$archived)<p class="preview">APERÇU — NON ARCHIVÉ</p>@endif
-@if($certificate && count($results))
+@if(!$archived && $document!=='pv_modules')<p class="preview">APERÇU — NON ARCHIVÉ</p>@endif
+@if($context['modele']==='esstic' && $document==='releve' && count($results))
+    @foreach($results as $r)
+        @include('eleves.academic_documents.esstic_transcript')
+    @endforeach
+@elseif($context['modele']==='ngaoundere' && $document==='releve' && count($results))
+    @foreach($ngaoundere_pages as $page)
+        @include('eleves.academic_documents.ngaoundere_transcript')
+    @endforeach
+@elseif($context['modele']==='isabee' && $document==='releve' && count($results))
+    @foreach($results as $r)
+        @include('eleves.academic_documents.isabee_transcript')
+    @endforeach
+@elseif($context['modele']==='polytechnique' && $document==='releve' && count($results))
+    @foreach($results as $r)
+        @include('eleves.academic_documents.polytechnique_transcript')
+    @endforeach
+@elseif($certificate && count($results))
     @foreach($results as $r)
         @include('eleves.academic_documents.attestation')
     @endforeach
@@ -70,9 +113,13 @@ body{font:11px Arial,sans-serif;color:#111;margin:16px}table{border-collapse:col
     </section>
     @endforeach
 @else
+    @if(in_array($document,array('pv','pv_modules')) && in_array($context['modele'],array('ngaoundere','polytechnique','esstic','isabee')))
+    @include('eleves.academic_documents.pv_header')
+    @else
     @include('eleves.academic_documents.header')
+    @endif
     @if($document==='pv_modules')
-    @include('eleves.academic_documents.pv_modules')
+    @include('eleves.academic_documents.soa_pv_modules')
     @elseif(in_array($document,array('admis','merite','non_admis','a_deliberer')))
     <table><thead><tr><th>N°</th><th>Rang</th><th>Matricule</th><th>Nom et prénom</th><th>Moyenne /20</th><th>Crédits capitalisés</th><th>Décision</th></tr></thead><tbody>
     @foreach($results as $i=>$r)<tr><td>{{ $i+1 }}</td><td>{{ $r['rank'] }}</td><td>{{ $r['student']->matricule }}</td><td class="left">{{ $r['student']->nom }} {{ $r['student']->prenom }}</td><td>{{ $r['summary']['incomplete']?'Incomplet':number_format($r['summary']['average'],2) }}</td><td>{{ $r['summary']['credits'] }}</td><td>{{ $r['summary']['decision'] }}</td></tr>@endforeach
@@ -118,6 +165,8 @@ body{font:11px Arial,sans-serif;color:#111;margin:16px}table{border-collapse:col
         @endforeach
         </tbody></table>
         @endforeach
+    @elseif($document==='pv')
+    @include('eleves.academic_documents.pv_detaille')
     @else
         <table class="results-matrix"><thead><tr><th>N°</th><th>Matricule</th><th>Nom et prénom</th>
         @foreach($sessions as $s)<th>{{ $s->code ?: $s->nom }}<br>S{{ $s->semestre }} · {{ $s->credit }} cr.</th>@endforeach
@@ -134,13 +183,17 @@ body{font:11px Arial,sans-serif;color:#111;margin:16px}table{border-collapse:col
         </tbody></table>
         @endif
     @endif
+    @if($context['modele']==='soa' && $document==='pv_modules')
+    <div class="soa-pv-signatures"><span>PR&Eacute;SIDENT DU JURY</span><span>VICE-PR&Eacute;SIDENT</span><span>MEMBRES</span></div>
+    @else
     <div class="signature"><span>Le responsable de filière</span><span>Le président du jury</span><span>Le représentant de la tutelle</span></div>
+    @endif
 @endif
 @if(!isset($deliberation_report) && !isset($anonymat_rows) && !count($results))@if(in_array($document,array('releve','releve_modules','attestation')))@include('eleves.academic_documents.header')@endif<p class="empty">Aucun étudiant ne correspond à ce document et aux filtres choisis.</p>@endif
-@if(!$certificate && !isset($deliberation_report) && !isset($anonymat_rows))
+@if(!$certificate && !isset($deliberation_report) && !isset($anonymat_rows) && !(in_array($context['modele'],array('ngaoundere','esstic','isabee')) && $document==='releve'))
 <p class="notice">Règles {{ $context['profile']['label'] }} : UE validée à 10/20 ; capitalisation dès {{ $context['profile']['credit_threshold'] }}/20 ; {{ $context['profile']['admission']==='credits'?'admission à partir de '.$context['profile']['credits_required'].' crédits':'admission pour une moyenne strictement supérieure à '.$context['profile']['average_required'].'/20' }}. Une donnée manquante impose une délibération. Établi le {{ $generated_at }}.</p>
 @endif
-@if(!$certificate || !count($results))
+@if((!$certificate || !count($results)) && !(in_array($context['modele'],array('ngaoundere','esstic','isabee')) && $document==='releve' && count($results)))
 @include('eleves.academic_documents.footer')
 @endif
 </body></html>
