@@ -179,17 +179,27 @@
 
 
 
-                <legend class="text-uppercase " style="margin-top: 15px">@lang('menu.gestion_notes')</legend>
+                <legend class="text-uppercase " style="margin-top: 15px">@lang('admin.discipline')</legend>
                 <div class="col-md-12 alert alert-warning">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <fieldset >
                             <div >
                                 <h5 class="text-uppercase"><strong>@lang('admin.discipline') </strong></h5>
                                 <span class="user-action inscription-check text-primary"><input name="actions[]" type="checkbox" value="{{\gesecole\Action::ACTION_STUDENT_DISCIPLINE}}" @if(in_array(\gesecole\Action::ACTION_STUDENT_DISCIPLINE, $actions_array)) checked @endif> @lang('admin.read')</span>
                                 <span class="user-action inscription-check text-primary"><input name="actions[]" type="checkbox" value="{{\gesecole\Action::ACTION_STUDENT_DISCIPLINE_CU}}" @if(in_array(\gesecole\Action::ACTION_STUDENT_DISCIPLINE_CU, $actions_array)) checked @endif> @lang('admin.create_update')</span>
+                                <div><strong>Appel et etats disciplinaires (disciplineetd)</strong></div>
+                                <span class="user-action inscription-check text-primary"><input name="actions[]" type="checkbox" value="{{\gesecole\Action::ACTION_STUDENT_DISCIPLINE_ETD_CREATE}}" @if(in_array(\gesecole\Action::ACTION_STUDENT_DISCIPLINE_ETD_CREATE, $actions_array)) checked @endif> Saisir l'appel</span>
+                                <span class="user-action inscription-check text-primary"><input name="actions[]" type="checkbox" value="{{\gesecole\Action::ACTION_STUDENT_DISCIPLINE_ETD_UPDATE}}" @if(in_array(\gesecole\Action::ACTION_STUDENT_DISCIPLINE_ETD_UPDATE, $actions_array)) checked @endif> Modifier l'appel</span>
+                                <span class="user-action inscription-check text-primary"><input name="actions[]" type="checkbox" value="{{\gesecole\Action::ACTION_STUDENT_DISCIPLINE_ETD_REPORT}}" @if(in_array(\gesecole\Action::ACTION_STUDENT_DISCIPLINE_ETD_REPORT, $actions_array)) checked @endif> Afficher et exporter les etats</span>
                             </div>
 
                         </fieldset>
+                    </div>
+                </div>
+
+                <legend class="text-uppercase " style="margin-top: 15px">@lang('menu.gestion_notes')</legend>
+                <div class="col-md-12 alert alert-warning">
+                    <div class="col-md-6">
                         <fieldset >
                             <div >
                                 <h5 class="text-uppercase"><strong>@lang('admin.notes') </strong></h5>

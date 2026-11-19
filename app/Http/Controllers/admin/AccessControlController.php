@@ -328,6 +328,11 @@ class AccessControlController extends Controller {
                 $this->permissionItem(Action::ACTION_ADMIN_STUDENT_PAYMENT_UPDATE, 'Paiement inscription - Modifier montant', 'Modifier montant paiement inscription'),
                 $this->permissionItem(Action::ACTION_REGISTRATION_SUBSCRIPTION_PAYMENT_PRINT_RECEIPT, 'Paiement inscription - Imprimer recu', 'Imprimer recu paiement inscription'),
             ],
+            'Discipline - Appel et etats' => [
+                $this->permissionItem(Action::ACTION_STUDENT_DISCIPLINE_ETD_CREATE, 'Appel - Saisir', 'Creer les presences disciplinaires'),
+                $this->permissionItem(Action::ACTION_STUDENT_DISCIPLINE_ETD_UPDATE, 'Appel - Modifier', 'Corriger les presences disciplinaires'),
+                $this->permissionItem(Action::ACTION_STUDENT_DISCIPLINE_ETD_REPORT, 'Etats - Afficher', 'Consulter et exporter les etats disciplinaires'),
+            ],
             'Notes - Saisie' => [
                 $this->permissionItem(Action::ACTION_STUDENT_NOTE, 'Notes - Voir', 'Afficher consulter notes'),
                 $this->permissionItem(Action::ACTION_STUDENT_NOTE_CREATE, 'Notes - Creer', 'Saisir creer notes controles examens'),

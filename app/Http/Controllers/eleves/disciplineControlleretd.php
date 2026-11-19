@@ -843,9 +843,25 @@ class disciplineControlleretd extends Controller {
 
     public function storePresence(Request $request)
     {
+        $user = \Auth::user();
+        $canCreate = $user->canDoAction(\gesecole\Action::ACTION_STUDENT_DISCIPLINE_ETD_CREATE);
+        $canUpdate = $user->canDoAction(\gesecole\Action::ACTION_STUDENT_DISCIPLINE_ETD_UPDATE);
         // Sécurité minimale
         if (!$request->presence) {
             return redirect()->back()->with('error', 'Aucune donnée envoyée');
+        }
+        $existingRecords = array();
+        foreach ($request->presence as $eleve_id => $horaires) {
+            foreach ($horaires as $horaire_id => $statut) {
+                $existingRecords[$eleve_id][$horaire_id] = DB::table('discipline__new__etds')
+                    ->where('id_eleve', $eleve_id)
+                    ->where('id_horaire', $horaire_id)
+                    ->where('date_discipline', $request->date_discipline)
+                    ->first();
+                if ($existingRecords[$eleve_id][$horaire_id] ? !$canUpdate : !$canCreate) {
+                    abort(403);
+                }
+            }
         }
 //        dd($request->id_jour);
        // dd($request->all());
@@ -858,11 +874,7 @@ class disciplineControlleretd extends Controller {
             foreach ($horaires as $horaire_id => $statut) {
 
                 // Vérifier si l'enregistrement existe déjà
-                $exist = DB::table('discipline__new__etds')
-                    ->where('id_eleve', $eleve_id)
-                    ->where('id_horaire', $horaire_id)
-                    ->where('date_discipline', $request->date_discipline)
-                    ->first();
+                $exist = $existingRecords[$eleve_id][$horaire_id];
 
                 if ($exist) {
 

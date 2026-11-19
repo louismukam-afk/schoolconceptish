@@ -2,6 +2,7 @@
 
 @section('content')
     <div class="row text-center pad-top">
+        @if(Auth::user()->canDoAction(\gesecole\Action::ACTION_STUDENT_DISCIPLINE))
         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
             <div class="div-square">
                 <a href="{{URL::to('/eleves/discipline/')}}" >
@@ -12,14 +13,17 @@
 
 
         </div>
+        @endif
+        @if(Auth::user()->canDoAction(array(\gesecole\Action::ACTION_STUDENT_DISCIPLINE_ETD_CREATE, \gesecole\Action::ACTION_STUDENT_DISCIPLINE_ETD_UPDATE, \gesecole\Action::ACTION_STUDENT_DISCIPLINE_ETD_REPORT)))
         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
             <div class="div-square">
                 <a href="{{URL::to('/eleves/disciplineetd')}}">
                     <i class="fa fa-pencil-square-o fa-5x"></i>
-                    <h4>Effectuer l'appel en salle par specialite</h4>
+                    <h4>Appel et etats disciplinaires</h4>
                 </a>
             </div>
         </div>
+        @endif
         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
             <div class="div-square">
                 <a href="{{URL::to('/eleves/releves_bts/')}}">

@@ -167,6 +167,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     private function legacyActionParents($actionAgainst)
     {
+        if($actionAgainst === Action::ACTION_STUDENT_DISCIPLINE_ETD_CREATE || $actionAgainst === Action::ACTION_STUDENT_DISCIPLINE_ETD_UPDATE) {
+            return [Action::ACTION_STUDENT_DISCIPLINE_CU];
+        }
+        if($actionAgainst === Action::ACTION_STUDENT_DISCIPLINE_ETD_REPORT) {
+            return [Action::ACTION_STUDENT_DISCIPLINE, Action::ACTION_STUDENT_DISCIPLINE_CU];
+        }
         $classSettings = [
             'ACTION_ADMIN_CYCLE',
             'ACTION_ADMIN_NNIVEAU',

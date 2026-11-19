@@ -436,6 +436,13 @@ Route::group(['middleware'=>'auth'],function (){
 
 
                 Route::any('/eleves/discipline/state1/', ['as'=>'etat_disciplinaire','uses'=>'eleves\disciplineController@state']);
+                Route::get('/eleves/disciplineetd/search', 'eleves\disciplineController@search');
+                Route::get('/eleves/disciplineetd/show/{id}', 'eleves\disciplineController@create');
+            });
+
+            Route::get('/eleves/disciplineetd/', ['middleware' => 'action', 'action' => array(Action::ACTION_STUDENT_DISCIPLINE_ETD_CREATE, Action::ACTION_STUDENT_DISCIPLINE_ETD_UPDATE, Action::ACTION_STUDENT_DISCIPLINE_ETD_REPORT), 'uses' => 'eleves\disciplineControlleretd@index']);
+
+            Route::group(['middleware' => 'action', 'action' => array(Action::ACTION_STUDENT_DISCIPLINE_ETD_CREATE, Action::ACTION_STUDENT_DISCIPLINE_ETD_UPDATE)], function () {
                 Route::get('/eleves/appel', ['as' => 'appel.index', 'uses' => 'eleves\disciplineControlleretd@index3']);
                 Route::get('/eleves/appel/specialite/{classe}', ['as' => 'appel.specialite', 'uses' => 'eleves\disciplineControlleretd@choisirCycleNiveau']);
                 Route::get('/eleves/appel/niveaux/{cycle}', ['as' => 'appel.niveaux', 'uses' => 'eleves\disciplineControlleretd@getNiveauxByCycle']);
@@ -494,23 +501,14 @@ Route::group(['middleware'=>'auth'],function (){
 
 
 
-               Route::get('/eleves/appel/selection/{classe}', [
-                   'as' => 'appel.selection',
-                   'uses' => 'eleves\disciplineControlleretd@selectionJour'
-               ]);
-
-               Route::post('/eleves/appel/formulaire',
-                   'eleves\disciplineControlleretd@formulaire');
-
-               Route::post('/eleves/appel/store', 'eleves\disciplineControlleretd@storePresence');
-
-
-                Route::get('/eleves/disciplineetd/', 'eleves\disciplineControlleretd@index');
                 //Route::get('/eleves/disciplineetd1/', 'eleves\disciplineControlleretd@index1');
                Route::get('/eleves/disciplineetd1/', [
                    'as' => 'appel.specialitesok',
                    'uses' => 'eleves\disciplineControlleretd@index1'
                ]);
+            });
+
+            Route::group(['middleware' => 'action', 'action' => Action::ACTION_STUDENT_DISCIPLINE_ETD_REPORT], function () {
                //route pour les etats
                Route::get('/eleves/discipline_etat/', [
                    'as' => 'appel.specialites_etat',
@@ -571,8 +569,6 @@ Route::group(['middleware'=>'auth'],function (){
                ]);
 
 
-               Route::get('/eleves/disciplineetd/search', 'eleves\disciplineController@search');
-                Route::get('/eleves/disciplineetd/show/{id}', 'eleves\disciplineController@create');
             });
 
     Route::group(['middleware' => 'action', 'action' => Action::ACTION_STUDENT_DISCIPLINE_CU], function () {
@@ -758,7 +754,6 @@ Route::group(['middleware'=>'auth'],function (){
                 //proces verbal soa
 
 
-                Route::get('/eleves/', 'eleves\eleveController@index');
                 Route::get('/eleves/soa/','eleves\soanoteController@index2');
 
                 Route::get('/eleves/notes/edit_soa','eleves\soanoteController@index');
@@ -783,7 +778,6 @@ Route::group(['middleware'=>'auth'],function (){
 
                 //proces verbal ndere
 
-                Route::get('/eleves/', 'eleves\eleveController@index');
                 Route::get('/eleves/ndere/','eleves\nderenoteController@index2');
 
                 Route::get('/eleves/notes/edit_ndere','eleves\nderenoteController@index');
@@ -796,7 +790,6 @@ Route::group(['middleware'=>'auth'],function (){
 
                 //proces verbal estic
 
-                Route::get('/eleves/', 'eleves\eleveController@index');
                 Route::get('/eleves/estic/','eleves\esticnoteController@index2');
 
                 Route::get('/eleves/notes/edit','eleves\esticnoteController@index');
